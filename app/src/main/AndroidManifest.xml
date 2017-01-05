@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.hehe.hehexposedlocation"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:versionCode="6"
+    android:versionName="1.4">
+    <uses-sdk
+        android:minSdkVersion="19"
+        android:targetSdkVersion="23"/>
+
+    <permission-tree android:name="com.hehe.hehexposedlocation.appsettings"/>
+    <permission android:name="com.hehe.hehexposedlocation.appsettings.BROADCAST_PERMISSION" android:protectionLevel="dangerous"></permission>
+
+    <permission-tree android:name="com.hehe.hehexposedlocation"/>
+
+    <uses-permission android:name="com.hehe.hehexposedlocation.appsettings.BROADCAST_PERMISSION"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <application
+        android:allowBackup="false"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo"
+        android:icon="@drawable/ic_launcher">
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" />
+        <meta-data
+            android:name="xposeddescription"
+            android:value="@string/app_mod_summary" />
+        <meta-data
+            android:name="xposedminversion"
+            android:value="30" />
+        <activity
+            android:name="com.hehe.hehexposedlocation.SettingsActivity"
+            android:label="@string/app_name">
+            <intent-filter> <!-- Make an APK -->
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.hehe.hehexposedlocation.WhitelistActivity"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_whitelist"
+            android:noHistory="true"
+            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+        </activity>
+        <activity
+            android:name="com.hehe.hehexposedlocation.intro.MainActivity"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/into_tiltle"
+            android:noHistory="true"
+            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+        </activity>
+        <activity
+            android:name="com.hehe.hehexposedlocation.appsettings.XposedModActivity"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/into_tiltle"
+            android:noHistory="true"
+            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+        </activity>
+        <activity
+            android:name="com.hehe.hehexposedlocation.appsettings.settings.ApplicationSettings"
+            android:label="@string/settings_title"
+            android:windowSoftInputMode="stateHidden"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.appsettings.XposedModActivity"/>
+        </activity>
+
+        <activity
+            android:name="com.hehe.hehexposedlocation.log.Settings"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/into_tiltle"
+            android:noHistory="true"
+            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity"
+            android:configChanges="orientation|screenSize">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+        </activity>
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+    </application>
+
+</manifest>

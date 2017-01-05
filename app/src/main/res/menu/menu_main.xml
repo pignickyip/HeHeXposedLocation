@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_refresh"
+        app:showAsAction="withText"
+        android:title="@string/menu_refresh"/>
+    <item
+        android:id="@+id/menu_recents"
+        app:showAsAction="withText"
+        android:title="@string/menu_recents"/>
+    <item
+        android:id="@+id/menu_export"
+        app:showAsAction="withText"
+        android:title="@string/menu_export"/>
+    <item
+        android:id="@+id/menu_import"
+        app:showAsAction="withText"
+        android:title="@string/menu_import"/>
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@android:drawable/ic_menu_help"
+        app:showAsAction="withText"
+        android:title="@string/menu_about"/>
+
+</menu>
