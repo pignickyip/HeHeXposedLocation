@@ -47,8 +47,6 @@ public class WhitelistActivity extends PreferenceActivity {
     ArrayAdapter<String> mAdapter;
     SharedPreferences mSharedPrefs;
 
-    OverrideSettingsSecure haha;
-
     final List<String> appList = new ArrayList<String>();
     boolean whitelistAllApps;
 

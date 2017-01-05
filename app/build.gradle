@@ -37,17 +37,13 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.+'
     compile 'com.android.support:support-v4:23.+'
     compile 'com.android.support:support-vector-drawable:23.+'
-
     compile 'com.google.android.gms:play-services-appindexing:8.4.0'
-
     //butterknife
     compile 'com.jakewharton:butterknife:8.1.0'
     apt 'com.jakewharton:butterknife-compiler:8.1.0'
-
     testCompile 'junit:junit:4.12'
     // Xposed Framework
     provided project(':api-82')
     provided project(':api-82-sources')
-
-
+    provided project(':XposedBridgeApi')
 }

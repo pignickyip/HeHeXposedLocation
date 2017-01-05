@@ -1,1 +1,1 @@
-include ':app', ':api-82-sources', ':api-82'
+include ':app', ':api-82-sources', ':api-82', ':XposedBridgeApi'

@@ -44,6 +44,7 @@ public class XposedMod implements IXposedHookZygoteInit, IXposedHookLoadPackage 
 	public static final String this_package = XposedMod.class.getPackage().getName();
 
 	private static final String SYSTEMUI_PACKAGE = "com.android.systemui";
+
 	private static final String[] SYSTEMUI_ADJUSTED_DIMENSIONS = {
 		"status_bar_height",
 		"navigation_bar_height", "navigation_bar_height_landscape",
