@@ -82,7 +82,11 @@
             android:name="com.hehe.hehexposedlocation.appsettings.settings.ApplicationSettings"
             android:label="@string/settings_title"
             android:windowSoftInputMode="stateHidden"
-            android:configChanges="orientation|screenSize">
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:parentActivityName="com.hehe.hehexposedlocation.appsettings.XposedModActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.appsettings.XposedModActivity"/>

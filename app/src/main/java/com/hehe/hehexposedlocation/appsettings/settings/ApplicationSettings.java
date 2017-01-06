@@ -75,7 +75,7 @@ public class ApplicationSettings extends Activity {
 		getActionBar().setCustomView(swtActive);
 		getActionBar().setDisplayShowCustomEnabled(true);
 
-		setContentView(R.layout.app_settings);
+		setContentView(R.layout.apps_setting);
 
 		Intent i = getIntent();
 		parentIntent = i;
@@ -113,65 +113,13 @@ public class ApplicationSettings extends Activity {
 			}
 		});
 
-		// Update DPI field
+		// Update Noise  field
 		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
-			((EditText) findViewById(R.id.txtDPI)).setText(String.valueOf(
-				prefs.getInt(pkgName + Common.PREF_DPI, 0)));
+			((EditText) findViewById(R.id.txtNoise)).setText(String.valueOf(
+				prefs.getInt(pkgName + Common.PREF_NOISE, 0)));
 		} else {
-			((EditText) findViewById(R.id.txtDPI)).setText("0");
+			((EditText) findViewById(R.id.txtNoise)).setText("0");
 		}
-
-		// Update Font Scaling field
-		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
-			((EditText) findViewById(R.id.txtFontScale)).setText(String.valueOf(prefs.getInt(pkgName + Common.PREF_FONT_SCALE, 100)));
-		} else {
-			((EditText) findViewById(R.id.txtFontScale)).setText("100");
-		}
-
-		// Load and render current screen setting + possible options
-		int screen = prefs.getInt(pkgName + Common.PREF_SCREEN, 0);
-		if (screen < 0 || screen >= Common.swdp.length)
-			screen = 0;
-		final int selectedScreen = screen;
-
-		Spinner spnScreen = (Spinner) findViewById(R.id.spnScreen);
-		List<String> lstScreens = new ArrayList<String>(Common.swdp.length);
-		lstScreens.add(getString(R.string.settings_default));
-		for (int j = 1; j < Common.swdp.length; j++)
-			lstScreens.add(String.format("%dx%d", Common.wdp[j], Common.hdp[j]));
-		ArrayAdapter<String> screenAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, lstScreens);
-		screenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spnScreen.setAdapter(screenAdapter);
-		spnScreen.setSelection(selectedScreen);
-
-		// Update Tablet field
-		((CheckBox) findViewById(R.id.chkXlarge)).setChecked(prefs.getBoolean(pkgName + Common.PREF_XLARGE, false));
-
-		// Update Res On Widgets field
-		((CheckBox) findViewById(R.id.chkResOnWidgets)).setChecked(prefs.getBoolean(pkgName + Common.PREF_RES_ON_WIDGETS, false));
-
-		// Update Language and list of possibilities
-		localeList = new LocaleList(getString(R.string.settings_default));
-
-		final Spinner spnLanguage = (Spinner) findViewById(R.id.spnLocale);
-		ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, localeList.getDescriptionList());
-		dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spnLanguage.setAdapter(dataAdapter);
-		int selectedLocalePos = localeList.getLocalePos(prefs.getString(pkgName + Common.PREF_LOCALE, null));
-		spnLanguage.setSelection(selectedLocalePos);
-		spnLanguage.setLongClickable(true);
-		spnLanguage.setOnLongClickListener(new View.OnLongClickListener() {
-			@Override
-			public boolean onLongClick(View arg0) {
-				int selPos = spnLanguage.getSelectedItemPosition();
-				if (selPos > 0)
-					Toast.makeText(getApplicationContext(), localeList.getLocale(selPos), Toast.LENGTH_SHORT).show();
-				return true;
-			}
-		});
-
 
 		// Helper to list all apk folders under /res
 		((Button) findViewById(R.id.btnListRes)).setOnClickListener(new View.OnClickListener() {
@@ -220,129 +168,6 @@ public class ApplicationSettings extends Activity {
 			}
 		});
 
-
-		// Setup fullscreen settings
-		{
-			int fullscreen;
-			try {
-				fullscreen = prefs.getInt(pkgName + Common.PREF_FULLSCREEN, Common.FULLSCREEN_DEFAULT);
-			} catch (ClassCastException ex) {
-				// Legacy boolean setting
-				fullscreen = prefs.getBoolean(pkgName + Common.PREF_FULLSCREEN, false)
-						? Common.FULLSCREEN_FORCE : Common.FULLSCREEN_DEFAULT;
-			}
-			final int fullscreenSelection = fullscreen;
-			Spinner spnFullscreen = (Spinner) findViewById(R.id.spnFullscreen);
-			// Note: the order of these items must match the Common.FULLSCREEN_... constants
-			String[] fullscreenArray;
-			if (Build.VERSION.SDK_INT >= 19) {
-				fullscreenArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent),
-						getString(R.string.settings_immersive)
-				};
-			} else {
-				fullscreenArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent)
-				};
-			}
-
-			List<String> lstFullscreen = Arrays.asList(fullscreenArray);
-			ArrayAdapter<String> fullscreenAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstFullscreen);
-			fullscreenAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spnFullscreen.setAdapter(fullscreenAdapter);
-			spnFullscreen.setSelection(fullscreenSelection);
-		}
-
-		// Update No Title field
-		((CheckBox) findViewById(R.id.chkNoTitle)).setChecked(prefs.getBoolean(pkgName + Common.PREF_NO_TITLE, false));
-
-		// Update Allow On Lockscreen field
-		((CheckBox) findViewById(R.id.chkAllowOnLockscreen)).setChecked(prefs.getBoolean(pkgName + Common.PREF_ALLOW_ON_LOCKSCREEN, false));
-
-		// Update Screen On field
-		((CheckBox) findViewById(R.id.chkScreenOn)).setChecked(prefs.getBoolean(pkgName + Common.PREF_SCREEN_ON, false));
-
-		// Load and render current screen setting + possible options
-		int orientation = prefs.getInt(pkgName + Common.PREF_ORIENTATION, 0);
-		if (orientation < 0 || orientation >= Common.orientationCodes.length)
-			orientation = 0;
-		final int selectedOrientation = orientation;
-
-		Spinner spnOrientation = (Spinner) findViewById(R.id.spnOrientation);
-		List<String> lstOrientations = new ArrayList<String>(Common.orientationLabels.length);
-		for (int j = 0; j < Common.orientationLabels.length; j++)
-			lstOrientations.add(getString(Common.orientationLabels[j]));
-		ArrayAdapter<String> orientationAdapter = new ArrayAdapter<String>(this,
-			android.R.layout.simple_spinner_item, lstOrientations);
-		orientationAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spnOrientation.setAdapter(orientationAdapter);
-		spnOrientation.setSelection(selectedOrientation);
-
-		// Setting for making the app resident in memory
-		((CheckBox) findViewById(R.id.chkResident)).setChecked(prefs.getBoolean(pkgName + Common.PREF_RESIDENT, false));
-
-		// Setting for disabling fullscreen IME
-		((CheckBox) findViewById(R.id.chkNoFullscreenIME)).setChecked(prefs.getBoolean(pkgName + Common.PREF_NO_FULLSCREEN_IME, false));
-
-		// Update No Big Notifications field
-		if (Build.VERSION.SDK_INT >= 16) {
-			((CheckBox) findViewById(R.id.chkNoBigNotifications)).setChecked(prefs.getBoolean(pkgName + Common.PREF_NO_BIG_NOTIFICATIONS, false));
-		} else {
-			findViewById(R.id.chkNoBigNotifications).setVisibility(View.GONE);
-		}
-
-		// Setup Ongoing Notifications settings
-		{
-			int ongoingNotifs = prefs.getInt(pkgName + Common.PREF_ONGOING_NOTIF, Common.ONGOING_NOTIF_DEFAULT);
-			Spinner spnOngoingNotif = (Spinner) findViewById(R.id.spnOngoingNotifications);
-			// Note: the order of these items must match the Common.ONGOING_NOTIF_... constants
-			String[] ongoingNotifArray = new String[] {
-						getString(R.string.settings_default),
-						getString(R.string.settings_force),
-						getString(R.string.settings_prevent) };
-
-			List<String> lstOngoingNotif = Arrays.asList(ongoingNotifArray);
-			ArrayAdapter<String> ongoingNotifAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstOngoingNotif);
-			ongoingNotifAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spnOngoingNotif.setAdapter(ongoingNotifAdapter);
-			spnOngoingNotif.setSelection(ongoingNotifs);
-		}
-
-		// Update Insistent Notifications field
-		((CheckBox) findViewById(R.id.chkInsistentNotifications)).setChecked(prefs.getBoolean(pkgName + Common.PREF_INSISTENT_NOTIF, false));
-
-		// Load and render notifications priority
-		if (Build.VERSION.SDK_INT >= 16) {
-			int notifPriority = prefs.getInt(pkgName + Common.PREF_NOTIF_PRIORITY, 0);
-			if (notifPriority < 0 || notifPriority >= Common.notifPriCodes.length)
-				notifPriority = 0;
-			final int selectedNotifPriority = notifPriority;
-
-			Spinner spnNotifPri = (Spinner) findViewById(R.id.spnNotifPriority);
-			List<String> lstNotifPriorities = new ArrayList<String>(Common.notifPriLabels.length);
-			for (int j = 0; j < Common.notifPriLabels.length; j++)
-				lstNotifPriorities.add(getString(Common.notifPriLabels[j]));
-			ArrayAdapter<String> notifPriAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstNotifPriorities);
-			notifPriAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-			spnNotifPri.setAdapter(notifPriAdapter);
-			spnNotifPri.setSelection(selectedNotifPriority);
-		} else {
-			findViewById(R.id.viewNotifPriority).setVisibility(View.GONE);
-		}
-
-		// Update Mute field
-		((CheckBox) findViewById(R.id.chkMute)).setChecked(prefs.getBoolean(pkgName + Common.PREF_MUTE, false));
-
-		// Update Legacy Menu field
-		((CheckBox) findViewById(R.id.chkLegacyMenu)).setChecked(prefs.getBoolean(pkgName + Common.PREF_LEGACY_MENU, false));
-
 		// Setting for permissions revoking
 		allowRevoking = prefs.getBoolean(pkgName + Common.PREF_REVOKEPERMS, false);
 		disabledPermissions = prefs.getStringSet(pkgName + Common.PREF_REVOKELIST, new HashSet<String>());
@@ -358,8 +183,6 @@ public class ApplicationSettings extends Activity {
 		ArrayAdapter<String> recentsModeAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_spinner_item, lstRecentsMode);
 		recentsModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		spnRecentsMode.setAdapter(recentsModeAdapter);
-		spnRecentsMode.setSelection(selectedRecentsMode);
 
 		Button btnPermissions = (Button) findViewById(R.id.btnPermissions);
 		btnPermissions.setOnClickListener(new View.OnClickListener() {
@@ -389,27 +212,7 @@ public class ApplicationSettings extends Activity {
 	private Set<String> getSettingKeys() {
 		HashSet<String> settingKeys = new HashSet<String>();
 		settingKeys.add(pkgName + Common.PREF_ACTIVE);
-		settingKeys.add(pkgName + Common.PREF_DPI);
-		settingKeys.add(pkgName + Common.PREF_FONT_SCALE);
-		settingKeys.add(pkgName + Common.PREF_SCREEN);
-		settingKeys.add(pkgName + Common.PREF_XLARGE);
-		settingKeys.add(pkgName + Common.PREF_RES_ON_WIDGETS);
-		settingKeys.add(pkgName + Common.PREF_LOCALE);
-		settingKeys.add(pkgName + Common.PREF_FULLSCREEN);
-		settingKeys.add(pkgName + Common.PREF_NO_TITLE);
-		settingKeys.add(pkgName + Common.PREF_ALLOW_ON_LOCKSCREEN);
-		settingKeys.add(pkgName + Common.PREF_SCREEN_ON);
-		settingKeys.add(pkgName + Common.PREF_ORIENTATION);
-		settingKeys.add(pkgName + Common.PREF_RESIDENT);
-		settingKeys.add(pkgName + Common.PREF_NO_FULLSCREEN_IME);
-		settingKeys.add(pkgName + Common.PREF_NO_BIG_NOTIFICATIONS);
-		settingKeys.add(pkgName + Common.PREF_INSISTENT_NOTIF);
-		settingKeys.add(pkgName + Common.PREF_ONGOING_NOTIF);
-		if (Build.VERSION.SDK_INT >= 16)
-			settingKeys.add(pkgName + Common.PREF_NOTIF_PRIORITY);
-		settingKeys.add(pkgName + Common.PREF_RECENTS_MODE);
-		settingKeys.add(pkgName + Common.PREF_MUTE);
-		settingKeys.add(pkgName + Common.PREF_LEGACY_MENU);
+		settingKeys.add(pkgName + Common.PREF_NOISE);
 		settingKeys.add(pkgName + Common.PREF_REVOKEPERMS);
 		settingKeys.add(pkgName + Common.PREF_REVOKELIST);
 		return settingKeys;
@@ -421,86 +224,14 @@ public class ApplicationSettings extends Activity {
 		if (swtActive.isChecked()) {
 			settings.put(pkgName + Common.PREF_ACTIVE, true);
 
-			int dpi;
+			int noise;
 			try {
-				dpi = Integer.parseInt(((EditText) findViewById(R.id.txtDPI)).getText().toString());
+				noise = Integer.parseInt(((EditText) findViewById(R.id.txtDPI)).getText().toString());
 			} catch (Exception ex) {
-				dpi = 0;
+				noise = 0;
 			}
-			if (dpi != 0)
-				settings.put(pkgName + Common.PREF_DPI, dpi);
-
-			int fontScale;
-			try {
-				fontScale = Integer.parseInt(((EditText) findViewById(R.id.txtFontScale)).getText().toString());
-			} catch (Exception ex) {
-				fontScale = 0;
-			}
-			if (fontScale != 0 && fontScale != 100)
-				settings.put(pkgName + Common.PREF_FONT_SCALE, fontScale);
-
-			int screen = ((Spinner) findViewById(R.id.spnScreen)).getSelectedItemPosition();
-			if (screen > 0)
-				settings.put(pkgName + Common.PREF_SCREEN, screen);
-
-			if (((CheckBox) findViewById(R.id.chkXlarge)).isChecked())
-				settings.put(pkgName + Common.PREF_XLARGE, true);
-
-			if (((CheckBox) findViewById(R.id.chkResOnWidgets)).isChecked())
-				settings.put(pkgName + Common.PREF_RES_ON_WIDGETS, true);
-
-			int selectedLocalePos = ((Spinner) findViewById(R.id.spnLocale)).getSelectedItemPosition();
-			if (selectedLocalePos > 0)
-				settings.put(pkgName + Common.PREF_LOCALE, localeList.getLocale(selectedLocalePos));
-
-			int fullscreen = ((Spinner) findViewById(R.id.spnFullscreen)).getSelectedItemPosition();
-			if (fullscreen > 0)
-				settings.put(pkgName + Common.PREF_FULLSCREEN, fullscreen);
-
-			if (((CheckBox) findViewById(R.id.chkNoTitle)).isChecked())
-				settings.put(pkgName + Common.PREF_NO_TITLE, true);
-
-			if (((CheckBox) findViewById(R.id.chkAllowOnLockscreen)).isChecked())
-				settings.put(pkgName + Common.PREF_ALLOW_ON_LOCKSCREEN, true);
-
-			if (((CheckBox) findViewById(R.id.chkScreenOn)).isChecked())
-				settings.put(pkgName + Common.PREF_SCREEN_ON, true);
-
-			int orientation = ((Spinner) findViewById(R.id.spnOrientation)).getSelectedItemPosition();
-			if (orientation > 0)
-				settings.put(pkgName + Common.PREF_ORIENTATION, orientation);
-
-			if (((CheckBox) findViewById(R.id.chkResident)).isChecked())
-				settings.put(pkgName + Common.PREF_RESIDENT, true);
-
-			if (((CheckBox) findViewById(R.id.chkNoFullscreenIME)).isChecked())
-				settings.put(pkgName + Common.PREF_NO_FULLSCREEN_IME, true);
-
-			if (((CheckBox) findViewById(R.id.chkNoBigNotifications)).isChecked())
-				settings.put(pkgName + Common.PREF_NO_BIG_NOTIFICATIONS, true);
-
-			if (((CheckBox) findViewById(R.id.chkInsistentNotifications)).isChecked())
-				settings.put(pkgName + Common.PREF_INSISTENT_NOTIF, true);
-
-			int ongoingNotif = ((Spinner) findViewById(R.id.spnOngoingNotifications)).getSelectedItemPosition();
-			if (ongoingNotif > 0)
-				settings.put(pkgName + Common.PREF_ONGOING_NOTIF, ongoingNotif);
-
-			if (Build.VERSION.SDK_INT >= 16) {
-				int notifPriority = ((Spinner) findViewById(R.id.spnNotifPriority)).getSelectedItemPosition();
-				if (notifPriority > 0)
-					settings.put(pkgName + Common.PREF_NOTIF_PRIORITY, notifPriority);
-			}
-
-			int recentsMode = ((Spinner) findViewById(R.id.spnRecentsMode)).getSelectedItemPosition();
-			if (recentsMode > 0)
-				settings.put(pkgName + Common.PREF_RECENTS_MODE, recentsMode);
-
-			if (((CheckBox) findViewById(R.id.chkMute)).isChecked())
-				settings.put(pkgName + Common.PREF_MUTE, true);
-
-			if (((CheckBox) findViewById(R.id.chkLegacyMenu)).isChecked())
-				settings.put(pkgName + Common.PREF_LEGACY_MENU, true);
+			if (noise != 0)
+				settings.put(pkgName + Common.PREF_NOISE, noise);
 
 			if (allowRevoking)
 				settings.put(pkgName + Common.PREF_REVOKEPERMS, true);

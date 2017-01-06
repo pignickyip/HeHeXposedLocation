@@ -128,26 +128,7 @@ public class XposedModActivity extends Activity {
 	private void loadSettings() {
 		settings = new ArrayList<SettingInfo>();
 
-		settings.add(new SettingInfo(Common.PREF_DPI, getString(R.string.settings_dpi)));
-		settings.add(new SettingInfo(Common.PREF_FONT_SCALE, getString(R.string.settings_fontscale)));
-		settings.add(new SettingInfo(Common.PREF_SCREEN, getString(R.string.settings_screen)));
-		settings.add(new SettingInfo(Common.PREF_XLARGE, getString(R.string.settings_xlargeres)));
-		settings.add(new SettingInfo(Common.PREF_RES_ON_WIDGETS, getString(R.string.settings_resonwidgets)));
-		settings.add(new SettingInfo(Common.PREF_LOCALE, getString(R.string.settings_locale)));
-		settings.add(new SettingInfo(Common.PREF_FULLSCREEN, getString(R.string.settings_fullscreen)));
-		settings.add(new SettingInfo(Common.PREF_NO_TITLE, getString(R.string.settings_notitle)));
-		settings.add(new SettingInfo(Common.PREF_SCREEN_ON, getString(R.string.settings_screenon)));
-		settings.add(new SettingInfo(Common.PREF_ALLOW_ON_LOCKSCREEN, getString(R.string.settings_showwhenlocked)));
-		settings.add(new SettingInfo(Common.PREF_RESIDENT, getString(R.string.settings_resident)));
-		settings.add(new SettingInfo(Common.PREF_NO_FULLSCREEN_IME, getString(R.string.settings_nofullscreenime)));
-		settings.add(new SettingInfo(Common.PREF_ORIENTATION, getString(R.string.settings_orientation)));
-		settings.add(new SettingInfo(Common.PREF_INSISTENT_NOTIF, getString(R.string.settings_insistentnotif)));
-		settings.add(new SettingInfo(Common.PREF_NO_BIG_NOTIFICATIONS, getString(R.string.settings_nobignotif)));
-		settings.add(new SettingInfo(Common.PREF_ONGOING_NOTIF, getString(R.string.settings_ongoingnotif)));
-		settings.add(new SettingInfo(Common.PREF_NOTIF_PRIORITY, getString(R.string.settings_notifpriority)));
-		settings.add(new SettingInfo(Common.PREF_RECENTS_MODE, getString(R.string.settings_recents_mode)));
-		settings.add(new SettingInfo(Common.PREF_MUTE, getString(R.string.settings_mute)));
-		settings.add(new SettingInfo(Common.PREF_LEGACY_MENU, getString(R.string.settings_legacy_menu)));
+		settings.add(new SettingInfo(Common.PREF_NOISE, getString(R.string.settings_dpi)));
 		settings.add(new SettingInfo(Common.PREF_REVOKEPERMS, getString(R.string.settings_permissions)));
 	}
 

@@ -13,6 +13,16 @@
     <string name="remove_app_title">Remove App</string>
     <string name="remove_app_message">Removed apps will detect Mock Locations is enabled.</string>
     <string name="restart_required">Force kill the target app to apply changes.</string>
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_noise">Noise</string>
+
+    <string name="settings_display_resource">Application resource: </string>
+    <string name="settings_list_resource">Show Me</string>
+    <string name="settings_display_permissions">Change the permissions: </string>
+    <string name="settings_permissions">Permissions</string>
+    <string name="settings_noise_add">Noise: </string>
+    <string name="settings_default">(default)</string>
 
     <string-array name="ref_list">
         <item>Rootcloak2</item>
@@ -52,7 +62,8 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="about">About Me</string>
-
+    <!--Application setting-->
+    <string name="settings_subtitle">Location Obfuscation Setting</string>
     <!-- Main screen -->
     <string name="app_loading">Loading apps, please wait</string>
     <string name="app_searchhint">name or package</string>
@@ -92,7 +103,6 @@ is enabled in its configuration!</string>
 
 
     <!-- Settings screen -->
-    <string name="settings_title">Settings</string>
     <string name="settings_dpi">DPI</string>
     <string name="settings_fontscale">Font scale</string>
     <string name="settings_listres">List res.</string>
@@ -113,10 +123,7 @@ is enabled in its configuration!</string>
     <string name="settings_notifpriority">Notifications priority</string>
     <string name="settings_mute">Mute audio</string>
     <string name="settings_legacy_menu">Legacy menu button</string>
-    <string name="settings_permissions">Permissions</string>
     <string name="settings_recents_mode">Show in recents</string>
-
-    <string name="settings_default">(default)</string>
 
     <string name="settings_force">Force</string>
     <string name="settings_prevent">Prevent</string>
