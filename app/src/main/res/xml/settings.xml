@@ -23,6 +23,10 @@
         <Preference
             android:key="logs_filter_clear"
             android:title="@string/logs_filter_clear" />
+
+        <Preference
+            android:key="logs_filter_clear"
+            android:title="Log File" />
     </PreferenceCategory>
 
 </PreferenceScreen>

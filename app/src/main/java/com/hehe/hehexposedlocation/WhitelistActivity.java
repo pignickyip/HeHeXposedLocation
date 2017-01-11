@@ -1,6 +1,7 @@
 package com.hehe.hehexposedlocation;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +22,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.hehe.hehexposedlocation.R;
+import com.hehe.hehexposedlocation.appsettings.FilterItemComponent;
+import com.hehe.hehexposedlocation.appsettings.XposedModActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -33,6 +36,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+
 public class WhitelistActivity extends PreferenceActivity {
 
     // These 2 are mutually exclusive
@@ -41,8 +45,9 @@ public class WhitelistActivity extends PreferenceActivity {
 
     @BindView(R.id.whitelist_all_view) View mWhitelistAllView;
     @BindView(R.id.add_app) Button addAppButton;
-    @BindView(R.id.donate) Button donateButton;
     @BindView(R.id.all_apps) CheckBox allAppsCheckbox;
+
+    private FilterItemComponent.FilterState filterActive;
 
     ArrayAdapter<String> mAdapter;
     SharedPreferences mSharedPrefs;
@@ -66,7 +71,6 @@ public class WhitelistActivity extends PreferenceActivity {
 
         final ToolbarListener listener = new ToolbarListener();
         addAppButton.setOnClickListener(listener);
-        donateButton.setOnClickListener(listener);
         allAppsCheckbox.setOnCheckedChangeListener(listener);
 
         mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, appList);
@@ -152,11 +156,6 @@ public class WhitelistActivity extends PreferenceActivity {
                     new PackageLookupThread(WhitelistActivity.this).start();
 
                     break;
-                case R.id.donate:
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                            Uri.parse("http://www.triple-l.hk"));
-                    startActivity(browserIntent);
-                    break;
             }
         }
 
@@ -168,14 +167,12 @@ public class WhitelistActivity extends PreferenceActivity {
         }
     }
 
-
-
     private static class PackageLookupThread extends Thread {
         final WeakReference<WhitelistActivity> contextHolder;
         public PackageLookupThread(final WhitelistActivity context) {
             this.contextHolder = new WeakReference<WhitelistActivity>(context);
-        }
 
+        }
         @Override
         public void run() {
             PackageManager pm = contextHolder.get().getPackageManager();
@@ -183,6 +180,7 @@ public class WhitelistActivity extends PreferenceActivity {
             final String[] names = new String[packages.size()];
             final HashMap<String, String> nameMap = new HashMap<>();
             int i = 0;
+
             for (ApplicationInfo info : packages) {
                 names[i] = info.loadLabel(pm) + "\n(" + info.packageName + ")";
                 nameMap.put(names[i], info.packageName);

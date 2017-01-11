@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="com.hehe.hehexposedlocation.appsettings"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tool="com.hehe.hehexposedlocation.appsettings"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="10dp" >
-
+    <!--xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:app="com.hehe.hehexposedlocation.appsettings"-->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dip"

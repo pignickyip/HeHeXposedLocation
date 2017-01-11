@@ -32,6 +32,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +49,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.hehe.hehexposedlocation.appsettings.Common;
 import com.hehe.hehexposedlocation.R;
+import com.hehe.hehexposedlocation.appsettings.XposedMod;
+import com.hehe.hehexposedlocation.appsettings.XposedModActivity;
+
+import de.robv.android.xposed.XposedBridge;
 
 @SuppressLint("WorldReadableFiles")
 public class ApplicationSettings extends Activity {
@@ -105,6 +110,7 @@ public class ApplicationSettings extends Activity {
 			swtActive.setChecked(false);
 			findViewById(R.id.viewTweaks).setVisibility(View.GONE);
 		}
+
 		// Toggle the visibility of the lower panel when changed
 		swtActive.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			@Override
@@ -117,6 +123,7 @@ public class ApplicationSettings extends Activity {
 		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
 			((EditText) findViewById(R.id.txtNoise)).setText(String.valueOf(
 				prefs.getInt(pkgName + Common.PREF_NOISE, 0)));
+            Common.PREF_NOISE = ((EditText) findViewById(R.id.txtNoise)).getText().toString();
 		} else {
 			((EditText) findViewById(R.id.txtNoise)).setText("0");
 		}
@@ -157,7 +164,9 @@ public class ApplicationSettings extends Activity {
 					if (jar != null) {
 						try {
 							jar.close();
-						} catch (Exception ex) { }
+						} catch (Exception ex) {
+                            XposedBridge.log(getString(R.string.res_failedtoload));
+                        }
 					}
 				}
 				txtPane.setText(contents);
@@ -201,6 +210,7 @@ public class ApplicationSettings extends Activity {
 					});
 					permsDlg.display();
 				} catch (NameNotFoundException e) {
+                    XposedBridge.log("Error Case 1.applicationSetting");
 				}
 			}
 		});
@@ -219,14 +229,12 @@ public class ApplicationSettings extends Activity {
 	}
 
 	private Map<String, Object> getSettings() {
-
 		Map<String, Object> settings = new HashMap<String, Object>();
 		if (swtActive.isChecked()) {
 			settings.put(pkgName + Common.PREF_ACTIVE, true);
-
 			int noise;
 			try {
-				noise = Integer.parseInt(((EditText) findViewById(R.id.txtDPI)).getText().toString());
+				noise = Integer.parseInt(((EditText) findViewById(R.id.txtNoise)).getText().toString());
 			} catch (Exception ex) {
 				noise = 0;
 			}
@@ -249,7 +257,6 @@ public class ApplicationSettings extends Activity {
 			finish();
 			return;
 		}
-
 		// Require confirmation to exit the screen and lose configuration changes
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.settings_unsaved_title);
@@ -258,6 +265,10 @@ public class ApplicationSettings extends Activity {
 		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent();
+                intent.setClass(ApplicationSettings.this,XposedModActivity.class);
+                /*呼叫Activity EX03_11_1*/
+                startActivityForResult(intent,0);
 				ApplicationSettings.this.finish();
 			}
 		});
@@ -269,15 +280,11 @@ public class ApplicationSettings extends Activity {
 		builder.show();
 	}
 
-
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		setResult(RESULT_OK, parentIntent);
 	}
-
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -329,15 +336,16 @@ public class ApplicationSettings extends Activity {
 					prefsEditor.remove(key);
 				} else {
 					if (value instanceof Boolean) {
-						prefsEditor.putBoolean(key, ((Boolean) value).booleanValue());
+						prefsEditor.putBoolean(key, (Boolean) value);
 					} else if (value instanceof Integer) {
-						prefsEditor.putInt(key, ((Integer) value).intValue());
+						prefsEditor.putInt(key, (Integer) value);
 					} else if (value instanceof String) {
 						prefsEditor.putString(key, (String) value);
 					} else if (value instanceof Set) {
 						prefsEditor.remove(key);
 						// Commit and reopen the editor, as it seems to be bugged when updating a StringSet
-						prefsEditor.commit();
+						//prefsEditor.commit();
+						prefsEditor.apply();
 						prefsEditor = prefs.edit();
 						prefsEditor.putStringSet(key, (Set<String>) value);
 					} else {
@@ -350,11 +358,11 @@ public class ApplicationSettings extends Activity {
 
 			// Update saved settings to detect modifications later
 			initialSettings = newSettings;
-
+			String msg = "Also kill the application so when it's relaunched it uses the new settings?" + "\nThe value: " + R.id.txtNoise;
 			// Check if in addition to saving the settings, the app should also be killed
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.settings_apply_title);
-			builder.setMessage(R.string.settings_apply_detail);
+			builder.setMessage(msg);
 			builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -364,7 +372,6 @@ public class ApplicationSettings extends Activity {
 					applyIntent.putExtra("Package", pkgName);
 					applyIntent.putExtra("Kill", true);
 					sendBroadcast(applyIntent, Common.MY_PACKAGE_NAME + ".BROADCAST_PERMISSION");
-
 					dialog.dismiss();
 				}
 			});
@@ -377,7 +384,6 @@ public class ApplicationSettings extends Activity {
 					applyIntent.putExtra("Package", pkgName);
 					applyIntent.putExtra("Kill", false);
 					sendBroadcast(applyIntent, Common.MY_PACKAGE_NAME + ".BROADCAST_PERMISSION");
-
 					dialog.dismiss();
 				}
 			});
@@ -394,6 +400,21 @@ public class ApplicationSettings extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+    //避免讓程式因為按下 Back 鍵而關閉
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
 
+        if (keyCode == KeyEvent.KEYCODE_BACK)
+        {
+             /*new一個Intent物件，並指定class*/
+            Intent intent = new Intent();
+            intent.setClass(ApplicationSettings.this,XposedModActivity.class);
+             /*呼叫Activity EX03_11_1*/
+            startActivityForResult(intent,0);
+            ApplicationSettings.this.finish();
+            return true;
+        }
 
+        return super.onKeyDown(keyCode, event);
+    }
 }

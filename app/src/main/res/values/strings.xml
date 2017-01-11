@@ -23,7 +23,10 @@
     <string name="settings_permissions">Permissions</string>
     <string name="settings_noise_add">Noise: </string>
     <string name="settings_default">(default)</string>
-
+    <string-array name="Filter">
+        <item>Type</item>
+        <item>State</item>
+    </string-array>
     <string-array name="ref_list">
         <item>Rootcloak2</item>
         <item>HideMockLocation</item>
@@ -36,11 +39,11 @@
         <item>Introduction</item>
         <item>Reference List</item>
         <item>Instructions</item>
-        <item>HeHeXposed Setting</item>
         <item>Enable HeHeXposed</item>
+        <item>Get in to set the HeHeXposed</item>
         <item>Log</item>
         <item>Turn On/Off Debug</item>
-        <item>Test</item>
+        <item>TestLog</item>
         <item>Test</item>
     </string-array>
     <string name="instructions_title">Instruction 指引</string>
@@ -56,19 +59,25 @@
     <string name="intro_content5">Obfuscating user location to achieve the goal of against malicious Android apps.</string>
     <string name="intro_content6">This project aims to provide a security method to let the client get rid of the risk of monitoring, reduce the probability of the personal information like GPS location exposed by any action which client does not expect.</string>
     <string name="intro_content7">It will be an Android application that gains a lot of potential users and encourages a world to avoid monitoring each other.</string>
-    <string name="email">My email:   15049782d@connect.polyu.hk</string>
+    <string name="email"><a href="mailto:15049782d@connect.polyu.hk">Contact Me</a></string>
     <string name="debug_on">Debug is now on.</string>
     <string name="debug_off">Debug is now off.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="about">About Me</string>
+    <string name="menuSaveToSd">Save to SD card</string>
+    <string name="menuClearLog">Clear log now</string>
+    <string name="menuReload">Reload</string>
+    <string name="scroll_top">Scroll to top</string>
+    <string name="scroll_bottom">Scroll to bottom</string>
+
     <!--Application setting-->
     <string name="settings_subtitle">Location Obfuscation Setting</string>
     <!-- Main screen -->
     <string name="app_loading">Loading apps, please wait</string>
     <string name="app_searchhint">name or package</string>
-    <string name="app_about">An <a href="http://forum.xda-developers.com/showthread.php?t=1574401">Xposed</a> module by
- <a href="http://forum.xda-developers.com/member.php?u=4419114">rovo89</a> and <a href="http://forum.xda-developers.com/member.php?u=4322181">Tungstwenty</a>.
+    <string name="app_about"> Hi, We are IS. \n
+        兩個老闆 => <a href="http://forum.xda-developers.com/member.php?u=4419114">rovo89</a> and <a href="http://forum.xda-developers.com/member.php?u=4322181">Tungstwenty</a>.
  \nYou can use <a href="http://forum.xda-developers.com/showthread.php?t=2437377">this thread</a> for questions or suggestions.</string>
     <string name="app_description"></string>
     <string name="app_version">Version: %s</string>
@@ -169,7 +178,6 @@ is enabled in its configuration!</string>
     <string name="settings_unsaved_detail">You didn\'t save the configuration.
 Really go back and discard changes?</string>
     <string name="settings_apply_title">Apply settings</string>
-    <string name="settings_apply_detail">Also kill the application so when it\'s relaunched it uses the new settings?</string>
 
 
     <!-- Filter dialog -->
@@ -200,4 +208,13 @@ Really go back and discard changes?</string>
     <string name="logs_filter_add">Add item to filter</string>
     <string name="logs_filter_manage">Manage items in filter</string>
     <string name="logs_filter_clear">Clear items in filter</string>
+    <string name="log_is_empty">empty</string>
+    <string name="logs_cleared">cleared</string>
+    <string name="logs_clear_failed">You are failed on clearing</string>
+    <string name="menuSend">Send</string>
+    <string name="permissionNotGranted">You have not grant the permission</string>
+    <string name="sdcard_not_writable">The SD card cannot</string>
+    <string name="logs_save_failed">Failed on log save</string>
+    <string name="loading">Loading....</string>
+    <string name="nav_item_logs">log</string>
 </resources>

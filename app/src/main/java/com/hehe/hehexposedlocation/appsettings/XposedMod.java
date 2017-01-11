@@ -6,6 +6,7 @@ import static de.robv.android.xposed.XposedHelpers.getAdditionalInstanceField;
 import static de.robv.android.xposed.XposedHelpers.getObjectField;
 import static de.robv.android.xposed.XposedHelpers.removeAdditionalInstanceField;
 import static de.robv.android.xposed.XposedHelpers.setAdditionalInstanceField;
+import static de.robv.android.xposed.XposedHelpers.setDoubleField;
 import static de.robv.android.xposed.XposedHelpers.setFloatField;
 import static de.robv.android.xposed.XposedHelpers.setIntField;
 import static de.robv.android.xposed.XposedHelpers.setObjectField;
@@ -18,6 +19,8 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.XResources;
 import android.content.res.XResources.DimensionReplacement;
+import android.location.Location;
+import android.location.LocationListener;
 import android.media.AudioTrack;
 import android.media.JetPlayer;
 import android.media.MediaPlayer;
@@ -36,6 +39,8 @@ import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
+
+import com.hehe.hehexposedlocation.R;
 import com.hehe.hehexposedlocation.appsettings.hooks.Activities;
 import com.hehe.hehexposedlocation.appsettings.hooks.PackagePermissions;
 
@@ -45,67 +50,58 @@ public class XposedMod implements IXposedHookZygoteInit, IXposedHookLoadPackage 
 
 	//private static final String SYSTEMUI_PACKAGE = "com.android.systemui";
     private static final String SYSTEMUI_PACKAGE = com.hehe.hehexposedlocation.Common.SYSTEM_LOCATION;
-	private static final String[] SYSTEMUI_ADJUSTED_DIMENSIONS = {
-		"status_bar_height",
-		"navigation_bar_height", "navigation_bar_height_landscape",
-		"navigation_bar_width",
-		"system_bar_height"
-	};
 
 	public static XSharedPreferences prefs;
 
 	@Override
 	public void initZygote(StartupParam startupParam) throws Throwable {
 		loadPrefs();
-
-		adjustSystemDimensions();
-
-		// Hook to override DPI (globally, including resource load + rendering)
-		try {
-			if (Build.VERSION.SDK_INT < 17) {
-				findAndHookMethod(Display.class, "init", int.class, new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-						String packageName = AndroidAppHelper.currentPackageName();
-
-						if (!isActive(packageName)) {
-							// No overrides for this package
-							return;
-						}
-
-						int packageDPI = prefs.getInt(packageName + Common.PREF_NOISE,
-							prefs.getInt(Common.PREF_DEFAULT + Common.PREF_NOISE, 0));
-						if (packageDPI > 0) {
-							// Density for this package is overridden, change density
-							setFloatField(param.thisObject, "mDensity", packageDPI / 160.0f);
-						}
-					};
-				});
-			} else {
-				findAndHookMethod(Display.class, "updateDisplayInfoLocked", new XC_MethodHook() {
-					@Override
-					protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-						String packageName = AndroidAppHelper.currentPackageName();
-
-						if (!isActive(packageName)) {
-							// No overrides for this package
-							return;
-						}
-
-						int packageDPI = prefs.getInt(packageName + Common.PREF_NOISE,
-							prefs.getInt(Common.PREF_DEFAULT + Common.PREF_NOISE, 0));
-						if (packageDPI > 0) {
-							// Density for this package is overridden, change density
-							Object mDisplayInfo = getObjectField(param.thisObject, "mDisplayInfo");
-							setIntField(mDisplayInfo, "logicalDensityDpi", packageDPI);
-						}
-					};
-				});
-			}
-		} catch (Throwable t) {
+        //adjustSystemDimensions();
+        adjustSystemData();
+        // Hook to override DPI (globally, including resource load + rendering)
+		try{
+			findAndHookMethod(Location.class, "getLatitude", double.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    String packageName = AndroidAppHelper.currentPackageName();
+                    if (!isActive(packageName)) {
+                        // No overrides for this package
+                        return;
+                    }
+                    int packageNOISE = prefs.getInt(packageName + Common.PREF_NOISE,
+                            prefs.getInt(Common.PREF_DEFAULT + Common.PREF_NOISE, 0));
+                    if (packageNOISE > 0) {
+                        // Density for this package is overridden, change density
+                        setDoubleField(param.thisObject, "getLatitude", (double) 34.33 );//packageNOISE / 1.0);
+                    }
+                    XposedBridge.log("Test1123");
+                }
+            });
+            findAndHookMethod(Location.class, "getLongitude", double.class, new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    String packageName = AndroidAppHelper.currentPackageName();
+                    if (!isActive(packageName)) {
+                        // No overrides for this package
+                        return;
+                    }
+                    int packageNOISE = prefs.getInt(packageName + Common.PREF_NOISE,
+                            prefs.getInt(Common.PREF_DEFAULT + Common.PREF_NOISE, 0));
+                    int hah = R.id.txtNoise;
+                    if(packageNOISE != hah && hah != 0)
+                        packageNOISE = hah;
+                    if (packageNOISE > 0) {
+                        // Density for this package is overridden, change density
+                        setDoubleField(param.thisObject, "getLongitude", (double) 34.33 );//packageNOISE / 2.5);
+                    }
+                    XposedBridge.log("Test1144");
+                }
+            });
+		}catch (Throwable t) {
 			XposedBridge.log(t);
 		}
-
 		PackagePermissions.initHooks();
 		Activities.hookActivitySettings();
 	}
@@ -125,14 +121,14 @@ public class XposedMod implements IXposedHookZygoteInit, IXposedHookLoadPackage 
 	 *  changes related with SystemUI, namely statusbar and navbar sizes.
 	 *  The values are adjusted and replaced system-wide by fixed px values.
 	 */
-	private void adjustSystemDimensions() {
+	private void adjustSystemData() {
 		if (!isActive(SYSTEMUI_PACKAGE))
 			return;
-
-		int systemUiDpi = prefs.getInt(SYSTEMUI_PACKAGE + Common.PREF_NOISE,
+		int test = prefs.getInt(SYSTEMUI_PACKAGE + Common.PREF_NOISE,
 				prefs.getInt(Common.PREF_DEFAULT + Common.PREF_NOISE, 0));
-		if (systemUiDpi <= 0)
+		if (test <= 0)
 			return;
+
 	}
 
 	@Override

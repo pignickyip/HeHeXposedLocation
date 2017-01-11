@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.inputmethodservice.InputMethodService;
+import android.location.LocationListener;
 import android.os.Build;
 import android.view.View;
 import android.view.Window;
@@ -284,6 +285,18 @@ public class Activities {
 				}
 			});
 		} catch (Throwable e) {
+			XposedBridge.log(e);
+		}
+		try{
+			findAndHookMethod(LocationListener.class,"onLocationChanged",void.class,new XC_MethodHook(){
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                    double latitude = 0.0;
+                    double longitude = 0.0;
+                    float accuracy = (float) 0.0000;
+                }
+            });
+		}catch (Throwable e){
 			XposedBridge.log(e);
 		}
 	}

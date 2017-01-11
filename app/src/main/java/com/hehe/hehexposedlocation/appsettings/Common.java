@@ -31,7 +31,7 @@ public class Common {
 	public static final String PREF_DEFAULT = "default";
 
 	public static final String PREF_ACTIVE = "/active";
-	public static final String PREF_NOISE = "/noise";
+	public static String PREF_NOISE = "/noise";
 	public static final String PREF_FONT_SCALE = "/font-scale";
 	public static final String PREF_LOCALE = "/locale";
 	public static final String PREF_SCREEN = "/screen";

@@ -121,14 +121,13 @@ public class XposedModActivity extends Activity {
 				startActivityForResult(i, position);
 			}
 		});
-
 		refreshApps();
 	}
 
 	private void loadSettings() {
 		settings = new ArrayList<SettingInfo>();
 
-		settings.add(new SettingInfo(Common.PREF_NOISE, getString(R.string.settings_dpi)));
+		settings.add(new SettingInfo(Common.PREF_NOISE, getString(R.string.settings_noise)));
 		settings.add(new SettingInfo(Common.PREF_REVOKEPERMS, getString(R.string.settings_permissions)));
 	}
 
@@ -507,7 +506,7 @@ public class XposedModActivity extends Activity {
 				pkgSharedUsers.put(pkgInfo.packageName, pkgInfo.sharedUserId);
 			}
 		}
-
+		//Sorting
 		Collections.sort(appList, new Comparator<ApplicationInfo>() {
 			@Override
 			public int compare(ApplicationInfo lhs, ApplicationInfo rhs) {
@@ -562,17 +561,17 @@ public class XposedModActivity extends Activity {
 				LinearLayout entriesView = (LinearLayout) filterDialog.findViewById(R.id.filter_entries);
 				filterComponents = new HashMap<String, FilterItemComponent>();
 				for (SettingInfo setting : settings) {
-					FilterItemComponent component = new FilterItemComponent(XposedModActivity.this, setting.label, null, null, null);
+					FilterItemComponent component;
+					component = new FilterItemComponent(XposedModActivity.this, setting.label, null, null, null);
 					component.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 					component.setFilterState(setting.filter);
 					entriesView.addView(component);
 					filterComponents.put(setting.settingKey, component);
 				}
-
+				//The top 3 component
 				((FilterItemComponent) filterDialog.findViewById(R.id.fltAppType)).setFilterState(filterAppType);
 				((FilterItemComponent) filterDialog.findViewById(R.id.fltAppState)).setFilterState(filterAppState);
 				((FilterItemComponent) filterDialog.findViewById(R.id.fltActive)).setFilterState(filterActive);
-
 				// Block or unblock the details based on the Active setting
 				enableFilterDetails(!FilterState.UNCHANGED.equals(filterActive));
 				((FilterItemComponent) filterDialog.findViewById(R.id.fltActive)).setOnFilterChangeListener(new FilterItemComponent.OnFilterChangeListener() {
@@ -592,12 +591,12 @@ public class XposedModActivity extends Activity {
 				((Button) filterDialog.findViewById(R.id.btnFilterClear)).setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
-						filterAppType = FilterState.ALL;
+						filterAppType = FilterState.OVERRIDDEN;
+                        //filterAppType = FilterState.ALL;
 						filterAppState = FilterState.ALL;
 						filterActive = FilterState.ALL;
 						for (SettingInfo setting : settings)
 							setting.filter = FilterState.ALL;
-
 						filterDialog.dismiss();
 						appListAdapter.getFilter().filter(nameFilter);
 					}

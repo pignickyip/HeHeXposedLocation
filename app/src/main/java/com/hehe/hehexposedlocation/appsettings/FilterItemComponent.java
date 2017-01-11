@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import com.hehe.hehexposedlocation.R;
 
+import java.util.Objects;
+
 /**
  * Composite component that displays a header and a triplet of radio buttons for
  * selection of All / Overridden / Unchanged settings for each parameter
@@ -72,7 +74,6 @@ public class FilterItemComponent extends LinearLayout {
 			}
 		});
 	}
-
 	/*
 	 * Update the label of a view id, if non-null
 	 */
@@ -115,15 +116,12 @@ public class FilterItemComponent extends LinearLayout {
 			return FilterState.ALL;
 		}
 	}
-
 	/**
 	 * Activate one of the 3 options as the selected one
 	 */
 	public void setFilterState(FilterState state) {
 		// Handle null values and use the default "All"
-		if (state == null)
-			state = FilterState.ALL;
-
+        state = FilterState.ALL;
 		switch (state) {
 		case OVERRIDDEN:
 			((RadioGroup) findViewById(R.id.radOptions)).check(R.id.radOverridden);
@@ -136,7 +134,6 @@ public class FilterItemComponent extends LinearLayout {
 			break;
 		}
 	}
-
 	/**
 	 * Register a listener to be notified when the selection changes
 	 */

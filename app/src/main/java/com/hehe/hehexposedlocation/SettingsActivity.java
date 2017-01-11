@@ -2,6 +2,7 @@ package com.hehe.hehexposedlocation;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.intro.*;
+import com.hehe.hehexposedlocation.log.LogsFragment;
 //import com.google.android.gms.appindexing.AppIndex;
 //import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -39,6 +41,7 @@ public class SettingsActivity extends PreferenceActivity  {
     String[] menuItems;
     String instructionsString;
     String instructionsTitle;
+    private int mPrevSelectedId;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -70,6 +73,7 @@ public class SettingsActivity extends PreferenceActivity  {
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void onListItemClick(ListView parent, View v, int position, long id) {
             Intent intent;
+            Fragment navFragment = null;
             switch (position) {
                 case 0: //about me
                     String aboutMsg = getString ( R.string.app_name ) + ": " + BuildConfig.VERSION_NAME
@@ -143,6 +147,9 @@ public class SettingsActivity extends PreferenceActivity  {
                     Toast.makeText ( getApplicationContext (), debugStatus, Toast.LENGTH_LONG ).show ();
                     break;
                 case 8: //test
+                    intent = new Intent ( this, com.hehe.hehexposedlocation.log.LogsFragment.class );
+                    // intent.setFlags ( Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                    startActivity ( intent );
                     break;
                 case 9: //test
                   //  intent = new Intent ( this, com.example.user.hehexposed.gpsfake.MainActivity.class );
