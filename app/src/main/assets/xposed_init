@@ -2,3 +2,4 @@ com.hehe.hehexposedlocation
     com.hehe.hehexposedlocation.OverrideSettingsSecure
     com.hehe.hehexposedlocation.appsettings.XposedMod
     com.hehe.hehexposedlocation.log.LogsFilter
+    com.hehe.hehexposedlocation.def_setting.def_noise

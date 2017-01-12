@@ -67,32 +67,25 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
                 if(packageNOISE != R.id.txtNoise && R.id.txtNoise != 0)
                     packageNOISE = R.id.txtNoise;
                 double a = packageNOISE/Build.VERSION.SDK_INT;
-                double r = Math.random() % packageNOISE - (1.0);
+                double r = (rand.nextDouble() % 50 ) / 50;
                 final double haha = randdouble(a , r);
-                final float hoho =  rand.nextFloat() * ((float)a - (float)r ) + (float)r ;
-                findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "isFromMockProvider",
-                        new XC_MethodHook() {
-                            @Override
-                            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                //param.setResult(false);
-                                param.setResult(true);
-                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION + " isFromMockProvider is changed");
-                            }
-                        });
+                final float hoho =  rand.nextFloat() % 0.1f ;
+                //TODO! //Change
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                         new XC_MethodHook() {
                             @Override
                             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                param.setResult((double)haha/((Math.random()%10)));
-                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION + " -  " + haha+ " getLatitude is changed") ;
+                                param.setResult(2.33);
+                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION + " -  " + 2.33 + " getLatitude is changed") ;
                             }
                         });
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLongitude",
                         new XC_MethodHook() {
                             @Override
                             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                param.setResult((double)haha/(Math.random()%5));
-                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION + " -  " + haha+ " getLongitude is changed") ;
+
+                                param.setResult(1.23);
+                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION + " -  " + 1 + " getLongitude is changed") ;
                             }
                         });
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getAccuracy",

@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hehe.hehexposedlocation"
     xmlns:tools="http://schemas.android.com/tools"
+    package="com.hehe.hehexposedlocation"
     android:versionCode="6"
     android:versionName="1.4">
+
     <uses-sdk
         android:minSdkVersion="19"
-        android:targetSdkVersion="23"/>
+        android:targetSdkVersion="23" />
 
-    <!--User Defined-->
-    <permission-tree android:name="com.hehe.hehexposedlocation"/>
-    <permission-tree android:name="com.hehe.hehexposedlocation.appsettings"/>
-    <permission android:name="com.hehe.hehexposedlocation.appsettings.BROADCAST_PERMISSION" android:protectionLevel="dangerous"/>
-    <permission android:name="com.hehe.hehexposedlocation.appsettings.UPDATE_PERMISSIONS" android:protectionLevel="dangerous"/>
-    <!--System  Defined-->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!-- User Defined -->
+    <permission-tree android:name="com.hehe.hehexposedlocation" />
+    <permission-tree android:name="com.hehe.hehexposedlocation.appsettings" />
 
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <permission
+        android:name="com.hehe.hehexposedlocation.appsettings.BROADCAST_PERMISSION"
+        android:protectionLevel="dangerous" />
+    <permission
+        android:name="com.hehe.hehexposedlocation.appsettings.UPDATE_PERMISSIONS"
+        android:protectionLevel="dangerous" />
+    <!-- System  Defined -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BROADCAST_PERMISSION" />
+    <uses-permission android:name="android.permission.UPDATE_PERMISSIONS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <uses-permission android:name="android.permission.BROADCAST_PERMISSION"/>
-    <uses-permission android:name="android.permission.UPDATE_PERMISSIONS"/>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo"
-        android:icon="@drawable/ic_launcher">
+        android:theme="@android:style/Theme.Holo">
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -42,90 +47,105 @@
         <meta-data
             android:name="xposedminversion"
             android:value="30" />
+
         <activity
-            android:name="com.hehe.hehexposedlocation.SettingsActivity"
-            android:label="@string/app_name"
+            android:name=".SettingsActivity"
             android:configChanges="orientation|screenSize"
-            android:exported="true">
+            android:exported="true"
+            android:label="@string/app_name">
             <intent-filter> <!-- Make an APK -->
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hehe.hehexposedlocation.WhitelistActivity"
+            android:name=".WhitelistActivity"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/title_activity_whitelist"
             android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity">
+            android:parentActivityName=".SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
         <activity
-            android:name="com.hehe.hehexposedlocation.intro.MainActivity"
+            android:name=".intro.MainActivity"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/into_tiltle"
             android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity">
+            android:parentActivityName=".SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
         <activity
-            android:name="com.hehe.hehexposedlocation.appsettings.XposedModActivity"
+            android:name=".appsettings.XposedModActivity"
+            android:configChanges="orientation|screenSize"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/into_tiltle"
             android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity"
-            android:configChanges="orientation|screenSize">
+            android:parentActivityName=".SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
         <activity
-            android:name="com.hehe.hehexposedlocation.appsettings.settings.ApplicationSettings"
+            android:name=".appsettings.settings.ApplicationSettings"
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/into_tiltle"
+            android:noHistory="false"
+            android:parentActivityName=".appsettings.XposedModActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.appsettings.XposedModActivity" />
+        </activity>
+        <activity
+            android:name=".log.Settings"
+            android:configChanges="orientation|screenSize"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/into_tiltle"
             android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.appsettings.XposedModActivity"
-            android:configChanges="orientation|screenSize">
+            android:parentActivityName=".SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.appsettings.XposedModActivity"/>
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
+        </activity>
+        <activity
+            android:name=".log.LogsFragment"
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/into_tiltle"
+            android:noHistory="true"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
 
         <activity
-            android:name="com.hehe.hehexposedlocation.log.Settings"
+            android:name="com.hehe.hehexposedlocation.def_setting.DefActivity"
+            android:configChanges="orientation|screenSize"
             android:enabled="true"
             android:excludeFromRecents="true"
-            android:label="@string/into_tiltle"
-            android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity"
-            android:configChanges="orientation|screenSize">
+            android:label="@string/app_defsetting"
+            android:noHistory="false"
+            android:parentActivityName=".SettingsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
-        <activity
-            android:name="com.hehe.hehexposedlocation.log.LogsFragment"
-            android:enabled="true"
-            android:excludeFromRecents="true"
-            android:label="@string/into_tiltle"
-            android:noHistory="true"
-            android:parentActivityName="com.hehe.hehexposedlocation.SettingsActivity"
-            android:configChanges="orientation|screenSize">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.hehe.hehexposedlocation.SettingsActivity"/>
-        </activity>
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <!--
+     ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

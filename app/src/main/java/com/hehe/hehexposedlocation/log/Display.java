@@ -12,6 +12,6 @@ public class Display extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+//http://jim690701.blogspot.hk/2012/07/androidspinner-iotxt.html //Seee
     }
 }

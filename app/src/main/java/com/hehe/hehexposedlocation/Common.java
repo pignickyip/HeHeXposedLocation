@@ -20,7 +20,9 @@ public class Common {
     public static final String SYSTEM_LOCATION = "android.location.Location";
     public static final String SYSTEM_LOCATION_MANGER = "android.location.LocationManager";
     public static final String SYSTEM_LOCATION_LISTENER = "android.location.LocationListener";
-    public static final String SHARED_PREFERENCES_FILE = "mockmocklocations";
+    //public static final String SHARED_PREFERENCES_FILE = "mockmocklocations";
+    public static final String SHARED_PREFERENCES_FILE = "hehexposedlocation";
+    public static final String SHARED_Noise_FILE = "HeHeXposedLocation";
     public static final String PREF_KEY_WHITELIST_ALL = "whitelist_all_apps";
     public static final String PREF_KEY_WHITELIST_APP_LIST = "whitelist_apps_list";
     public static final String PREFS_SETTINGS = "CustomizeSettings";
@@ -28,6 +30,7 @@ public class Common {
     public static final String FIRST_RUN_KEY = Common.PACKAGE_NAME + "IS_FIRST_RUN";
     public static final String DEBUG_KEY = Common.PACKAGE_NAME + "DEBUGGERPREF";
     public static final String SHOW_WARNING = "SHOW_WARNING";
+    public static String DEFAULT = "None";
 
    // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();

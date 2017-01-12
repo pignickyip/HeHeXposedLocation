@@ -152,8 +152,8 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 9: //test
-                  //  intent = new Intent ( this, com.example.user.hehexposed.gpsfake.MainActivity.class );
-                  //  startActivity ( intent );
+                    intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
+                    startActivity ( intent );
                     break;
                 default:
                     break;
