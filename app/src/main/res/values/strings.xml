@@ -53,6 +53,13 @@
         <item>Medium</item>
         <item>Highest</item>
     </string-array>
+    <string-array name="def_setting_intro">
+        <item>Default means my function is being stop</item>
+        <item>Customer means enable any function of my application</item>
+        <item>Low means low noise strength</item>
+        <item>Medium means medium noise strength</item>
+        <item>Highest means highest noise strength</item>
+    </string-array>
     <string name="def_setting_intro">You can choose three level: </string>
     <string name="instructions_title">Instruction 指引</string>
     <string name="instructions1">ABC</string>

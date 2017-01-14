@@ -1,52 +1,111 @@
 package com.hehe.hehexposedlocation.def_setting;
 
 import android.app.Activity;
+import android.app.AndroidAppHelper;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hehe.hehexposedlocation.*;
+import com.hehe.hehexposedlocation.Common;
+import com.hehe.hehexposedlocation.appsettings.*;
 
-public class DefActivity extends Activity implements AdapterView.OnItemSelectedListener {
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import de.robv.android.xposed.XSharedPreferences;
+
+import static android.R.attr.cursorVisible;
+import static android.R.attr.focusable;
+import static android.R.attr.focusableInTouchMode;
+
+public class DefActivity extends Activity  {
     //TODO! Need to make the application save it
+    Spinner spinnerDef;
+    ArrayAdapter adapter;
+    String [] intro;
+    List<PackageInfo> pkgs;
+    // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
+    private ListView vlist;
+    public static Map<String, Object> DEFSETTING = new HashMap<String, Object>();
+    public static SharedPreferences SAVE_PREF;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_def);
 
-        Spinner spinner = (Spinner) findViewById(R.id.def_spinner);
+        initControls();
 
-        // Spinner click listener
-        spinner.setOnItemSelectedListener(this);
+        intro = getResources().getStringArray(R.array.def_setting_intro);
+        vlist = (ListView) findViewById(R.id.def_setting_intro);
+        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, intro);
+        vlist.setAdapter(adapter);
 
+        Control();
+    }
+    protected void Control(){
+        //HashMAp
+        String packageName = AndroidAppHelper.currentPackageName();
+        PackageManager pm = getPackageManager();
+        pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
+        DEFSETTING.put(packageName,pkgs);
+
+        SAVE_PREF = getSharedPreferences ("SNIPPER", 0);
+        //SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(sharedPref), MODE_PRIVATE).edit();
+        // editor.putStringSet(packageName,pkgs);
+        //editor.commit();
+    }
+    protected void initControls() {
+        spinnerDef = (Spinner) findViewById(R.id.def_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.def_setting, android.R.layout.simple_spinner_item);
+        adapter = ArrayAdapter.createFromResource(this, R.array.def_setting, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
+        spinnerDef.setAdapter(adapter);
+        spinnerDef.setSelection(SAVE_PREF.getInt("SPINNER", 0));
+        spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
     }
-
-    @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        // On selecting a spinner item
-        String item = parent.getItemAtPosition(position).toString();
-
-        if(position !=0) {
+    public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            // On selecting a spinner item
+            String item = parent.getItemAtPosition(position).toString();
+           // Customertext.setFocusable(false);
+           // Customertext.setClickable(false);
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-            Common.DEFAULT = item;
-        }
-    }
+            //TODO
+            SharedPreferences.Editor PE = SAVE_PREF.edit();
+            PE.putInt("SPINNER", position);
+            PE.apply();
 
-    @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+            Common.DEFAULT = item;
+            if(position == 1){
+            //    Customertext.setFocusable(true);
+            //    Customertext.setClickable(true);
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            //Rly othing
+        }
 
     }
 }

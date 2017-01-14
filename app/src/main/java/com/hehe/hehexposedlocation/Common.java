@@ -31,6 +31,8 @@ public class Common {
     public static final String DEBUG_KEY = Common.PACKAGE_NAME + "DEBUGGERPREF";
     public static final String SHOW_WARNING = "SHOW_WARNING";
     public static String DEFAULT = "None";
+    public static String CUSTOMER_NUM = "0";
+    public static String DEFAULT_SETTING = "";
 
    // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();
