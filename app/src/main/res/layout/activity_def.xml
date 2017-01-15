@@ -26,12 +26,22 @@
         android:drawSelectorOnTop="true"/>
 
 
-    <ListView
-        android:text="@array/def_setting_intro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/def_setting_intro"
-        android:clickable="false"
-        android:focusable="false" />
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/def_spinner"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="107dp">
+
+        <ListView
+            android:text="@array/def_setting_intro"
+            android:layout_width="match_parent"
+            android:layout_height="384dp"
+            android:id="@+id/def_setting_intro"
+            android:clickable="false"
+            android:focusable="false"
+            android:layout_alignParentStart="true" />
+    </LinearLayout>
 
 </RelativeLayout>

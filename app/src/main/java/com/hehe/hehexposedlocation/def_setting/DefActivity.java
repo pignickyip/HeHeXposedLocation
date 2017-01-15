@@ -5,6 +5,7 @@ import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.support.v7.app.ActionBar;
@@ -40,10 +41,12 @@ public class DefActivity extends Activity  {
     ArrayAdapter adapter;
     String [] intro;
     List<PackageInfo> pkgs;
+    String pkgName;
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
+    private Intent parentIntent;
     public static Map<String, Object> DEFSETTING = new HashMap<String, Object>();
-    public static SharedPreferences SAVE_PREF;
+    public static SharedPreferences SAVE_PREF = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,14 +61,15 @@ public class DefActivity extends Activity  {
 
         Control();
     }
-    protected void Control(){
+    protected void Control()  {
         //HashMAp
-        String packageName = AndroidAppHelper.currentPackageName();
-        PackageManager pm = getPackageManager();
-        pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-        DEFSETTING.put(packageName,pkgs);
+        pkgName = getPackageName();
 
+        pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
+        DEFSETTING.put(pkgName,pkgs);
         SAVE_PREF = getSharedPreferences ("SNIPPER", 0);
+
+
         //SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(sharedPref), MODE_PRIVATE).edit();
         // editor.putStringSet(packageName,pkgs);
         //editor.commit();
@@ -78,7 +82,8 @@ public class DefActivity extends Activity  {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         spinnerDef.setAdapter(adapter);
-        spinnerDef.setSelection(SAVE_PREF.getInt("SPINNER", 0));
+        if(!(SAVE_PREF==null))
+           spinnerDef.setSelection(SAVE_PREF.getInt("SPINNER", 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
     }
     public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {

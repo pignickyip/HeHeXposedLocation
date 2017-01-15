@@ -83,7 +83,7 @@ public class def_noise implements IXposedHookLoadPackage {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 String packageName = AndroidAppHelper.currentPackageName();
                                 String yama = (String) HAHA.get(packageName);
-                                if(yama != "")
+                                if(!Objects.equals(yama, ""))
                                     param.setResult((float) hehe);
                                 XposedBridge.log("Loaded app: " + packageName + " -  " + hehe + " getAccuracy is changed in def_noise - " + yama );
                             }
