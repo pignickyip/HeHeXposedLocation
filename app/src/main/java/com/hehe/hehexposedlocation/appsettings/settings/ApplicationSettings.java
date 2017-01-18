@@ -66,7 +66,7 @@ public class ApplicationSettings extends Activity {
 	private Set<String> disabledPermissions;
 	private boolean allowRevoking;
 	private Intent parentIntent;
-
+	private static Map<String, Object> settings = new HashMap<String, Object>(); //New change in 19/1
 	private LocaleList localeList;
 
 
@@ -216,7 +216,7 @@ public class ApplicationSettings extends Activity {
 		});
 
 		settingKeys = getSettingKeys();
-		initialSettings = getSettings();
+		initialSettings = settings;
 	}
 
 	private Set<String> getSettingKeys() {
@@ -228,8 +228,7 @@ public class ApplicationSettings extends Activity {
 		return settingKeys;
 	}
 
-	private Map<String, Object> getSettings() {
-		Map<String, Object> settings = new HashMap<String, Object>();
+	private void setSettings() {
 		if (swtActive.isChecked()) {
 			settings.put(pkgName + Common.PREF_ACTIVE, true);
 			int noise;
@@ -247,13 +246,12 @@ public class ApplicationSettings extends Activity {
 			if (disabledPermissions.size() > 0)
 				settings.put(pkgName + Common.PREF_REVOKELIST, new HashSet<String>(disabledPermissions));
 		}
-		return settings;
 	}
 
 	@Override
 	public void onBackPressed() {
 		// If form wasn't changed, exit without prompting
-		if (getSettings().equals(initialSettings)) {
+		if (settings.equals(initialSettings)) {
 			finish();
 			return;
 		}
@@ -329,7 +327,7 @@ public class ApplicationSettings extends Activity {
 
 		if (item.getItemId() == R.id.menu_save) {
 			Editor prefsEditor = prefs.edit();
-			Map<String, Object> newSettings = getSettings();
+			Map<String, Object> newSettings = settings;
 			for (String key : settingKeys) {
 				Object value = newSettings.get(key);
 				if (value == null) {
@@ -417,4 +415,7 @@ public class ApplicationSettings extends Activity {
 
         return super.onKeyDown(keyCode, event);
     }
+	public static Map<String, Object> getSetting(){
+		return settings;
+	}
 }

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,11 +26,13 @@ import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.appsettings.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import de.robv.android.xposed.XSharedPreferences;
+import de.robv.android.xposed.XposedBridge;
 
 import static android.R.attr.cursorVisible;
 import static android.R.attr.focusable;
@@ -42,11 +45,14 @@ public class DefActivity extends Activity  {
     String [] intro;
     List<PackageInfo> pkgs;
     String pkgName;
+    private static Boolean check = true;
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
     private Intent parentIntent;
     public static Map<String, Object> DEFSETTING = new HashMap<String, Object>();
     public static SharedPreferences SAVE_PREF = null;
+    public static List<ResolveInfo> pkgAppsList;
+    private ArrayList results = new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,16 +69,25 @@ public class DefActivity extends Activity  {
     }
     protected void Control()  {
         //HashMAp
-        pkgName = getPackageName();
-
-        pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-        DEFSETTING.put(pkgName,pkgs);
+        if(check) {
+            Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
+            for (int i = 0; pkgAppsList.size() > i; i++) {//TODO Time delay
+                pkgName = getPackageName();
+                pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
+                DEFSETTING.put(pkgName, pkgs);
+                if (check) {
+                    check = false;
+                }
+            }
+        }
         SAVE_PREF = getSharedPreferences ("SNIPPER", 0);
-
-
         //SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(sharedPref), MODE_PRIVATE).edit();
         // editor.putStringSet(packageName,pkgs);
         //editor.commit();
+
+
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);
