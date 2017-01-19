@@ -8,7 +8,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PermissionInfo;
 import android.content.pm.ResolveInfo;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
@@ -39,19 +42,20 @@ import static android.R.attr.focusable;
 import static android.R.attr.focusableInTouchMode;
 
 public class DefActivity extends Activity  {
-    //TODO! Need to make the application save it
     Spinner spinnerDef;
     ArrayAdapter adapter;
     String [] intro;
     List<PackageInfo> pkgs;
-    String pkgName;
+
     private static Boolean check = true;
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
     private Intent parentIntent;
-    public static Map<String, Object> DEFSETTING = new HashMap<String, Object>();
+    public static SharedPreferences SAVE_NAME = null;
+    public static Map<String, String> DEFSETTING = new HashMap<String, String>();
     public static SharedPreferences SAVE_PREF = null;
     public static List<ResolveInfo> pkgAppsList;
+    public static List<PackageInfo> pkgApp;
     private ArrayList results = new ArrayList();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,24 +74,39 @@ public class DefActivity extends Activity  {
     protected void Control()  {
         //HashMAp
         if(check) {
+            if (SAVE_NAME == null)
+                SAVE_NAME = PreferenceManager.getDefaultSharedPreferences(DefActivity.this);//= getSharedPreferences ("pkgName", 0);
+
             Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);//http://blog.csdn.net/jackrex/article/details/9189657
             pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
-            for (int i = 0; pkgAppsList.size() > i; i++) {//TODO Time delay
-                pkgName = getPackageName();
-                pkgs = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-                DEFSETTING.put(pkgName, pkgs);
-                if (check) {
-                    check = false;
+            //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
+            pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
+
+            SharedPreferences.Editor PE = SAVE_NAME.edit();
+
+            DEFSETTING.put("android", "android");//TODO Problem to Category
+
+            for (PackageInfo packageInfo : pkgApp) {
+                String pkgName = packageInfo.packageName;
+                ApplicationInfo applicationInfo = packageInfo.applicationInfo;
+                //stringBuilder.append("应用名称:"+ applicationInfo.loadLabel(getPackageManager())+ "\n");
+                //http://stackoverflow.com/questions/39421952/packageinfo-requestedpermissions-vs-permissions
+                CharSequence appsName = applicationInfo.loadLabel(getPackageManager());
+                if (packageInfo.permissions != null) {
+                    for (PermissionInfo p : packageInfo.permissions) {
+                        if (Objects.equals(packageInfo.permissions, "android.permission.ACCESS_FINE_LOCATION")) {
+                            DEFSETTING.put(pkgName, p.name);
+                        } else if (Objects.equals(packageInfo.permissions, "android.permission.ACCESS_COARSE_LOCATION")) {
+                            DEFSETTING.put(pkgName, p.name);
+                        } else if (Objects.equals(packageInfo.permissions, "android.permission.ACCESS_NETWORK_STATE")) {
+                            DEFSETTING.put(pkgName, p.name);
+                        }
+                    }
                 }
             }
+            SAVE_PREF = getSharedPreferences("SNIPPER", 0);
         }
-        SAVE_PREF = getSharedPreferences ("SNIPPER", 0);
-        //SharedPreferences.Editor editor = getSharedPreferences(String.valueOf(sharedPref), MODE_PRIVATE).edit();
-        // editor.putStringSet(packageName,pkgs);
-        //editor.commit();
-
-
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);
@@ -116,7 +135,7 @@ public class DefActivity extends Activity  {
             PE.apply();
 
             Common.DEFAULT = item;
-            if(position == 1){
+            if(position == 1){ //TODO Set up the field for user input its customer value
             //    Customertext.setFocusable(true);
             //    Customertext.setClickable(true);
             }

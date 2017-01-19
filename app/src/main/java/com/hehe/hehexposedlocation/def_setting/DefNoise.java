@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.AndroidAppHelper;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PermissionInfo;
@@ -32,6 +33,7 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
+import static com.hehe.hehexposedlocation.def_setting.DefActivity.DEFSETTING;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
 /**
@@ -41,34 +43,26 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 public class DefNoise implements IXposedHookLoadPackage {
     String hoho = Common.DEFAULT;
     int sdk = Build.VERSION.SDK_INT;
-    Map<String, Object> HAHA  = new HashMap<String, Object>();
+    private static Map<String, String> HAHA  = new HashMap<String, String>();
+    private static SharedPreferences SAVE_NAME = null;
     List<ResolveInfo> pkgAppsList;
+    final static double MaxLat= -90.0;
+    final static double MinLat = 90.0;
+    final static double MaxLong = 180.0;
+    final static double MinLong = -180.0;
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         final XSharedPreferences sharedPreferences = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_FILE);
         sharedPreferences.makeWorldReadable();
-        pkgAppsList = DefActivity.pkgAppsList;
-
-        if(!(DefActivity.DEFSETTING.isEmpty())) {
-            Map<String, Object> ada = DefActivity.DEFSETTING;
-            Iterator GetDATA = ada.keySet().iterator();
-            while (GetDATA.hasNext()) {
-                String key = (String) GetDATA.next();
-                String value = (String) ada.get(key);
-                XposedBridge.log(value);
-                if(!(Objects.equals(valueToStringOrEmpty(ada, key), ""))){ //the hash map not equal to null
-                    if(Objects.equals(value, "android.permission.ACCESS_FINE_LOCATION")) {
-                        HAHA.put(key, value);
-                        XposedBridge.log("Put data to HAHA");
-                    }
-                    else if(Objects.equals(value,"android.permission.ACCESS_COARSE_LOCATION")){
-                        HAHA.put(key, value);
-                        XposedBridge.log("Put data to HAHA");
-                    }
-                }
-                else
-                    XposedBridge.log("Cant Put data to HAHA");
+        //pkgAppsList = DefActivity.pkgAppsList;
+        try{
+            HAHA = DEFSETTING;
+            if(HAHA == null){
+                XposedBridge.log("HERE the HAHA is empty");
             }
+        }
+        catch(Exception e){
+            XposedBridge.log(e);
         }
         //  https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
@@ -76,36 +70,49 @@ public class DefNoise implements IXposedHookLoadPackage {
         if(sdk > 18) {
             try{
             if (true){//!HAHA.isEmpty()) {
-
-                int range = 1;
+                //Latitudes range from -90 to 90.
+               // Longitudes range from -180 to 180.
+                int adapter = 1;
                 if (!Objects.equals(hoho, "Default") || !Objects.equals(hoho, "Customer"))
                     if (Objects.equals(hoho, "Low"))
-                        range = 2;
+                        adapter = 2;
                     else if (Objects.equals(hoho, "Medium"))
-                        range = 3;
+                        adapter = 3;
                     else if (Objects.equals(hoho, "Highest"))
-                        range = 4;
-                float minX = 50.0f / range;
-                float maxX = 100.0f / range;
-                final float hehe = rand.nextFloat() * (maxX - minX) % (float) range;
-                findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLongitude",
+                        adapter = 4;
+
+                final int range = adapter;
+
+                findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                         new XC_MethodHook() {
                             @Override
                             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                                super.beforeHookedMethod(param);
                                 //XposedBridge.log("Here im Xpsoed Hooked");
                             }
                             @Override //TODO!
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                                //super.afterHookedMethod(param);
+
+                                Random rand = new Random();
+                                double RanLat = Math.floor( //Original value + random value
+                                        ((rand.nextDouble() % (MaxLat))
+                                        /(range*range))*1000/1000
+                                );
+
                                 String packageName = AndroidAppHelper.currentPackageName();
-                                String yama = HAHA.get(packageName).toString();//TODo //Nullpointerexception
-                                boolean a = true;
+                                String test = HAHA.get(packageName);
                                 try{
-                                    if(!Objects.equals(yama, "")) {
-                                        param.setResult(-25.1);
-                                        XposedBridge.log("Loaded app: " + packageName + " -  " + hehe + " getLongitude is changed in def_noise - " + yama);
+                                    double ori = (double)param.getResult();
+                                    if(!(Objects.equals(test, "")) || !(Objects.equals(test,null))) {//TODO MAKE the Category
+                                        double result = ori+RanLat;
+                                        param.setResult(result);
+                                        XposedBridge.log("Loaded app: " + packageName + " -  " + result + " getLatitudes is changed in def_noise - " +test );
                                     }
-                                    else
-                                            XposedBridge.log("Failed to change.");
+                                    else {
+                                        param.setResult(ori);
+                                        XposedBridge.log("Failed to change.");
+                                    }
                                 }
                                 catch (Exception e){
                                     XposedBridge.log("Failed" + e );
@@ -113,6 +120,39 @@ public class DefNoise implements IXposedHookLoadPackage {
 
                             }
                         });
+                findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLongitude", new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        super.beforeHookedMethod(param);
+                    }
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                        Random rand = new Random();
+                        double RanLat = Math.floor( //Original value + random value
+                                ((rand.nextDouble() % (MaxLong))
+                                        /(range*range))*1000/1000
+                        );
+                        String packageName = AndroidAppHelper.currentPackageName();
+                        String test = HAHA.get(packageName);
+                        try{
+                            double ori = (double)param.getResult();
+                            if(!(Objects.equals(test, "")) || !(Objects.equals(test,null))) {//TODO MAKE the Category
+                                double result = ori+RanLat;
+                                param.setResult(result);
+                                XposedBridge.log("DLLM" + hoho); //TODO CHECK
+                            }
+                            else {
+                                param.setResult(ori);
+                                XposedBridge.log("Failed to change.");
+                            }
+                        }
+                        catch (Exception e){
+                            XposedBridge.log("Failed" + e );
+                        }
+
+                    }
+                });
                 //TODO http://www.jianshu.com/p/796e94d8af31
                 findAndHookMethod(Common.SYSTEM_LOCATION_MANGER, lpparam.classLoader,
                         "getGpsStatus", GpsStatus.class, new XC_MethodHook() {
@@ -162,7 +202,7 @@ public class DefNoise implements IXposedHookLoadPackage {
                         });
                 }
                 else
-                     XposedBridge.log("HAHA empty " );
+                     XposedBridge.log("GPS status " );
             }
             catch (Exception e) {
                 XposedBridge.log("Wrong here" );

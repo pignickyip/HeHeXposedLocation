@@ -83,7 +83,7 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
                 double r = (rand.nextDouble() % 50 ) / 50;
                 final double haha = randdouble(a , r);
                 final float hoho =  rand.nextFloat() % 0.1f ;
-                //TODO! //Change
+                //TODO!  Customer change
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                         new XC_MethodHook() {
                             @Override
