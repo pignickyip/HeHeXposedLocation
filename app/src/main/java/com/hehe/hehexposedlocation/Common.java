@@ -4,10 +4,12 @@ package com.hehe.hehexposedlocation;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 
 //import hehexposed.BuildConfig;
 
 import com.hehe.hehexposedlocation.DefaultLists;
+import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -32,9 +34,8 @@ public class Common {
     public static final String SHOW_WARNING = "SHOW_WARNING";
     public static String DEFAULT = "None";
     public static String CUSTOMER_NUM = "0";
-    public static String DEFAULT_SETTING = "";
 
-   // public static final PrefSet APPS = new AppsSet();
+    // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();
     public static final PrefSet COMMANDS = new CommandSet();
     public static final PrefSet LIBRARIES = new LibrarySet();
