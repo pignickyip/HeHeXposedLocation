@@ -24,6 +24,9 @@ public class Common {
     public static final String SYSTEM_LOCATION_LISTENER = "android.location.LocationListener";
     //public static final String SHARED_PREFERENCES_FILE = "mockmocklocations";
     public static final String SHARED_PREFERENCES_FILE = "hehexposedlocation";
+    public static final String SHARED_PREFERENCES_POSITION = "position";
+    public static final String SHARED_PREDERENCES_CUSTOMER = "customer";
+
     public static final String SHARED_Noise_FILE = "HeHeXposedLocation";
     public static final String PREF_KEY_WHITELIST_ALL = "whitelist_all_apps";
     public static final String PREF_KEY_WHITELIST_APP_LIST = "whitelist_apps_list";

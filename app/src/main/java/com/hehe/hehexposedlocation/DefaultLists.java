@@ -1,7 +1,7 @@
 package com.hehe.hehexposedlocation;
 
 public class DefaultLists {
-    public static final String[] DEFAULT_APPS_LIST = { };
+    public static final String[] DEFAULT_APPS_LIST = { "android" , "com.android" };
 
     public static final String[] DEFAULT_KEYWORD_LIST = new String[]{"supersu", "superuser", "Superuser",
             "noshufou", "xposed", "rootcloak",

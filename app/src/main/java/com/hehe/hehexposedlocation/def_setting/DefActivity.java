@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.FeatureGroupInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -27,6 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+
+
 public class DefActivity extends Activity  {
     Spinner spinnerDef;
     ArrayAdapter adapter;
@@ -36,8 +39,8 @@ public class DefActivity extends Activity  {
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
     private Intent parentIntent;
-    public static SharedPreferences SAVE_NAME = null;
-    public static Map<String, Integer> DEFSETTING = new HashMap<>();
+    public static int POSITION;
+    public static SharedPreferences CUSTOMER = null;
     public static SharedPreferences SAVE_ACTION = null;
     public static List<ResolveInfo> pkgAppsList;
     public static List<PackageInfo> pkgApp;
@@ -49,12 +52,13 @@ public class DefActivity extends Activity  {
 
         initControls();
 
+        //Show the introduction
         intro = getResources().getStringArray(R.array.def_setting_intro);
         vlist = (ListView) findViewById(R.id.def_setting_intro);
         adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, intro);
         vlist.setAdapter(adapter);
 
-        Control();
+        Control();//DO logic
     }
     protected void Control()  {
         //HashMAp
@@ -63,8 +67,7 @@ public class DefActivity extends Activity  {
         pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
         //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
         // TODO Problem to Category
-        pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-        DEFSETTING.put("android",1);//
+        /*pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
         try {
             PackageManager packageManager = getPackageManager();
             for (PackageInfo pkgInfo : pkgApp) {
@@ -84,7 +87,8 @@ public class DefActivity extends Activity  {
         }
         catch(Exception e){//TODO not yet test
             Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
-        }
+        }*/
+
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);
@@ -95,9 +99,9 @@ public class DefActivity extends Activity  {
         // Apply the adapter to the spinner
         spinnerDef.setAdapter(adapter);
 
-        SAVE_ACTION = getSharedPreferences("SNIPPER", 0);
+        SAVE_ACTION = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
         if(!(SAVE_ACTION==null))
-           spinnerDef.setSelection(SAVE_ACTION.getInt("SPINNER", 0));
+           spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
     }
     public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
@@ -109,16 +113,20 @@ public class DefActivity extends Activity  {
            // Customertext.setClickable(false);
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-            //TODO
+            //TODO pass the position value to DefNoise, try the code from overridesettings
             SharedPreferences.Editor PE = SAVE_ACTION.edit();
-            PE.putInt("SPINNER", position);
+            PE.putInt(Common.SHARED_PREFERENCES_POSITION, position);
             PE.apply();
-
-            Common.DEFAULT = item;
-            if(position == 1){ //TODO Set up the field for user input its customer value
-            //    Customertext.setFocusable(true);
-            //    Customertext.setClickable(true);
+            try {
+                if (Objects.equals(item, "Customer")) {
+                    //TODO popup box to get the value,,, first get above
+                    CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 5);
+                }
             }
+            catch(Exception e){
+                Log.d("","FF");
+            }
+
         }
 
         @Override
