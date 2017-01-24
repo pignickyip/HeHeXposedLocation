@@ -69,11 +69,11 @@ public class DefNoise implements IXposedHookLoadPackage  {
         //http://blog.csdn.net/yzzst/article/details/47659479
         if(sdk > 18) {
             try {
-                Random rand = new Random();
+                Random rand = new Random(sdk);
                 int omg = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
-                //Need to restart the phone each time
+                //TODO Make an notifcation to -> Need to restart the phone each time
                 int adapter = 1;
                 if(omg == 0 ){//Default
                     adapter = 1;
@@ -86,9 +86,9 @@ public class DefNoise implements IXposedHookLoadPackage  {
                 else if(omg>=2){//Low, Medium,Highest
                     //adapter = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
                     if(sdk >= 21)
-                        adapter = ThreadLocalRandom.current().nextInt(4, 77)*(omg-1);
+                        adapter = ThreadLocalRandom.current().nextInt(4, 100)*(omg-1) + 1;
                     else
-                        adapter = rand.nextInt(100)+1*(omg-1);
+                        adapter = (rand.nextInt(100)*(omg-1)) + 1;
 
                     XposedBridge.log("The User chose Low, Medium, High.");
                 }
@@ -113,8 +113,6 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                 );
                                 String packageName = AndroidAppHelper.currentPackageName();
                                 try {
-                                    //Integer test = 0;
-                                    //test = DEFSETTING.get(packageName);
                                     double ori = (double) param.getResult();//get the original result
                                     for (String List_pkg : FreePacketList) {
                                         if (Objects.equals(List_pkg, packageName)) {

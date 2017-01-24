@@ -40,7 +40,7 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
         int sdk = Build.VERSION.SDK_INT;
         //http://blog.csdn.net/yzzst/article/details/47659479
         Random rand = new Random(); // random number
-
+        //TODO try to do seem like the DefNoise
         ChangeSetting = ApplicationSettings.getSetting();
         if (sharedPreferences.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true) ||
                 sharedPreferences.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>(0)).contains(lpparam.packageName)) {
