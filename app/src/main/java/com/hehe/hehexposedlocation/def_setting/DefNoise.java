@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ResolveInfo;
 import android.location.GpsStatus;
 import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.Common;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -47,6 +49,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
     final static double MinLong = -180.0;
     final static String[] FreePacketList = PACKGE_LIST;
     final static String[] FreeKeywordList = KEYWORD_LIST;
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.html
@@ -81,12 +84,16 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     XposedBridge.log("The User chose  Customer and the value is " + adapter);
                 }
                 else if(omg>=2){//Low, Medium,Highest
-                    adapter = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
-                    adapter = rand.nextInt(adapter);
-                    XposedBridge.log("The User chose....");
+                    //adapter = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
+                    if(sdk >= 21)
+                        adapter = ThreadLocalRandom.current().nextInt(4, 77)*(omg-1);
+                    else
+                        adapter = rand.nextInt(100)+1*(omg-1);
+
+                    XposedBridge.log("The User chose Low, Medium, High.");
                 }
                 else
-                    adapter = 5;
+                    XposedBridge.log("The SharePreferences get wrong...");
                 final int range = adapter;
 
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
@@ -100,9 +107,9 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 //super.afterHookedMethod(param);
                                 Random rand = new Random();
-                                double RanLat = Math.floor( //Original value + random value
-                                        ((rand.nextDouble() % (MaxLat))
-                                                / (range * range)) * 2
+                                //Original value + random value
+                                double RanLat = (
+                                           (rand.nextDouble() % (MaxLat)) / rand.nextInt(range) * 1000/1000
                                 );
                                 String packageName = AndroidAppHelper.currentPackageName();
                                 try {
@@ -117,11 +124,11 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                             //Match apart of
                                             for (String List_keyword : FreeKeywordList) {
                                                 if (packageName.startsWith(List_keyword)) {
-                                                    double result = ori + (RanLat * 20);
+                                                    double result = ori + (RanLat * (range-1));
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else {
-                                                    double result = ori + (RanLat * 200);
+                                                    double result = ori + (RanLat * (range-1));
                                                     param.setResult(result);
                                                     XposedBridge.log("Loaded app: " + packageName + " get the Latitude " + result);
                                                 }
@@ -141,13 +148,13 @@ public class DefNoise implements IXposedHookLoadPackage  {
                         super.beforeHookedMethod(param);
                         //XposedBridge.log("Here im Xpsoed Hooked");
                     }
-                    @Override //TODO!
+                    @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        //super.afterHookedMethod(param);
+                        //super.afterHookedMethod(param); Math.floor
                         Random rand = new Random();
-                        double RanLong = Math.floor( //Original value + random value
-                                ((rand.nextDouble() % (MaxLong))
-                                        / (range * range)) * 2
+                        //Original value + random value
+                        double RanLong = (
+                            (rand.nextDouble() % (MaxLong)) / rand.nextInt(range) * 1000/1000
                         );
                         String packageName = AndroidAppHelper.currentPackageName();
                         try {
@@ -162,11 +169,11 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
                                         if (packageName.startsWith(List_keyword)) {
-                                            double result = ori + (RanLong * 20);
+                                            double result = ori + (RanLong * (range-1));
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the getLongitude " + result);
                                         } else {
-                                            double result = ori + (RanLong * 200);
+                                            double result = ori + (RanLong * (range-1));
                                             param.setResult(result);
                                             XposedBridge.log("Loaded app: " + packageName + " get the getLongitude " + result);
                                         }

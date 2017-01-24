@@ -6,8 +6,9 @@ package com.hehe.hehexposedlocation.def_setting;
  */
 
 public class FreeList{
-    public static final String[] PACKGE_LIST = { };//"android" , "com.google.android.gms"
-    public static final String[] KEYWORD_LIST = { };
+    //TODO THE LIST must not empty
+    public static final String[] PACKGE_LIST = { "android"," " };//"android" , "com.google.android.gms"
+    public static final String[] KEYWORD_LIST = { " " };
     public static String HoHo;
 
 }
