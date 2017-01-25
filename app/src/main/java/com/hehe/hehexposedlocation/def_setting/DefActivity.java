@@ -1,6 +1,8 @@
 package com.hehe.hehexposedlocation.def_setting;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -16,12 +18,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.Common;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +39,7 @@ public class DefActivity extends Activity  {
     ArrayAdapter adapter;
     String [] intro;
     List<PackageInfo> pkgs;
+    AlertDialog.Builder b;
 
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
@@ -45,18 +50,26 @@ public class DefActivity extends Activity  {
     public static List<ResolveInfo> pkgAppsList;
     public static List<PackageInfo> pkgApp;
     private ArrayList results = new ArrayList();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_def);
 
         initControls();
 
+        TextView tv = (TextView) findViewById(R.id.def_setting_intro);
         //Show the introduction
-        intro = getResources().getStringArray(R.array.def_setting_intro);
-        vlist = (ListView) findViewById(R.id.def_setting_intro);
-        adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1, intro);
-        vlist.setAdapter(adapter);
+        String[] word = { "Default means my function is being stop\n" ,
+                "Customer means enable any function of my application\n" ,
+                "Low means low noise strength\n" ,
+                "Medium means medium noise strength\n" ,
+                "Highest means highest noise strength"};
+        // Prints [Pretty, Cool, Weird]
+        tv.setText(Arrays.toString(word));
+        // Prints Pretty, Cool, Weird
+        tv.setText(Arrays.toString(word).replaceAll("\\[|\\]", ""));
 
         Control();//DO logic
     }
@@ -74,14 +87,6 @@ public class DefActivity extends Activity  {
                 String[] perms = pkgInfo.requestedPermissions;
                 if (perms != null)
                     for (String perm : perms) {
-                        if (Objects.equals(perm, "android.permission.ACCESS_FINE_LOCATION"))
-                            DEFSETTING.put(pkgInfo.packageName, 1);
-                        else if (Objects.equals(perm, "ACCESS_FINE_LOCATION"))
-                            DEFSETTING.put(pkgInfo.packageName, 2);
-                        else if (Objects.equals(perm, "android:name=\"android.permission.ACCESS_FINE_LOCATION\""))
-                            DEFSETTING.put(pkgInfo.packageName, 3);
-                        else if (Objects.equals(perm, "android.permission.ACCESS_COARSE_LOCATION"))
-                            DEFSETTING.put(pkgInfo.packageName, 4);
                     }
             }
         }
@@ -89,6 +94,24 @@ public class DefActivity extends Activity  {
             Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
         }*/
 
+        b = new AlertDialog.Builder(this);
+        b.setTitle("Example");
+        String[] types = {"By Zip", "By Category"};
+        b.setItems(types, new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dialog.dismiss();
+                switch(which){
+                    case 0:
+                        break;
+                    case 1:
+                        break;
+                }
+            }
+
+        });
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);
@@ -104,6 +127,7 @@ public class DefActivity extends Activity  {
            spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
     }
+
     public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -120,6 +144,7 @@ public class DefActivity extends Activity  {
             try {
                 if (Objects.equals(item, "Customer")) {
                     //TODO popup box to get the value,,, first get above
+                    b.show();
                     CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 5);
                 }
             }
@@ -133,6 +158,7 @@ public class DefActivity extends Activity  {
         public void onNothingSelected(AdapterView<?> parent) {
             //Rly othing
         }
+
 
     }
 }

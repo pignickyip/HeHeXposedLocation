@@ -8,40 +8,49 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin">
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="@string/Notice_def_setting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView10" />
+
+
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/def_text"
         android:text="@string/def_setting_intro"
-        android:textAppearance="@style/TextAppearance.AppCompat" />
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="78dp" />
 
     <Spinner
         android:id="@+id/def_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_below="@+id/def_text"
-        android:layout_alignParentStart="true"
+        android:layout_marginTop="21dp"
         android:dropDownWidth="match_parent"
-        android:drawSelectorOnTop="true"/>
+        android:drawSelectorOnTop="true"
+        android:layout_below="@+id/def_text"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp" />
 
-
-    <LinearLayout
-        android:orientation="vertical"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/def_setting_intro"
+        android:clickable="false"
+        android:focusable="false"
         android:layout_below="@+id/def_spinner"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="107dp">
-
-        <ListView
-            android:text="@array/def_setting_intro"
-            android:layout_width="match_parent"
-            android:layout_height="384dp"
-            android:id="@+id/def_setting_intro"
-            android:clickable="false"
-            android:focusable="false"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>
-
+        android:layout_marginTop="26dp" />
+</LinearLayout>
 </RelativeLayout>
