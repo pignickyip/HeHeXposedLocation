@@ -119,7 +119,7 @@ public class ApplicationSettings extends Activity {
 			}
 		});
 
-		// Update Noise  field
+		// Update Noise field
 		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
 			((EditText) findViewById(R.id.txtNoise)).setText(String.valueOf(
 				prefs.getInt(pkgName + Common.PREF_NOISE, 0)));

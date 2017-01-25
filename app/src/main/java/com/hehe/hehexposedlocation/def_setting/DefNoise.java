@@ -41,7 +41,7 @@ import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
  */
 
 public class DefNoise implements IXposedHookLoadPackage  {
-    int sdk = Build.VERSION.SDK_INT;
+    final static int sdk = Build.VERSION.SDK_INT;
     private static Map<String, Integer> HAHA = new HashMap<>();
     final static double MaxLat= -90.0;
     final static double MinLat = 90.0;
@@ -92,7 +92,11 @@ public class DefNoise implements IXposedHookLoadPackage  {
                 else
                     XposedBridge.log("The SharePreferences get wrong...");
                 final int range = adapter;
-
+                /*
+                Source file of android location api
+                //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/Location.java
+                //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/LocationManager.java
+                */
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                         new XC_MethodHook() {
                             @Override
@@ -118,12 +122,34 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                         } else {
                                             //Match apart of
                                             for (String List_keyword : FreeKeywordList) {
+                                                int PlusORMinus = rand.nextInt(1);
+
                                                 if (packageName.startsWith(List_keyword)) {
-                                                    double result = ori + (RanLat * (range-1));
+                                                    double result = ori;
+                                                    switch (PlusORMinus) {
+                                                        case 0: {
+                                                            result = ori + (RanLat * (range - 1));
+                                                            break;
+                                                        }
+                                                        case 1: {
+                                                            result = ori - (RanLat * (range - 1));
+                                                            break;
+                                                        }
+                                                    }
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else {
-                                                    double result = ori + (RanLat * (range-1));
+                                                    double result = ori;
+                                                    switch (PlusORMinus) {
+                                                        case 0: {
+                                                            result = ori + ((RanLat * (range - 1))*2);
+                                                            break;
+                                                        }
+                                                        case 1: {
+                                                            result = ori - ((RanLat * (range - 1))*2);
+                                                            break;
+                                                        }
+                                                    }
                                                     param.setResult(result);
                                                     XposedBridge.log("Loaded app: " + packageName + " get the Latitude " + result);
                                                 }
@@ -163,12 +189,33 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                 } else {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
+                                        int PlusORMinus = rand.nextInt(1);
                                         if (packageName.startsWith(List_keyword)) {
-                                            double result = ori + (RanLong * (range-1));
+                                            double result = ori;
+                                            switch (PlusORMinus) {
+                                                case 0: {
+                                                    result = ori + (RanLong * (range - 1));
+                                                    break;
+                                                }
+                                                case 1: {
+                                                    result = ori - (RanLong * (range - 1));
+                                                    break;
+                                                }
+                                            }
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the getLongitude " + result);
                                         } else {
-                                            double result = ori + (RanLong * (range-1));
+                                            double result = ori;
+                                            switch (PlusORMinus) {
+                                                case 0: {
+                                                    result = ori + ((RanLong * (range - 1))*2);
+                                                    break;
+                                                }
+                                                case 1: {
+                                                    result = ori - ((RanLong * (range - 1))*2);
+                                                    break;
+                                                }
+                                            }
                                             param.setResult(result);
                                             XposedBridge.log("Loaded app: " + packageName + " get the getLongitude " + result);
                                         }
@@ -191,10 +238,4 @@ public class DefNoise implements IXposedHookLoadPackage  {
         Object value = map.get(key);
         return value == null ? "" : value.toString();
     }
-    @SuppressLint("DefaultLocale")
-    private boolean FindPerrmission(String pa){
-        return false;
-    }
-
-
 }

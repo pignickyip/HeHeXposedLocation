@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import com.hehe.hehexposedlocation.BuildConfig;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -34,12 +36,19 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage.LoadPackageParam;
 
 public class OverrideSettingsSecure implements IXposedHookLoadPackage {
     private Map<String, Object> ChangeSetting = new HashMap<String, Object>();
+    final static double MaxLat= -90.0;
+    final static double MinLat = 90.0;
+    final static double MaxLong = 180.0;
+    final static double MinLong = -180.0;
+    final static int sdk = Build.VERSION.SDK_INT;
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+
     public void handleLoadPackage(final LoadPackageParam lpparam) throws Throwable {
         final XSharedPreferences sharedPreferences = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_FILE);
+        final XSharedPreferences sharedPref = new XSharedPreferences(BuildConfig.APPLICATION_ID, com.hehe.hehexposedlocation.appsettings.Common.PREFS);
+        sharedPref.makeWorldReadable();
         sharedPreferences.makeWorldReadable();
-        int sdk = Build.VERSION.SDK_INT;
         //http://blog.csdn.net/yzzst/article/details/47659479
-        Random rand = new Random(); // random number
         //TODO try to do seem like the DefNoise
         ChangeSetting = ApplicationSettings.getSetting();
         if (sharedPreferences.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true) ||
@@ -72,25 +81,41 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/LocationManager.java
             // at API level 18, the function Location.isFromMockProvider is added
             if (sdk >= 18) {
+                Random rand = new Random(); // random number
                 String packageName = AndroidAppHelper.currentPackageName();
-                //get NaN
-                int packageNOISE = prefs.getInt(packageName + com.hehe.hehexposedlocation.appsettings.Common.PREF_NOISE,
-                        prefs.getInt(com.hehe.hehexposedlocation.appsettings.Common.PREF_DEFAULT + com.hehe.hehexposedlocation.appsettings.Common.PREF_NOISE, 0));
-                final int bubu = (int) ChangeSetting.get(packageName);//TODO NEWW
-                if(packageNOISE != R.id.txtNoise && R.id.txtNoise != 0)
-                    packageNOISE = R.id.txtNoise;
-                double a = packageNOISE/Build.VERSION.SDK_INT;
-                double r = (rand.nextDouble() % 50 ) / 50;
-                final double haha = randdouble(a , r);
-                final float hoho =  rand.nextFloat() % 0.1f ;
+                int adapter = 0,omg = 0,Noise;
+                try {
+                    //TODO test  those code need no error
+                    omg = sharedPreferences.getInt(packageName + com.hehe.hehexposedlocation.appsettings.Common.PREF_NOISE, 0);
+                    if(omg == 0)
+                        XposedBridge.log("Noise get 0 - " + omg);
+
+                    int packageNOISE = prefs.getInt(packageName + com.hehe.hehexposedlocation.appsettings.Common.PREF_NOISE,
+                            prefs.getInt(com.hehe.hehexposedlocation.appsettings.Common.PREF_DEFAULT + com.hehe.hehexposedlocation.appsettings.Common.PREF_NOISE, 0));
+                    if(packageNOISE !=omg)
+                        XposedBridge.log("packageNoise != omg");
+
+                    if(sdk >= 21)
+                        adapter = ThreadLocalRandom.current().nextInt(1, (50*omg)) + 1;
+                    else
+                        adapter = (rand.nextInt(50*omg)) + 1;
+
+                    final int bubu = (int) ChangeSetting.get(packageName);
+                }
+                catch (Exception e){
+                    XposedBridge.log("Problem 2");
+                }
+                if(adapter != 0)
+                    Noise = adapter;
+                else
+                    Noise = 0;
+                XposedBridge.log("Noise: " + Noise);
                 //TODO!  Customer change
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                         new XC_MethodHook() {
                             @Override
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                if(bubu > 0)
-                                    param.setResult(54.23);
-                                XposedBridge.log("Here Over: " + bubu + " getLatitude is changed") ;
+
                             }
                         });
                 findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLongitude",
@@ -131,10 +156,10 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
                         new XC_MethodHook() {
                             @Override
                             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                double latitude = haha;
-                                double longitude = (-1)*haha;
-                                float accuracy = (float)hoho;
-                                XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION_LISTENER +  " Value: " + latitude +", " + longitude + "\n Accuracy: " +accuracy) ;
+                                //double latitude = haha;
+                               // double longitude = (-1)*haha;
+                              //  float accuracy = (float)hoho;
+                               // XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION_LISTENER +  " Value: " + latitude +", " + longitude + "\n Accuracy: " +accuracy) ;
                             }
                         });
                 findAndHookMethod(LocationManager.class, "getLastLocation", new XC_MethodHook() {
@@ -151,85 +176,7 @@ public class OverrideSettingsSecure implements IXposedHookLoadPackage {
                         param.setResult(l);*/
                     }
                 });
-                findAndHookMethod(LocationManager.class, "getLastKnownLocation", String.class, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                      /*  Location l = new Location(LocationManager.GPS_PROVIDER);
-                        l.setLatitude(66.12);
-                        l.setLongitude(1.33);
-                        l.setAccuracy(1000f);
-                        l.setTime(System.currentTimeMillis());
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                            l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
-                        }
-                        param.setResult(l);*/
-                    }
-                });
-                findAndHookMethod(Common.SYSTEM_LOCATION_MANGER, lpparam.classLoader,
-                        "getGpsStatus", GpsStatus.class, new XC_MethodHook() {
-                            @Override
-                            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                              /*  GpsStatus gss = (GpsStatus) param.getResult();
-                                if (gss == null)
-                                    return;
-                                Class<?> clazz = GpsStatus.class;
-                                Method m = null;
-                                for (Method method : clazz.getDeclaredMethods()) {
-                                    if (method.getName().equals("setStatus")) {
-                                        if (method.getParameterTypes().length > 1) {
-                                            m = method;
-                                            break;
-                                        }
-                                    }
-                                }
-                                if (m == null)
-                                    return;
-
-                                //access the private setStatus function of GpsStatus
-                                m.setAccessible(true);
-
-                                //make the apps belive GPS works fine now
-                                int svCount = 5;
-                                int[] prns = {1, 2, 3, 4, 5};
-                                float[] snrs = {0, 0, 0, 0, 0};
-                                float[] elevations = {0, 0, 0, 0, 0};
-                                float[] azimuths = {0, 0, 0, 0, 0};
-                                int ephemerisMask = 0x1f;
-                                int almanacMask = 0x1f;
-
-                                //5 satellites are fixed
-                                int usedInFixMask = 0x1f;
-
-                                XposedHelpers.callMethod(gss, "setStatus", svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
-                                param.args[0] = gss;
-                                param.setResult(gss);
-                                try {
-                                    m.invoke(gss, svCount, prns, snrs, elevations, azimuths, ephemerisMask, almanacMask, usedInFixMask);
-                                    param.setResult(gss);
-                                } catch (Exception e) {
-                                    XposedBridge.log(e);
-                                }*/
-                            }
-                        });
             }
         }
-    }
-    private int mod(double x, int y)
-    {
-        int result = (int)x % y;
-        if (result < 0)
-            result += y;
-        return result;
-    }
-    private static int randInt(int min, int max) {
-        Random rand  = new Random();
-        return rand.nextInt((max - min) + 1) + min;
-    }
-    private static double randdouble(double ha, double he){
-        double r = Math.random();
-        if (r < 0.5) {
-            return ((1 - Math.random()) * (ha - he) + he);
-        }
-        return (Math.random() * (ha - he) + he);
     }
 }
