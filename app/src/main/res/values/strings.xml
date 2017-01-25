@@ -53,8 +53,12 @@
         <item>Medium</item>
         <item>Highest</item>
     </string-array>
+
     <string name="Notice_def_setting">Resart your phone after update.</string>
     <string name="def_setting_intro">You can choose level: </string>
+    <string name="Customer_setting">Your customer number: </string>
+    <string name="Customer_hints">Input between 1-100</string>
+
     <string name="instructions_title">Instruction 指引</string>
     <string name="instructions1">ABC</string>
     <string name="instructions2">ABC</string>

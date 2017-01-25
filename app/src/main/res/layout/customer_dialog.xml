@@ -10,13 +10,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Enter Name"
+        android:text="@string/Customer_setting"
         android:id="@+id/textView" />
 
     <EditText
-        android:id="@+id/edittext"
+        android:id="@+id/customer_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter text here.."
+        android:inputType="numberSigned"
+        android:ems="3"
+        android:maxLines="1"
+        android:maxLength="3"
+        android:hint="@string/Customer_hints"
         android:padding="10dp" />
+
 </LinearLayout>

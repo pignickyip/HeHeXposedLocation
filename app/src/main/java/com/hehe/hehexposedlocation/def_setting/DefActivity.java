@@ -13,9 +13,11 @@ import android.content.pm.ResolveInfo;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -31,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
+import java.util.concurrent.ExecutionException;
 
 
 public class DefActivity extends Activity  {
@@ -40,7 +42,7 @@ public class DefActivity extends Activity  {
     String [] intro;
     List<PackageInfo> pkgs;
     AlertDialog.Builder b;
-
+    static boolean te = true;
     // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
     private ListView vlist;
     private Intent parentIntent;
@@ -94,24 +96,6 @@ public class DefActivity extends Activity  {
             Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
         }*/
 
-        b = new AlertDialog.Builder(this);
-        b.setTitle("Example");
-        String[] types = {"By Zip", "By Category"};
-        b.setItems(types, new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                dialog.dismiss();
-                switch(which){
-                    case 0:
-                        break;
-                    case 1:
-                        break;
-                }
-            }
-
-        });
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);
@@ -126,8 +110,47 @@ public class DefActivity extends Activity  {
         if(!(SAVE_ACTION==null))
            spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
-    }
 
+        CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
+    }
+    protected void showInputDialog() {
+
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(DefActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.customer_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DefActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        int haha = R.id.customer_text;
+                        if(CUSTOMER.getBoolean(Common.SHARED_PREDERENCES_CUSTOMER_CHECK, true))
+                            te = false;
+                        try {
+                            SharedPreferences.Editor PE = CUSTOMER.edit();
+                            PE.putInt(Common.SHARED_PREDERENCES_CUSTOMER, haha);
+                            PE.putBoolean(Common.SHARED_PREDERENCES_CUSTOMER_CHECK, true);
+                            PE.putBoolean(Common.SHARED_PREDERENCES_CUSTOMER_RECORD,true);
+                            PE.apply();
+                        }
+                        catch(Exception e){
+                            dialog.notify();
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
     public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -137,16 +160,17 @@ public class DefActivity extends Activity  {
            // Customertext.setClickable(false);
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-            //TODO pass the position value to DefNoise, try the code from overridesettings
+            //pass the position value to DefNoise
             SharedPreferences.Editor PE = SAVE_ACTION.edit();
             PE.putInt(Common.SHARED_PREFERENCES_POSITION, position);
             PE.apply();
             try {
                 if (Objects.equals(item, "Customer")) {
-                    //TODO popup box to get the value,,, first get above
-                    b.show();
-                    CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 5);
+                    if(te)
+                        showInputDialog();
                 }
+                else
+                    te = true;
             }
             catch(Exception e){
                 Log.d("","FF");
@@ -158,7 +182,6 @@ public class DefActivity extends Activity  {
         public void onNothingSelected(AdapterView<?> parent) {
             //Rly othing
         }
-
 
     }
 }

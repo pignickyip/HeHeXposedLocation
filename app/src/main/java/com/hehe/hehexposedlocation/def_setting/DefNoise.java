@@ -53,42 +53,39 @@ public class DefNoise implements IXposedHookLoadPackage  {
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.html
-        final XSharedPreferences sharedPreferences = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
-        sharedPreferences.makeWorldReadable();
 
-        try{
-            if(HAHA == null){
-                XposedBridge.log("HERE the HAHA is empty");
-            }
-        }
-        catch(Exception e){
-            //DONT TRY SHAREPREF
-            XposedBridge.log("Problem get "+e);
-        }
+        final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
+        final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_CUSTOMER);
+        sharedPreferences_posit.makeWorldReadable();
+        sharedPreferences_customer.makeWorldReadable();
+
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if(sdk > 18) {
             try {
                 Random rand = new Random(sdk);
-                int omg = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
+                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_POSITION,0);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 //TODO Make an notifcation to -> Need to restart the phone each time
                 int adapter = 1;
                 if(omg == 0 ){//Default
-                    adapter = 1;
-                    XposedBridge.log("The User chose  Default");
+                    XposedBridge.log("The User chose Default");
                 }
                 else if(omg==1) {//Customer
-                    adapter = sharedPreferences.getInt(Common.SHARED_PREDERENCES_CUSTOMER,5);
+                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_CUSTOMER,5);
                     XposedBridge.log("The User chose  Customer and the value is " + adapter);
+                    if(sdk >= 21)
+                        adapter = ThreadLocalRandom.current().nextInt(1, adapter);
+                    else
+                        adapter = ((rand.nextInt(adapter)))+ 1;
                 }
                 else if(omg>=2){//Low, Medium,Highest
                     //adapter = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
                     if(sdk >= 21)
-                        adapter = ThreadLocalRandom.current().nextInt(4, 100)*(omg-1) + 1;
+                        adapter = ThreadLocalRandom.current().nextInt(1, (50*omg)) + 1;
                     else
-                        adapter = (rand.nextInt(100)*(omg-1)) + 1;
+                        adapter = (rand.nextInt(50*omg)) + 1;
 
                     XposedBridge.log("The User chose Low, Medium, High.");
                 }
@@ -106,10 +103,10 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             @Override //TODO!
                             protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                                 //super.afterHookedMethod(param);
-                                Random rand = new Random();
+                                Random rand = new Random(range);
                                 //Original value + random value
                                 double RanLat = (
-                                           (rand.nextDouble() % (MaxLat)) / rand.nextInt(range) * 1000/1000
+                                           (rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) * 1000/1000
                                 );
                                 String packageName = AndroidAppHelper.currentPackageName();
                                 try {
@@ -149,7 +146,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     @Override
                     protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                         //super.afterHookedMethod(param); Math.floor
-                        Random rand = new Random();
+                        Random rand = new Random(range);
                         //Original value + random value
                         double RanLong = (
                             (rand.nextDouble() % (MaxLong)) / rand.nextInt(range) * 1000/1000
