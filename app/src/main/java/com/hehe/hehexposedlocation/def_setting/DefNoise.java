@@ -158,10 +158,19 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     try {
                                         double ori = (double) param.getResult();//get the original result
                                         for (String List_pkg : FreePacketList) {
-                                            if (Objects.equals(List_pkg, packageName) || Objects.equals(List_pkg, CurrpackageName)
-                                                    || (appList.contains(packageName)) ||(appList.contains(CurrpackageName))) {//TODO this apps can escape the location
-                                                param.setResult(ori);
-                                                XposedBridge.log(packageName + "or " + CurrpackageName + " needs the accuracy location" );
+                                            //TODO escape
+                                            if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
+                                                if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){
+                                                    param.setResult(ori);
+                                                    XposedBridge.log(packageName + " needs the accuracy location" );
+                                                }
+                                                else{
+                                                    double ra = rand.nextInt(5) / 10000000;
+                                                    ra += ori;
+                                                    param.setResult(ra);
+                                                    XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
+                                                }
+
                                             } else {
                                                 //Match apart of
                                                 for (String List_keyword : FreeKeywordList) {
@@ -229,10 +238,18 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             try {
                                 double ori = (double) param.getResult();//get the original result
                                 for (String List_pkg : FreePacketList) {
-                                    if (Objects.equals(List_pkg, packageName) || Objects.equals(List_pkg, CurrpackageName)
-                                            || (appList.contains(packageName)) ||(appList.contains(CurrpackageName))) {//TODO this apps can escape the location
-                                        param.setResult(ori);
-                                        XposedBridge.log(packageName + " needs the accuracy location");
+                                    //TODO escape
+                                    if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
+                                        if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){
+                                            param.setResult(ori);
+                                            XposedBridge.log(packageName + " needs the accuracy location" );
+                                        }
+                                        else{
+                                            double ra = rand.nextInt(5) / 10000000;
+                                            ra += ori;
+                                            param.setResult(ra);
+                                            XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
+                                        }
                                     } else {
                                         //Match apart of
                                         for (String List_keyword : FreeKeywordList) {
@@ -264,7 +281,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                     }
                                                 }
                                                 param.setResult(result);
-                                                XposedBridge.log("Loaded app: " + packageName + " get the getLongitude " + result);
+                                                XposedBridge.log(packageName + " get the getLongitude " + result);
                                             }
                                         }
                                     }
