@@ -81,7 +81,7 @@ public class DefActivity extends Activity  {
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);//http://blog.csdn.net/jackrex/article/details/9189657
         pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
         //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
-        // TODO Problem to Category
+        // TODO Category
         /*pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
         try {
             PackageManager packageManager = getPackageManager();
@@ -92,7 +92,7 @@ public class DefActivity extends Activity  {
                     }
             }
         }
-        catch(Exception e){//TODO not yet test
+        catch(Exception e){
             Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
         }*/
 
@@ -164,6 +164,7 @@ public class DefActivity extends Activity  {
             SharedPreferences.Editor PE = SAVE_ACTION.edit();
             PE.putInt(Common.SHARED_PREFERENCES_POSITION, position);
             PE.apply();
+            //TODO Set the dialog to notice user restart the phone,,ASAP
             try {
                 if (Objects.equals(item, "Customer")) {
                     if(te)

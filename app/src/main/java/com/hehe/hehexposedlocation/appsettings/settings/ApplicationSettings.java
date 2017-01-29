@@ -61,12 +61,13 @@ public class ApplicationSettings extends Activity {
 
 	private String pkgName;
 	private SharedPreferences prefs;
+    private SharedPreferences ACTIVE_PACKET;
 	private Set<String> settingKeys;
 	private Map<String, Object> initialSettings;
 	private Set<String> disabledPermissions;
 	private boolean allowRevoking;
 	private Intent parentIntent;
-	private static Map<String, Object> settings = new HashMap<String, Object>(); //New change in 19/1
+
 	private LocaleList localeList;
 
 
@@ -91,6 +92,7 @@ public class ApplicationSettings extends Activity {
 		try {
 			app = getPackageManager().getApplicationInfo(i.getStringExtra("package"), 0);
 			pkgName = app.packageName;
+            ACTIVE_PACKET = getSharedPreferences(Common.ACTIVE_PACKET, 0);
 		} catch (NameNotFoundException e) {
 			// Close the dialog gracefully, package might have been uninstalled
 			finish();
@@ -119,11 +121,17 @@ public class ApplicationSettings extends Activity {
 			}
 		});
 
-		// Update Noise field
+		// Update Noise  field
 		if (prefs.getBoolean(pkgName + Common.PREF_ACTIVE, false)) {
+            //Change the view
 			((EditText) findViewById(R.id.txtNoise)).setText(String.valueOf(
-				prefs.getInt(pkgName + Common.PREF_NOISE, 0)));
-            Common.PREF_NOISE = ((EditText) findViewById(R.id.txtNoise)).getText().toString();
+					prefs.getInt(pkgName + Common.PREF_NOISE, 0)));
+            //Change the content
+			Common.PREF_NOISE = ((EditText) findViewById(R.id.txtNoise)).getText().toString();
+
+            Editor PE = ACTIVE_PACKET.edit();
+            PE.putInt(pkgName,1);
+            PE.apply();
 		} else {
 			((EditText) findViewById(R.id.txtNoise)).setText("0");
 		}
@@ -165,8 +173,8 @@ public class ApplicationSettings extends Activity {
 						try {
 							jar.close();
 						} catch (Exception ex) {
-                            XposedBridge.log(getString(R.string.res_failedtoload));
-                        }
+							XposedBridge.log(getString(R.string.res_failedtoload));
+						}
 					}
 				}
 				txtPane.setText(contents);
@@ -181,17 +189,6 @@ public class ApplicationSettings extends Activity {
 		allowRevoking = prefs.getBoolean(pkgName + Common.PREF_REVOKEPERMS, false);
 		disabledPermissions = prefs.getStringSet(pkgName + Common.PREF_REVOKELIST, new HashSet<String>());
 
-		// Setup recents mode options
-		final int selectedRecentsMode = prefs.getInt(pkgName + Common.PREF_RECENTS_MODE, Common.PREF_RECENTS_DEFAULT);
-		// Note: the order of these items must match the Common.RECENTS_... constants
-		String[] recentsModeArray = new String[] { getString(R.string.settings_default),
-				getString(R.string.settings_force), getString(R.string.settings_prevent) };
-
-		Spinner spnRecentsMode = (Spinner) findViewById(R.id.spnRecentsMode);
-		List<String> lstRecentsMode = Arrays.asList(recentsModeArray);
-		ArrayAdapter<String> recentsModeAdapter = new ArrayAdapter<String>(this,
-				android.R.layout.simple_spinner_item, lstRecentsMode);
-		recentsModeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 		Button btnPermissions = (Button) findViewById(R.id.btnPermissions);
 		btnPermissions.setOnClickListener(new View.OnClickListener() {
@@ -210,13 +207,13 @@ public class ApplicationSettings extends Activity {
 					});
 					permsDlg.display();
 				} catch (NameNotFoundException e) {
-                    XposedBridge.log("Error Case 1.applicationSetting");
+					XposedBridge.log("Error Case 1.applicationSetting");
 				}
 			}
 		});
 
 		settingKeys = getSettingKeys();
-		initialSettings = settings;
+		initialSettings = getSettings();
 	}
 
 	private Set<String> getSettingKeys() {
@@ -228,7 +225,8 @@ public class ApplicationSettings extends Activity {
 		return settingKeys;
 	}
 
-	private void setSettings() {
+	private Map<String, Object> getSettings() {
+		Map<String, Object> settings = new HashMap<String, Object>();
 		if (swtActive.isChecked()) {
 			settings.put(pkgName + Common.PREF_ACTIVE, true);
 			int noise;
@@ -246,12 +244,13 @@ public class ApplicationSettings extends Activity {
 			if (disabledPermissions.size() > 0)
 				settings.put(pkgName + Common.PREF_REVOKELIST, new HashSet<String>(disabledPermissions));
 		}
+		return settings;
 	}
 
 	@Override
 	public void onBackPressed() {
 		// If form wasn't changed, exit without prompting
-		if (settings.equals(initialSettings)) {
+		if (getSettings().equals(initialSettings)) {
 			finish();
 			return;
 		}
@@ -263,10 +262,10 @@ public class ApplicationSettings extends Activity {
 		builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent();
-                intent.setClass(ApplicationSettings.this,XposedModActivity.class);
+				Intent intent = new Intent();
+				intent.setClass(ApplicationSettings.this,XposedModActivity.class);
                 /*呼叫Activity EX03_11_1*/
-                startActivityForResult(intent,0);
+				startActivityForResult(intent,0);
 				ApplicationSettings.this.finish();
 			}
 		});
@@ -324,18 +323,21 @@ public class ApplicationSettings extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		int haha = 0;String hh="";
 
 		if (item.getItemId() == R.id.menu_save) {
 			Editor prefsEditor = prefs.edit();
-			Map<String, Object> newSettings = settings;
+			Map<String, Object> newSettings = getSettings();
 			for (String key : settingKeys) {
 				Object value = newSettings.get(key);
 				if (value == null) {
 					prefsEditor.remove(key);
 				} else {
+                    hh =key;
 					if (value instanceof Boolean) {
 						prefsEditor.putBoolean(key, (Boolean) value);
 					} else if (value instanceof Integer) {
+						haha = (Integer)value;
 						prefsEditor.putInt(key, (Integer) value);
 					} else if (value instanceof String) {
 						prefsEditor.putString(key, (String) value);
@@ -356,7 +358,7 @@ public class ApplicationSettings extends Activity {
 
 			// Update saved settings to detect modifications later
 			initialSettings = newSettings;
-			String msg = "Also kill the application so when it's relaunched it uses the new settings?" + "\nThe value: " + R.id.txtNoise;
+			String msg = "Also kill the application so when it's relaunched it uses the new settings?" + "\nThe "+ hh +" value: " + haha;
 			// Check if in addition to saving the settings, the app should also be killed
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
 			builder.setTitle(R.string.settings_apply_title);
@@ -392,30 +394,27 @@ public class ApplicationSettings extends Activity {
 			startActivity(LaunchIntent);
 		} else if (item.getItemId() == R.id.menu_app_settings) {
 			startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-									Uri.parse("package:" + pkgName)));
+					Uri.parse("package:" + pkgName)));
 		} else if (item.getItemId() == R.id.menu_app_store) {
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + pkgName)));
 		}
 		return super.onOptionsItemSelected(item);
 	}
-    //避免讓程式因為按下 Back 鍵而關閉
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+	//避免讓程式因為按下 Back 鍵而關閉
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
 
-        if (keyCode == KeyEvent.KEYCODE_BACK)
-        {
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
              /*new一個Intent物件，並指定class*/
-            Intent intent = new Intent();
-            intent.setClass(ApplicationSettings.this,XposedModActivity.class);
+			Intent intent = new Intent();
+			intent.setClass(ApplicationSettings.this,XposedModActivity.class);
              /*呼叫Activity EX03_11_1*/
-            startActivityForResult(intent,0);
-            ApplicationSettings.this.finish();
-            return true;
-        }
+			startActivityForResult(intent,0);
+			ApplicationSettings.this.finish();
+			return true;
+		}
 
-        return super.onKeyDown(keyCode, event);
-    }
-	public static Map<String, Object> getSetting(){
-		return settings;
+		return super.onKeyDown(keyCode, event);
 	}
 }

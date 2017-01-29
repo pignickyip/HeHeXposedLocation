@@ -21,10 +21,11 @@ import com.hehe.hehexposedlocation.R;
 public class Common {
 
 	public static final String TAG = "AppSettings";
-	public static final String MY_PACKAGE_NAME = Common.class.getPackage().getName();
+	public static final String MY_PACKAGE_NAME = "com.hehe.hehexposedlocation.appsettings";//Common.class.getPackage().getName();
 
 	public static final String ACTION_PERMISSIONS = "update_permissions";
 
+	public static final String ACTIVE_PACKET = "active_pkg";
 
 	public static final String PREFS = "ModSettings";
 

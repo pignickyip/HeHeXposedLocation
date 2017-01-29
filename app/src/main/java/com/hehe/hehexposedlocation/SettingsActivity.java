@@ -25,7 +25,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.intro.*;
-import com.hehe.hehexposedlocation.log.LogsFragment;
 //import com.google.android.gms.appindexing.AppIndex;
 //import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -131,10 +130,10 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6://Log
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.log.Settings.class );
+                    //intent = new Intent ( this, com.hehe.hehexposedlocation.log.Settings.class ); //Not used
                     // intent.setFlags ( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                     startActivity ( intent );
-                     finish ();
+                    // startActivity ( intent );
+                    // finish ();
                     break;
                 case 7: //debug
                     boolean debugPref = sharedPref.getBoolean ( Common.DEBUG_KEY, false );
@@ -147,11 +146,11 @@ public class SettingsActivity extends PreferenceActivity  {
                     Toast.makeText ( getApplicationContext (), debugStatus, Toast.LENGTH_LONG ).show ();
                     break;
                 case 8: //test
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.log.LogsFragment.class );
+                    //intent = new Intent ( this, com.hehe.hehexposedlocation.log.LogsFragment.class );
                     // intent.setFlags ( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                    startActivity ( intent );
+                    //startActivity ( intent );
                     break;
-                case 9: //test
+                case 9: //Default Noise setting
                     intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
                     startActivity ( intent );
                     break;
