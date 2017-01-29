@@ -81,7 +81,7 @@ public class DefActivity extends Activity  {
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);//http://blog.csdn.net/jackrex/article/details/9189657
         pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
         //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
-        // TODO Category
+        // Category
         /*pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
         try {
             PackageManager packageManager = getPackageManager();

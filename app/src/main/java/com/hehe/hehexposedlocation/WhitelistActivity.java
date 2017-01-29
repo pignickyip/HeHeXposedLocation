@@ -57,6 +57,8 @@ public class WhitelistActivity extends PreferenceActivity {
 
     ProgressDialog progressDialog;
 
+    //TODO MAKE the apps list more ...
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

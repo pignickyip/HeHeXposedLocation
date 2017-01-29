@@ -125,15 +125,11 @@ public class SettingsActivity extends PreferenceActivity  {
                     intent = new Intent ( this, WhitelistActivity.class );
                     startActivity ( intent );
                     break;
-                case 5: //Enable
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
+                case 5: //Default Noise setting
+                    intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
                     startActivity ( intent );
                     break;
-                case 6://Log
-                    //intent = new Intent ( this, com.hehe.hehexposedlocation.log.Settings.class ); //Not used
-                    // intent.setFlags ( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                    // startActivity ( intent );
-                    // finish ();
+                case 6:
                     break;
                 case 7: //debug
                     boolean debugPref = sharedPref.getBoolean ( Common.DEBUG_KEY, false );
@@ -145,13 +141,8 @@ public class SettingsActivity extends PreferenceActivity  {
                     Log.d ( LOG_TAG, debugStatus );
                     Toast.makeText ( getApplicationContext (), debugStatus, Toast.LENGTH_LONG ).show ();
                     break;
-                case 8: //test
-                    //intent = new Intent ( this, com.hehe.hehexposedlocation.log.LogsFragment.class );
-                    // intent.setFlags ( Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                    //startActivity ( intent );
-                    break;
-                case 9: //Default Noise setting
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
+                case 8: //Enable
+                    intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
                     startActivity ( intent );
                     break;
                 default:
@@ -166,8 +157,8 @@ public class SettingsActivity extends PreferenceActivity  {
      */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Settings Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Settings Page") //  Define a title for the content shown.
+                // Make sure this auto-generated URL is correct.
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
