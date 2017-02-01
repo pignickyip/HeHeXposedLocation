@@ -22,11 +22,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.hehe.hehexposedlocation.BuildConfig;
-import com.hehe.hehexposedlocation.*;
-import com.hehe.hehexposedlocation.intro.*;
-//import com.google.android.gms.appindexing.AppIndex;
-//import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,11 +30,12 @@ import java.util.List;
 public class SettingsActivity extends PreferenceActivity  {
     private GoogleApiClient client;
 
-    public static final String LOG_TAG = "Settings";
     SharedPreferences sharedPref;
     String[] menuItems;
     String instructionsString;
     String instructionsTitle;
+    SharedPreferences clear;
+    SharedPreferences.Editor PE;
     private int mPrevSelectedId;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -53,10 +49,10 @@ public class SettingsActivity extends PreferenceActivity  {
         setContentView(R.layout.activity_settings_main );
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
-        instructionsString = res.getString(R.string.instructions1) + "\n\n"
-                + res.getString(R.string.instructions2) + "\n\n"
-                + res.getString(R.string.instructions3) + "\n\n"
-                + res.getString(R.string.instructions4);
+        instructionsString = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" + "\n\n"
+               + "\n\n"
+                 + "\n\n"
+                 ;
 
         instructionsTitle = res.getString(R.string.instructions_title);
 
@@ -121,26 +117,58 @@ public class SettingsActivity extends PreferenceActivity  {
                             } )
                             .show ();
                     break;
-                case 4: //Mock
-                    intent = new Intent ( this, WhitelistActivity.class );
-                    startActivity ( intent );
-                    break;
-                case 5: //Default Noise setting
+                case 4: //Default Noise setting
                     intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
                     startActivity ( intent );
                     break;
+                case 5: //White List
+                    intent = new Intent ( this, WhitelistActivity.class );
+                    startActivity ( intent );
+                    break;
                 case 6:
+                    intent = new Intent ( this, IndexActivity.class );
+                    startActivity ( intent );
                     break;
-                case 7: //debug
-                    boolean debugPref = sharedPref.getBoolean ( Common.DEBUG_KEY, false );
+                case 7: //clear all setting
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage("Sure? One Way able");
+                    builder.setTitle("Clear All Setting");
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            clear = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+                            clear = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+                            clear = getSharedPreferences(Common.SHARED_PREFERENCES_FILE, MODE_WORLD_READABLE);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+
+                            Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                            //SettingsActivity.this.finish();
+                        }
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.create().show();
+                    /*boolean debugPref = sharedPref.getBoolean(Common.DEBUG_KEY, false);
                     debugPref = !debugPref;
-                    sharedPref.edit ()
-                            .putBoolean ( Common.DEBUG_KEY, debugPref )
-                            .apply ();
-                    String debugStatus = getString ( debugPref ? R.string.debug_on : R.string.debug_off );
-                    Log.d ( LOG_TAG, debugStatus );
-                    Toast.makeText ( getApplicationContext (), debugStatus, Toast.LENGTH_LONG ).show ();
+                    sharedPref.edit()
+                            .putBoolean(Common.DEBUG_KEY, debugPref)
+                            .apply();*/
                     break;
+                }
                 case 8: //Enable
                     intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
                     startActivity ( intent );

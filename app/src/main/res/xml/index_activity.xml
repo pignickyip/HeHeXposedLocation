@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="Preference category">
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:title="11"
+        android:key="22" />
+        <Preference
+            android:title="33"
+            android:key="44"
+            android:summary="HIHI" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="Preference category">
+
+    <ListPreference
+        android:defaultValue="1"
+        android:title="list"
+        android:entries="@array/def_setting"
+        android:entryValues="@array/def_setting"
+        android:key="list" />
+</PreferenceCategory>
+</PreferenceScreen>

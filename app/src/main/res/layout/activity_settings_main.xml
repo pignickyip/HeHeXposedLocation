@@ -1,3 +1,4 @@
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -6,11 +7,16 @@
     android:paddingRight="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <TextView
+        android:text="Here "
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView11" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0"
+        android:layout_height="match_parent"
         android:drawSelectorOnTop="false" />
 
     <TextView

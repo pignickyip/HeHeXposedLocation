@@ -39,10 +39,10 @@
         <item>Introduction</item>
         <item>Reference List</item>
         <item>Instructions</item>
-        <item>Setting</item>
-        <item>Customer Enable HeHeXposed</item>
+        <item>Enable HeHeXposed</item>
+        <item>Whitelist</item>
         <item>Test</item>
-        <item>Turn On/Off Debug</item>
+        <item>Clear all Setting</item>
         <item>Apps List</item>
     </string-array>
     <string-array name="def_setting">
@@ -59,10 +59,6 @@
     <string name="Customer_hints">Input between 1-999</string>
 
     <string name="instructions_title">Instruction 指引</string>
-    <string name="instructions1">ABC</string>
-    <string name="instructions2">ABC</string>
-    <string name="instructions3">ABC</string>
-    <string name="instructions4">ABC</string>
     <string name="into_tiltle">Introduction</string>
     <string name="intro_content1">With the prosperity of mobile and smart devices, the mobile devices security increasingly important.</string>
     <string name="intro_content2">Consider the information confidentiality of mobile; it required a necessary method to keep the information secret.</string>
@@ -72,8 +68,8 @@
     <string name="intro_content6">This project aims to provide a security method to let the client get rid of the risk of monitoring, reduce the probability of the personal information like GPS location exposed by any action which client does not expect.</string>
     <string name="intro_content7">It will be an Android application that gains a lot of potential users and encourages a world to avoid monitoring each other.</string>
     <string name="email"><a href="mailto:15049782d@connect.polyu.hk">Contact Me</a></string>
-    <string name="debug_on">Debug is now on.</string>
-    <string name="debug_off">Debug is now off.</string>
+    <string name="cas_on">Debug is now on.</string>
+    <string name="cas_off">Debug is now off.</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="about">About Me</string>
@@ -303,4 +299,5 @@ Really go back and discard changes?</string>
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+    <string name="title_activity_index">IndexActivity</string>
 </resources>
