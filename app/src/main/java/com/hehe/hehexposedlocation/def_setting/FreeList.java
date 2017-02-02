@@ -12,7 +12,7 @@ package com.hehe.hehexposedlocation.def_setting;
     * */
 
 public class FreeList{
-    public static final String[] PACKGE_LIST = { " "," " };//"android" , "com.google.android.gms"
+    public static final String[] PACKGE_LIST = { "android"," " };//"android" , "com.google.android.gms"
     public static final String[] KEYWORD_LIST = { " " };
     public static final String HoHo = "The list for free";
 }

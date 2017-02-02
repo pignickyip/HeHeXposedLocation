@@ -78,8 +78,8 @@ public class WhitelistActivity extends PreferenceActivity {
         ButterKnife.bind(this);
 
         this.getPreferenceManager().setSharedPreferencesMode(MODE_WORLD_READABLE);
-        mSharedPrefs = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
-        DisplaymSharedPrefs = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
+        mSharedPrefs = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
+        DisplaymSharedPrefs = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
         loadFromPrefs();
         resetUi();
 
@@ -92,7 +92,8 @@ public class WhitelistActivity extends PreferenceActivity {
     }
 
     private void loadFromPrefs() {
-        whitelistAllApps = mSharedPrefs.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true);
+        whitelistAllApps = DisplaymSharedPrefs.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true);
+
         pkgList.clear();
         pkgList.addAll(mSharedPrefs.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
         Collections.sort(pkgList);
@@ -153,8 +154,8 @@ public class WhitelistActivity extends PreferenceActivity {
         builder.setItems(sortedNames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String pkg = nameMap.get(sortedNames[which]);
-                        appList.add(pkgMap.get(pkg));
+                        String pkg = pkgMap.get(sortedNames[which]);
+                        appList.add(nameMap.get(pkg));
                         Collections.sort(appList);
                         pkgList.add(pkg);
                         Collections.sort(pkgList);
@@ -182,8 +183,8 @@ public class WhitelistActivity extends PreferenceActivity {
                             }
                         }
                         if(checc) {
-                            String pkg = nameMap.get(cho);
-                            appList.add(pkgMap.get(pkg));
+                            String pkg = pkgMap.get(cho);
+                            appList.add(nameMap.get(pkg));
                             Collections.sort(appList);
                             pkgList.add(nameMap.get(cho));
                             Collections.sort(pkgList);
@@ -239,7 +240,6 @@ public class WhitelistActivity extends PreferenceActivity {
             PackageManager pm = contextHolder.get().getPackageManager();
             final List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
             final String[] names = new String[packages.size()];
-            final String[] apps_name = new String[packages.size()];
             final HashMap<String, String> nameMap = new HashMap<>();
             final HashMap<String, String> pkgMap = new HashMap<>();
             int i = 0;
@@ -247,8 +247,8 @@ public class WhitelistActivity extends PreferenceActivity {
             for (ApplicationInfo info : packages) {
                 //names[i] = info.loadLabel(pm) + "\n(" + info.packageName + ")";
                 names[i] = (String)info.loadLabel(pm);
-                nameMap.put(names[i], info.packageName);
-                pkgMap.put(info.packageName,names[i]);
+                nameMap.put(info.packageName,names[i]);
+                pkgMap.put(names[i], info.packageName);
                 appIcon.put(info.packageName,info.loadIcon(pm));
                 i++;
             }
@@ -258,7 +258,7 @@ public class WhitelistActivity extends PreferenceActivity {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void run() {
-                    contextHolder.get().showAddAppDialog(nameMap,pkgMap,  names);
+                    contextHolder.get().showAddAppDialog(nameMap,pkgMap, names);
                 }
             });
         }

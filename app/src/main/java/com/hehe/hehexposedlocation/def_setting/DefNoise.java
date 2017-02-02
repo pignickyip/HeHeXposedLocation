@@ -46,7 +46,7 @@ import static de.robv.android.xposed.XposedHelpers.findConstructorExact;
 /**
  * The Spinner noise setting
  */
-
+//TODO the sharedPreferences_whitelist need to reset/clear
 public class DefNoise implements IXposedHookLoadPackage  {
     final static int sdk = Build.VERSION.SDK_INT;
     final static double MaxLat= -90.0;
@@ -70,6 +70,9 @@ public class DefNoise implements IXposedHookLoadPackage  {
         appList.clear();
         appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
         Collections.sort(appList);
+
+        for(String as :appList)
+                XposedBridge.log(as);
 
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
