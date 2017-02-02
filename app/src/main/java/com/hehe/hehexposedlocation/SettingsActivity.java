@@ -137,15 +137,23 @@ public class SettingsActivity extends PreferenceActivity  {
                     builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            //Default setting position
                             clear = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
                             PE = clear.edit();
                             PE.clear();
                             PE.apply();
+                            //Customer setting value
                             clear = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
                             PE = clear.edit();
                             PE.clear();
                             PE.apply();
-                            clear = getSharedPreferences(Common.SHARED_PREFERENCES_FILE, MODE_WORLD_READABLE);
+
+                            //white list
+                            clear = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+                            clear = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
                             PE = clear.edit();
                             PE.clear();
                             PE.apply();

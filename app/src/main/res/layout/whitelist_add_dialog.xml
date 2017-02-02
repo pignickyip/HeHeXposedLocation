@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:id="@+id/whitelist_dialog_addapps"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="200dip"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+
+    <ListView android:id="@+id/item_addapp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:choiceMode="singleChoice">
+    </ListView>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:maxLines="1"
+        android:hint="@string/whitelist_Search_hints"
+        android:id="@+id/searchbox" />
+
+</LinearLayout>

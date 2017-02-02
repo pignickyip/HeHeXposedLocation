@@ -17,6 +17,9 @@
     <string name="settings_title">Settings</string>
     <string name="settings_noise">Noise</string>
 
+    <string name="whitelist_Search_hints">Type the apps name</string>
+    <string name="whitelist_Search_button">FastKey</string>
+
     <string name="settings_display_resource">Application resource: </string>
     <string name="settings_list_resource">Show Me</string>
     <string name="settings_display_permissions">Change the permissions: </string>

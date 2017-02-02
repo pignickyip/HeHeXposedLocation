@@ -55,18 +55,19 @@ public class DefNoise implements IXposedHookLoadPackage  {
     final static double MinLong = -180.0;
     final static String[] FreePacketList = PACKGE_LIST;
     final static String[] FreeKeywordList = KEYWORD_LIST;
+    final List<String> appList = new ArrayList<String>();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.html
-        final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_FILE);
+        final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
         final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
         final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_CUSTOMER);
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
         sharedPreferences_customer.makeWorldReadable();
 
-        List<String> appList = new ArrayList<String>();
+        appList.clear();
         appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
         Collections.sort(appList);
 
@@ -84,7 +85,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     //XposedBridge.log("The User chose Default");
                 } else if (omg == 1) {//Customer
                     adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_CUSTOMER, 5);
-                    XposedBridge.log("The User chose  Customer and the value is " + adapter);
+                    XposedBridge.log("The User chose Customer and the value is " + adapter);
                     if (sdk >= 21)
                         adapter = ThreadLocalRandom.current().nextInt(1, adapter);
                     else
@@ -145,11 +146,6 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     //super.afterHookedMethod(param);
                                     Random rand = new Random(range);
                                     //Original value + random value
-
-                                    List<String> appList = new ArrayList<String>();
-                                    appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
-                                    Collections.sort(appList);
-
                                     double RanLat = (
                                             (rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) * 1000 / 1000
                                     );
@@ -159,12 +155,14 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                         double ori = (double) param.getResult();//get the original result
                                         for (String List_pkg : FreePacketList) {
                                             //TODO escape
+                                            //Check the package in free list -> created by admin
                                             if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
+                                                //within white list
                                                 if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){
                                                     param.setResult(ori);
                                                     XposedBridge.log(packageName + " needs the accuracy location" );
                                                 }
-                                                else{
+                                                else{//if not in white list
                                                     double ra = rand.nextInt(5) / 10000000;
                                                     ra += ori;
                                                     param.setResult(ra);
