@@ -1,6 +1,6 @@
 package com.hehe.hehexposedlocation.def_setting;
 
-//TODO
+//
     /*
     * There are the free list of specify android apps
     * Packge_list mean the packet which can escape my noise

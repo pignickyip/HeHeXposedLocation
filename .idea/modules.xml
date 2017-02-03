@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/api-82/api-82.iml" filepath="$PROJECT_DIR$/api-82/api-82.iml" />
       <module fileurl="file://$PROJECT_DIR$/api-82-sources/api-82-sources.iml" filepath="$PROJECT_DIR$/api-82-sources/api-82-sources.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jsoup-1.10.2/jsoup-1.10.2.iml" filepath="$PROJECT_DIR$/jsoup-1.10.2/jsoup-1.10.2.iml" />
     </modules>
   </component>
 </project>

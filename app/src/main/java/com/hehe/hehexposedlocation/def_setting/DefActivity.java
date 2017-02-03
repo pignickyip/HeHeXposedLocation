@@ -17,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,32 +24,37 @@ import android.widget.Toast;
 import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.Common;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import java.io.IOException;
 
 public class DefActivity extends Activity  {
     Spinner spinnerDef;
     ArrayAdapter adapter;
-    String [] intro;
-    List<PackageInfo> pkgs;
-    AlertDialog.Builder b;
     static boolean te = true;
-    // private EditText Customertext  = (EditText) findViewById(R.id.customnumber);
-    private ListView vlist;
-    private Intent parentIntent;
     public static int POSITION;
     public static SharedPreferences CUSTOMER = null;
     public static SharedPreferences SAVE_ACTION = null;
-    public static List<ResolveInfo> pkgAppsList;
-    public static List<PackageInfo> pkgApp;
-    private ArrayList results = new ArrayList();
+    public static SharedPreferences UserApplicationFile = null;
+    public static SharedPreferences SystemApplicationFile = null;
+    public static SharedPreferences WebContent = null;
+
+    private PackageManager pm = this.getPackageManager();
+    private SharedPreferences.Editor PE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +76,16 @@ public class DefActivity extends Activity  {
         // Prints Pretty, Cool, Weird
         tv.setText(Arrays.toString(word).replaceAll("\\[|\\]", ""));
 
-        Control();//DO logic
+        GetFile();//DO logic
     }
-    protected void Control()  {
+    protected void GetFile()  {
         //HashMAp
-        Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
+        /*Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
         mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);//http://blog.csdn.net/jackrex/article/details/9189657
-        pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);
+        pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);*/
+        //http://stackoverflow.com/questions/6418945/retrieving-application-information-from-package-manager
+        //http://blog.csdn.net/qinjuning/article/details/6867806
+        // http://stackoverflow.com/questions/14675978/getting-attributes-values-from-xml-in-java
         //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
         // Category
         /*pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
@@ -95,7 +101,67 @@ public class DefActivity extends Activity  {
         catch(Exception e){
             Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
         }*/
+        //http://blog.csdn.net/feng88724/article/details/6198446
+        // Android】获取手机中已安装apk文件信息(PackageInfo、ResolveInfo)(应用图片、应用名、包名等)
+        // 查询所有已经安装的应用程序
+        List<String> UserpkgName = new ArrayList<String>();
+        List<String> SyspkgName = new ArrayList<String>();
+        //获取手机内所有应用
+        List<PackageInfo> paklist = pm.getInstalledPackages(0);
+        for (int i = 0; i < paklist.size(); i++) {
+            PackageInfo pak = (PackageInfo) paklist.get(i);
+            //判断是否为非系统预装的应用程序
+            if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
+                // customs applications
+                UserpkgName.add(pak.packageName);
+            }
+            else
+                SyspkgName.add(pak.packageName);
+        }
+        UserApplicationFile = getSharedPreferences(Common.USER_PACKET_NAME, 0);
+        SystemApplicationFile = getSharedPreferences(Common.SYSTEM_PACKET_NAME, 0);
 
+        PE = UserApplicationFile.edit();
+        PE.putStringSet(Common.USER_PACKET_NAME_KEY, (Set<String>) UserpkgName);
+        PE.apply();
+
+        PE = SystemApplicationFile.edit();
+        PE.putStringSet(Common.SYSTEM_PACKET_NAME_KEY, (Set<String>) SyspkgName);
+        PE.apply();
+
+        GetWebData(UserpkgName, SyspkgName);
+    }
+    private void GetWebData(List<String> UserpkgName, List<String> SyspkgName){
+        try {
+            WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
+            String playstoreURL = "https://play.google.com/store/apps/details?id=";
+            String test = "com.google.android.apps.maps";
+            //Document[] doc;
+            Document doc = Jsoup.connect(playstoreURL+test).get();
+            Elements links = doc.select("a[href]");
+            Elements imports = doc.select("link[href]");
+            String a = " " ,b = " ";
+            for (Element link : imports) {
+                a = " * %s <%s> (%s)" + link.tagName() + link.attr("abs:href") + link.attr("rel");
+            }
+
+            PE = WebContent.edit();
+            PE.putString(test,a);
+            PE.apply();
+
+            for (Element link : links) {
+               b = " * a: <%s>  (%s)" + link.attr("abs:href") + trim(link.text(), 35);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    private static String trim(String s, int width) {
+        if (s.length() > width)
+            return s.substring(0, width-1) + ".";
+        else
+            return s;
     }
     protected void initControls() {
         spinnerDef = (Spinner) findViewById(R.id.def_spinner);

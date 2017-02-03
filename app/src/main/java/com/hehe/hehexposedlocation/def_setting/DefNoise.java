@@ -55,7 +55,9 @@ public class DefNoise implements IXposedHookLoadPackage  {
     final static double MinLong = -180.0;
     final static String[] FreePacketList = PACKGE_LIST;
     final static String[] FreeKeywordList = KEYWORD_LIST;
-    final List<String> appList = new ArrayList<String>();
+    final List<String> WhiteListappList = new ArrayList<String>();
+    final List<String> UserpkgName = new ArrayList<String>();
+    final List<String> SyspkgName = new ArrayList<String>();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -63,17 +65,31 @@ public class DefNoise implements IXposedHookLoadPackage  {
         final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
         final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
         final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_CUSTOMER);
+        final XSharedPreferences sharedPreferences_UserApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
+        final XSharedPreferences sharedPreferences_SystemApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
+        final XSharedPreferences sharedPreferences_WebContent = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WEB_CONTENT);
+
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
         sharedPreferences_customer.makeWorldReadable();
+        sharedPreferences_UserApplicationFile.makeWorldReadable();
+        sharedPreferences_SystemApplicationFile.makeWorldReadable();
+        sharedPreferences_WebContent.makeWorldReadable();
 
-        appList.clear();
-        appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
-        Collections.sort(appList);
+        WhiteListappList.clear();
+        WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
+        Collections.sort(WhiteListappList);
 
-        for(String as :appList)
-                XposedBridge.log(as);
+        UserpkgName.clear();
+        UserpkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.USER_PACKET_NAME_KEY,new HashSet<String>()));
+        Collections.sort(UserpkgName);
 
+        SyspkgName.clear();
+        SyspkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY,new HashSet<String>()));
+        Collections.sort(SyspkgName);
+
+        String hehe = sharedPreferences_WebContent.getString("com.google.android.apps.maps", " ");
+        XposedBridge.log("The HeHE is " + hehe);
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
@@ -110,7 +126,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/LocationManager.java
             */
                 if (omg != 0) {
-                    if (sharedPreferences_whitelist.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true) || appList.contains(lpparam.packageName)) {
+                    if (sharedPreferences_whitelist.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true) || WhiteListappList.contains(lpparam.packageName)) {
                         //https://android.googlesource.com/platform/frameworks/base/+/9637d474899d9725da8a41fdf92b9bd1a15d301e/core/java/android/provider/Settings.java
                         findAndHookMethod("android.provider.Settings.Secure", lpparam.classLoader, "getString",
                                 ContentResolver.class, String.class, new XC_MethodHook() {
@@ -159,9 +175,9 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                         for (String List_pkg : FreePacketList) {
                                             //TODO escape
                                             //Check the package in free list -> created by admin
-                                            if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
+                                            if (Objects.equals(List_pkg, packageName) || (WhiteListappList.contains(packageName))) {
                                                 //within white list
-                                                if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){
+                                                if(Objects.equals(List_pkg, CurrpackageName) ||(WhiteListappList.contains(CurrpackageName))){
                                                     param.setResult(ori);
                                                     XposedBridge.log(packageName + " needs the accuracy location" );
                                                 }

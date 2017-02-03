@@ -19,6 +19,7 @@ import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
 
 
 public class Common {
+    public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
     public static final String SYSTEM_LOCATION = "android.location.Location";
     public static final String SYSTEM_LOCATION_MANGER = "android.location.LocationManager";
     public static final String SYSTEM_LOCATION_LISTENER = "android.location.LocationListener";
@@ -30,11 +31,18 @@ public class Common {
     public static final String SHARED_PREDERENCES_CUSTOMER_CHECK = "customercheck";
     public static final String SHARED_PREDERENCES_CUSTOMER_RECORD = "customerrecord";
 
-    public static final String SHARED_Noise_FILE = "HeHeXposedLocation";
+    public static final String SHARE_APPLICATIONS_TYPE = "APPLICATIONTYPE";
     public static final String PREF_KEY_WHITELIST_ALL = "whitelist_all_apps";
     public static final String PREF_KEY_WHITELIST_APP_LIST = "whitelist_apps_list";
     public static final String PREFS_SETTINGS = "CustomizeSettings";
-    public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
+
+    public static final String USER_PACKET_NAME = "USER_PACKET_NAME";
+    public static final String USER_PACKET_NAME_KEY = "USER_PACKET_NAME_KEY";
+    public static final String SYSTEM_PACKET_NAME = "SYSTEM_PACKET_NAME";
+    public static final String SYSTEM_PACKET_NAME_KEY = "SYSTEM_PACKET_NAME_KEY";
+    public static final String WEB_CONTENT = "WEB_CONTENT";
+    public static final String WEB_CONTENT_KEY = "WEB_CONTENT_KEY";
+
     public static final String FIRST_RUN_KEY = Common.PACKAGE_NAME + "IS_FIRST_RUN";
     public static final String DEBUG_KEY = Common.PACKAGE_NAME + "DEBUGGERPREF";
     public static final String SHOW_WARNING = "SHOW_WARNING";

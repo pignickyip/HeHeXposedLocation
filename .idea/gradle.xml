@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/api-82" />
             <option value="$PROJECT_DIR$/api-82-sources" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/jsoup-1.10.2" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
