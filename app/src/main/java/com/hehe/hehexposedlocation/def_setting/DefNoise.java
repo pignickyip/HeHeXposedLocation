@@ -16,6 +16,12 @@ import android.support.annotation.RequiresApi;
 import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.Common;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -58,6 +64,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
     final List<String> WhiteListappList = new ArrayList<String>();
     final List<String> UserpkgName = new ArrayList<String>();
     final List<String> SyspkgName = new ArrayList<String>();
+    final List<String> WebContent = new ArrayList<String>();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -88,8 +95,18 @@ public class DefNoise implements IXposedHookLoadPackage  {
         SyspkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY,new HashSet<String>()));
         Collections.sort(SyspkgName);
 
-        String hehe = sharedPreferences_WebContent.getString("com.google.android.apps.maps", " ");
-        XposedBridge.log("The HeHE is " + hehe);
+        String test = "com.google.android.apps.maps";
+        WebContent.clear();
+        WebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
+        Collections.sort(WebContent);
+        if(WebContent.isEmpty())
+            XposedBridge.log("Is empty");
+        else {
+            for (String web : WebContent) {
+                XposedBridge.log("The HeHE is " + web);
+            }
+        }
+
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {

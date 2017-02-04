@@ -8,7 +8,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:text="Here "
+        android:text="@string/main_activity_inroo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView11" />

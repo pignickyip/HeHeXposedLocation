@@ -38,8 +38,11 @@ public class Common {
 
     public static final String USER_PACKET_NAME = "USER_PACKET_NAME";
     public static final String USER_PACKET_NAME_KEY = "USER_PACKET_NAME_KEY";
+    public static final String USER_PACKET_NAME_KEY_ALL = "USER_PACKET_NAME_KEY_ALL";
     public static final String SYSTEM_PACKET_NAME = "SYSTEM_PACKET_NAME";
     public static final String SYSTEM_PACKET_NAME_KEY = "SYSTEM_PACKET_NAME_KEY";
+    public static final String SYSTEM_PACKET_NAME_KEY_ALL = "SYSTEM_PACKET_NAME_KEY_ALL";
+
     public static final String WEB_CONTENT = "WEB_CONTENT";
     public static final String WEB_CONTENT_KEY = "WEB_CONTENT_KEY";
 

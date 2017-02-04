@@ -10,6 +10,7 @@ import android.content.pm.FeatureGroupInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,11 +29,14 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.helper.Validate;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +57,12 @@ public class DefActivity extends Activity  {
     public static SharedPreferences SystemApplicationFile = null;
     public static SharedPreferences WebContent = null;
 
-    private PackageManager pm = this.getPackageManager();
+    private PackageManager pm;
     private SharedPreferences.Editor PE;
 
+    final List<String> UserpkgName = new ArrayList<String>();
+    final List<String> SyspkgName = new ArrayList<String>();
+    final List<String> Webcontent = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,33 +86,11 @@ public class DefActivity extends Activity  {
         GetFile();//DO logic
     }
     protected void GetFile()  {
-        //HashMAp
-        /*Intent mainIntent = new Intent(Intent.ACTION_MAIN, null);
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER);//http://blog.csdn.net/jackrex/article/details/9189657
-        pkgAppsList = this.getPackageManager().queryIntentActivities(mainIntent, 0);*/
-        //http://stackoverflow.com/questions/6418945/retrieving-application-information-from-package-manager
-        //http://blog.csdn.net/qinjuning/article/details/6867806
-        // http://stackoverflow.com/questions/14675978/getting-attributes-values-from-xml-in-java
-        //获取所有应用的名称，包名，以及权限 有了包名就可以判断是否有某个应用了
-        // Category
-        /*pkgApp = getPackageManager().getInstalledPackages(PackageManager.GET_PERMISSIONS);
-        try {
-            PackageManager packageManager = getPackageManager();
-            for (PackageInfo pkgInfo : pkgApp) {
-                String[] perms = pkgInfo.requestedPermissions;
-                if (perms != null)
-                    for (String perm : perms) {
-                    }
-            }
-        }
-        catch(Exception e){
-            Log.e("WTF","FUCK",e);//http://blog.csdn.net/Android_Tutor/article/details/5081713
-        }*/
         //http://blog.csdn.net/feng88724/article/details/6198446
         // Android】获取手机中已安装apk文件信息(PackageInfo、ResolveInfo)(应用图片、应用名、包名等)
         // 查询所有已经安装的应用程序
-        List<String> UserpkgName = new ArrayList<String>();
-        List<String> SyspkgName = new ArrayList<String>();
+        pm = this.getPackageManager();
+
         //获取手机内所有应用
         List<PackageInfo> paklist = pm.getInstalledPackages(0);
         for (int i = 0; i < paklist.size(); i++) {
@@ -118,44 +103,105 @@ public class DefActivity extends Activity  {
             else
                 SyspkgName.add(pak.packageName);
         }
+        Collections.sort(UserpkgName);
+        Collections.sort(SyspkgName);
+
         UserApplicationFile = getSharedPreferences(Common.USER_PACKET_NAME, 0);
         SystemApplicationFile = getSharedPreferences(Common.SYSTEM_PACKET_NAME, 0);
 
         PE = UserApplicationFile.edit();
-        PE.putStringSet(Common.USER_PACKET_NAME_KEY, (Set<String>) UserpkgName);
+        PE.putBoolean(Common.USER_PACKET_NAME_KEY_ALL, true);
+        PE.putStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>(UserpkgName));
         PE.apply();
 
         PE = SystemApplicationFile.edit();
-        PE.putStringSet(Common.SYSTEM_PACKET_NAME_KEY, (Set<String>) SyspkgName);
+        PE.putBoolean(Common.SYSTEM_PACKET_NAME_KEY_ALL, true);
+        PE.putStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>(SyspkgName));
         PE.apply();
 
-        GetWebData(UserpkgName, SyspkgName);
-    }
-    private void GetWebData(List<String> UserpkgName, List<String> SyspkgName){
+        // https://jsoup.org/cookbook/extracting-data/dom-navigation
+        // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
+        WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
+        String test = "com.google.android.apps.maps";
+        String Domain = "https://play.google.com";
+        String ShortURL = "/store/apps/details?id=";
+        String ContrySet = "&hl=en";
+        final String url = Domain + ShortURL + test + ContrySet;
+        Document doc = null;
         try {
-            WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
-            String playstoreURL = "https://play.google.com/store/apps/details?id=";
-            String test = "com.google.android.apps.maps";
-            //Document[] doc;
-            Document doc = Jsoup.connect(playstoreURL+test).get();
-            Elements links = doc.select("a[href]");
-            Elements imports = doc.select("link[href]");
-            String a = " " ,b = " ";
-            for (Element link : imports) {
-                a = " * %s <%s> (%s)" + link.tagName() + link.attr("abs:href") + link.attr("rel");
-            }
-
-            PE = WebContent.edit();
-            PE.putString(test,a);
-            PE.apply();
-
-            for (Element link : links) {
-               b = " * a: <%s>  (%s)" + link.attr("abs:href") + trim(link.text(), 35);
-            }
-
-        } catch (IOException e) {
+            doc = Jsoup.connect(url).get();
+        }catch (Exception e) {
             e.printStackTrace();
+            Webcontent.add("sss");
         }
+        if(doc != null) {
+            Element link = doc.select("span[itemprop=genre]").first();
+            String subCategory = link.text();
+            Webcontent.add(subCategory);
+        }
+        else
+            Webcontent.add("doc is null");
+
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //http://stackoverflow.com/questions/10710442/how-to-get-category-for-each-app-on-device-on-android
+                Document doc = null;
+                try {
+                    doc = Jsoup.connect(url).get();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                    Webcontent.add("sss");
+                }
+                    // http://www.oodlestechnologies.com/blogs/Getting-app-information-from-Google-play-store-by-Url
+                   // Elements links = doc.select("a[href]");
+                   // Element linkss = doc.select("a").first();
+                  //  Webcontent.add(linkss.className());
+                if(doc != null) {
+                    Element link = doc.select("span[itemprop=genre]").first();
+                    //String subCategory = Jsoup.parse(detailsInfo.select("span[itemprop=genre]").first().toString().replace("<span itemprop=\"genre\">", "").replace("</span>", "")).text();
+                    //String category = Jsoup.parse(detailsInfo.select("a.category").attr("href")).text();
+                    String subCategory = link.text();
+                    Webcontent.add(subCategory);
+                    //Webcontent.add(category);
+                    /*int gameIndex = category.indexOf("GAME");
+                    if(gameIndex == -1){
+                        category = subCategory;
+                    }else{
+                        category = "GAMES";
+                    }
+                    Webcontent.add(category);
+                    for (Element link : links) {
+                        String className = link.className();
+                        String classNameHref = link.attr("href");
+                        if (classNameHref.startsWith("/store/apps/category/")) {
+                            Webcontent.add(classNameHref);
+                        }
+                        if (Objects.equals(className, "document-subtitle category")) {
+                            Webcontent.add(classNameHref);
+                        }
+                        Webcontent.add("errr");
+
+                    } */
+                }
+                else
+                    Webcontent.add("doc is null");
+            }
+        });
+        //t0.start();
+        if(Webcontent.isEmpty())
+            Webcontent.add("url");
+        else
+            Webcontent.add("had value");
+        // <a class="document-subtitle category" href="/store/apps/category/TRAVEL_AND_LOCAL">
+        // <span itemprop="genre">
+        // 旅遊XXXX
+        //</span>
+        // </a>
+        PE = WebContent.edit();
+        PE.putStringSet(Common.WEB_CONTENT_KEY,new HashSet<String>(Webcontent));
+        PE.apply();
+
     }
     private static String trim(String s, int width) {
         if (s.length() > width)
@@ -178,6 +224,10 @@ public class DefActivity extends Activity  {
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
         CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
+
+        UserpkgName.clear();
+        SyspkgName.clear();
+        Webcontent.clear();
     }
     protected void showInputDialog() {
 
@@ -250,5 +300,7 @@ public class DefActivity extends Activity  {
             //Rly othing
         }
 
+    }
+    protected void onDestory(){
     }
 }

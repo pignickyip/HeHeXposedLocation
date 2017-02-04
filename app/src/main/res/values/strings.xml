@@ -3,6 +3,7 @@
     <string name="app_name">HeHeXposed</string>
     <string name="app_mod_summary">We are IS&#8230;</string>
     <string name="title_activity_whitelist">Whitelist Settings</string>
+    <string name="main_activity_inroo">Here get Smart Location Obfuscation</string>
     <string name="empty_state">Add apps that you want this module to spoof. All apps can currently detect your Mock Locations setting.</string>
     <string name="all_apps_whitelisted_state">No apps should be able to detect that Mock Locations is on.</string>
     <string name="loading_app_list">Loading your apps.</string>

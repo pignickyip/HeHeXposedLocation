@@ -8,6 +8,8 @@
       <module fileurl="file://$PROJECT_DIR$/api-82-sources/api-82-sources.iml" filepath="$PROJECT_DIR$/api-82-sources/api-82-sources.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/jsoup-1.10.2/jsoup-1.10.2.iml" filepath="$PROJECT_DIR$/jsoup-1.10.2/jsoup-1.10.2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jsoup-1.10.2-javadoc/jsoup-1.10.2-javadoc.iml" filepath="$PROJECT_DIR$/jsoup-1.10.2-javadoc/jsoup-1.10.2-javadoc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jsoup-1.10.2-sources/jsoup-1.10.2-sources.iml" filepath="$PROJECT_DIR$/jsoup-1.10.2-sources/jsoup-1.10.2-sources.iml" />
     </modules>
   </component>
 </project>
