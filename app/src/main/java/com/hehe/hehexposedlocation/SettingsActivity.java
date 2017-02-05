@@ -6,6 +6,9 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
@@ -29,7 +32,10 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 
@@ -40,9 +46,20 @@ public class SettingsActivity extends PreferenceActivity  {
     String[] menuItems;
     String instructionsString;
     String instructionsTitle;
+
+    private PackageManager pm;
+
     SharedPreferences clear;
     SharedPreferences.Editor PE;
-    private int mPrevSelectedId;
+
+    public static SharedPreferences UserApplicationFile = null;
+    public static SharedPreferences SystemApplicationFile = null;
+    public static SharedPreferences WebContent = null;
+
+    final List<String> UserpkgName = new ArrayList<String>();
+    final List<String> SyspkgName = new ArrayList<String>();
+    String AppsCategorty = null;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -57,8 +74,7 @@ public class SettingsActivity extends PreferenceActivity  {
         menuItems = res.getStringArray(R.array.menu_array);
         instructionsString = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" + "\n\n"
                + "\n\n"
-                 + "\n\n"
-                 ;
+                 + "\n\n";
 
         instructionsTitle = res.getString(R.string.instructions_title);
 
@@ -132,8 +148,8 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
-                    intent = new Intent ( this, IndexActivity.class );
-                    startActivity ( intent );
+                    GetFile();
+                    //Toast.makeText(getApplicationContext(), hoho , Toast.LENGTH_LONG).show();
                     break;
                 case 7: //clear all setting
                 {
@@ -227,5 +243,89 @@ public class SettingsActivity extends PreferenceActivity  {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+    protected void GetFile()  {
+        UserpkgName.clear();
+        SyspkgName.clear();
+        //http://blog.csdn.net/feng88724/article/details/6198446
+        // Android】获取手机中已安装apk文件信息(PackageInfo、ResolveInfo)(应用图片、应用名、包名等)
+        // 查询所有已经安装的应用程序
+        pm = this.getPackageManager();
+
+        //获取手机内所有应用
+        List<PackageInfo> paklist = pm.getInstalledPackages(0);
+        for (int i = 0; i < paklist.size(); i++) {
+            PackageInfo pak = (PackageInfo) paklist.get(i);
+            //判断是否为非系统预装的应用程序
+            if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
+                // customs applications
+                UserpkgName.add(pak.packageName);
+            }
+            else
+                SyspkgName.add(pak.packageName);
+        }
+        Collections.sort(UserpkgName);
+        Collections.sort(SyspkgName);
+
+        UserApplicationFile = getSharedPreferences(Common.USER_PACKET_NAME, 0);
+        SystemApplicationFile = getSharedPreferences(Common.SYSTEM_PACKET_NAME, 0);
+
+        PE = UserApplicationFile.edit();
+        PE.putBoolean(Common.USER_PACKET_NAME_KEY_ALL, true);
+        PE.putStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>(UserpkgName));
+        PE.apply();
+
+        PE = SystemApplicationFile.edit();
+        PE.putBoolean(Common.SYSTEM_PACKET_NAME_KEY_ALL, true);
+        PE.putStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>(SyspkgName));
+        PE.apply();
+
+        List<String> Category = new ArrayList<String>();
+        WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
+
+        for(String User : UserpkgName) {
+            Category.add(User + WebGet(User));
+        }
+        for(String System : SyspkgName){
+            Category.add(System + WebGet(System));
+        }
+        Collections.sort(Category);
+
+        PE = WebContent.edit();
+        PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
+        PE.apply();
+        // https://jsoup.org/cookbook/extracting-data/dom-navigation
+        // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
+    }
+    protected String WebGet(String pkg){//TODO get null
+        String Domain = "https://play.google.com";
+        String ShortURL = "/store/apps/details?id=";
+        String ContrySet = "&hl=en";
+        final String url = Domain + ShortURL + pkg + ContrySet;
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //http://stackoverflow.com/questions/10710442/how-to-get-category-for-each-app-on-device-on-android
+                Document doc = null;
+                try {
+                    doc = Jsoup.connect(url).get();
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+                // Reference code
+                // http://www.oodlestechnologies.com/blogs/Getting-app-information-from-Google-play-store-by-Url
+                if(doc != null) {
+                    Element link = doc.select("span[itemprop=genre]").first();
+                    AppsCategorty = (link.text());
+                }
+            }
+        });
+        t0.start();
+        // <a class="document-subtitle category" href="/store/apps/category/TRAVEL_AND_LOCAL">
+        // <span itemprop="genre">
+        // 旅遊XXXX
+        //</span>
+        // </a>
+        return AppsCategorty;
     }
 }

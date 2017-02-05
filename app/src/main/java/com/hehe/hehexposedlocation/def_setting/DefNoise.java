@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -48,6 +49,7 @@ import static com.hehe.hehexposedlocation.def_setting.FreeList.PACKGE_LIST;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findConstructorExact;
+import static de.robv.android.xposed.XposedHelpers.setDoubleField;
 
 /**
  * The Spinner noise setting
@@ -64,7 +66,8 @@ public class DefNoise implements IXposedHookLoadPackage  {
     final List<String> WhiteListappList = new ArrayList<String>();
     final List<String> UserpkgName = new ArrayList<String>();
     final List<String> SyspkgName = new ArrayList<String>();
-    final List<String> WebContent = new ArrayList<String>();
+    final List<String> GetWebContent = new ArrayList<String>();
+    final Hashtable<String,String> WebContent = new Hashtable<String,String>();
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -92,20 +95,44 @@ public class DefNoise implements IXposedHookLoadPackage  {
         Collections.sort(UserpkgName);
 
         SyspkgName.clear();
-        SyspkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY,new HashSet<String>()));
+        SyspkgName.addAll(sharedPreferences_SystemApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY,new HashSet<String>()));
         Collections.sort(SyspkgName);
 
-        String test = "com.google.android.apps.maps";
+        GetWebContent.clear();
+        GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY,new HashSet<String>()));
+        Collections.sort(GetWebContent);
+
         WebContent.clear();
-        WebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
-        Collections.sort(WebContent);
-        if(WebContent.isEmpty())
-            XposedBridge.log("Is empty");
-        else {
-            for (String web : WebContent) {
-                XposedBridge.log("The HeHE is " + web);
+        for(String Web : GetWebContent){
+            /*Boolean next =true;
+            for(String User : UserpkgName){
+                if(Web.startsWith(User)) {
+                    WebContent.put(User,Web.substring(User.length()));
+                    next = false;
+                    XposedBridge.log("ssadas " + User);
+                    break;
+                }
             }
+            if(next){
+                for(String System : SyspkgName){
+                    if(Web.startsWith(System)) {
+                        WebContent.put(System,Web.substring(System.length()));
+                        break;
+                    }
+                }
+            }*/
+            XposedBridge.log("ssadas " + Web);
         }
+        if(GetWebContent.isEmpty()){
+            /*for(String User : UserpkgName){
+                String hehe = WebContent.get(User);
+                if(hehe != null)
+                  XposedBridge.log("The AA here: " + hehe);
+            }*/
+            XposedBridge.log("empty");
+        }
+        else
+            XposedBridge.log("Not empty");
 
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
@@ -355,6 +382,8 @@ public class DefNoise implements IXposedHookLoadPackage  {
             }
         }
     }
+
+
 
     private String valueToStringOrEmpty(Map<String, ?> map, String key) {
         Object value = map.get(key);
