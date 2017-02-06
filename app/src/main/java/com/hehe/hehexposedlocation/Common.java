@@ -20,10 +20,11 @@ import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
 
 public class Common {
     public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
+
     public static final String SYSTEM_LOCATION = "android.location.Location";
     public static final String SYSTEM_LOCATION_MANGER = "android.location.LocationManager";
     public static final String SYSTEM_LOCATION_LISTENER = "android.location.LocationListener";
-    //public static final String SHARED_PREFERENCES_FILE = "mockmocklocations";
+
     public static final String SHARED_WHITELIST_PREFERENCES_FILE = "SHARED_WHITELIST_PREFERENCES_FILE";
     public static final String SHARED_WHITELIST_PKGS_PREFERENCES_FILE = "SHARED_WHITELIST_PKGS_PREFERENCES_FILE";
     public static final String SHARED_PREFERENCES_POSITION = "position";
@@ -46,11 +47,6 @@ public class Common {
     public static final String WEB_CONTENT = "WEB_CONTENT";
     public static final String WEB_CONTENT_KEY = "WEB_CONTENT_KEY";
 
-    public static final String FIRST_RUN_KEY = Common.PACKAGE_NAME + "IS_FIRST_RUN";
-    public static final String DEBUG_KEY = Common.PACKAGE_NAME + "DEBUGGERPREF";
-    public static final String SHOW_WARNING = "SHOW_WARNING";
-    public static String DEFAULT = "None";
-    public static String CUSTOMER_NUM = "0";
 
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();
@@ -67,7 +63,6 @@ public class Common {
             return activity.getSharedPreferences(getPrefKey(), Context.MODE_WORLD_READABLE);
         }
     }
-
 
     public static class KeywordSet extends PrefSet {
         public static final String PREFS_KEYWORDS = "CustomizeKeywords";
