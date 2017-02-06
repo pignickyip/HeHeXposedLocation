@@ -104,16 +104,16 @@ public class DefNoise implements IXposedHookLoadPackage  {
 
         WebContent.clear();
         for(String Web : GetWebContent){
-            /*Boolean next =true;
+            //Boolean next =true;
             for(String User : UserpkgName){
                 if(Web.startsWith(User)) {
                     WebContent.put(User,Web.substring(User.length()));
-                    next = false;
-                    XposedBridge.log("ssadas " + User);
+                    //next = false;
+                    //XposedBridge.log(User + " -  " + Web.substring(User.length()));
                     break;
                 }
             }
-            if(next){
+            /*if(next){
                 for(String System : SyspkgName){
                     if(Web.startsWith(System)) {
                         WebContent.put(System,Web.substring(System.length()));
@@ -121,18 +121,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     }
                 }
             }*/
-            XposedBridge.log("ssadas " + Web);
         }
-        if(GetWebContent.isEmpty()){
-            /*for(String User : UserpkgName){
-                String hehe = WebContent.get(User);
-                if(hehe != null)
-                  XposedBridge.log("The AA here: " + hehe);
-            }*/
-            XposedBridge.log("empty");
-        }
-        else
-            XposedBridge.log("Not empty");
 
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
@@ -352,41 +341,10 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             }
                         }
                     });
-                    findAndHookMethod(Common.SYSTEM_LOCATION_LISTENER, lpparam.classLoader, "onLocationChanged",
-                            new XC_MethodHook() {
-                                @Override
-                                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                                    //double latitude = haha;
-                                    // double longitude = (-1)*haha;
-                                    //  float accuracy = (float)hoho;
-                                    // XposedBridge.log("Loaded app: " + Common.SYSTEM_LOCATION_LISTENER +  " Value: " + latitude +", " + longitude + "\n Accuracy: " +accuracy) ;
-                                }
-                            });
-                    findAndHookMethod(LocationManager.class, "getLastLocation", new XC_MethodHook() {
-                        @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                       /* Location l = new Location(LocationManager.GPS_PROVIDER);
-                        l.setLatitude(2.33);
-                        l.setLongitude(1.33);
-                        l.setAccuracy(1000f);
-                        l.setTime(System.currentTimeMillis());
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                            l.setElapsedRealtimeNanos(SystemClock.elapsedRealtimeNanos());
-                        }
-                        param.setResult(l);*/
-                        }
-                    });
                 }
             } catch (Exception e) {
                 XposedBridge.log("Wrong here");
             }
         }
-    }
-
-
-
-    private String valueToStringOrEmpty(Map<String, ?> map, String key) {
-        Object value = map.get(key);
-        return value == null ? "" : value.toString();
     }
 }

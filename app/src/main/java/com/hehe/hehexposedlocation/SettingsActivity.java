@@ -15,7 +15,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 
 import com.google.android.gms.appindexing.Action;
@@ -32,11 +30,13 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 public class SettingsActivity extends PreferenceActivity  {
@@ -58,7 +58,6 @@ public class SettingsActivity extends PreferenceActivity  {
 
     final List<String> UserpkgName = new ArrayList<String>();
     final List<String> SyspkgName = new ArrayList<String>();
-    String AppsCategorty = null;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -148,7 +147,11 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
-                    GetFile();
+                    try {
+                        GetFile();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     //Toast.makeText(getApplicationContext(), hoho , Toast.LENGTH_LONG).show();
                     break;
                 case 7: //clear all setting
@@ -244,7 +247,7 @@ public class SettingsActivity extends PreferenceActivity  {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
-    protected void GetFile()  {
+    protected void GetFile() throws InterruptedException {
         UserpkgName.clear();
         SyspkgName.clear();
         //http://blog.csdn.net/feng88724/article/details/6198446
@@ -281,14 +284,22 @@ public class SettingsActivity extends PreferenceActivity  {
         PE.apply();
 
         List<String> Category = new ArrayList<String>();
+        Category.clear();
         WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
 
         for(String User : UserpkgName) {
-            Category.add(User + WebGet(User));
+            String temp = WebGet(User);
+            if(temp != null) {
+                Category.add(User + temp);
+            }
         }
-        for(String System : SyspkgName){
-            Category.add(System + WebGet(System));
-        }
+        //Wait Dr.hu declar need or not
+        /*for(String System : SyspkgName){
+            String temp = WebGet(System);
+            if(temp != null) {
+                Category.add(System + temp);
+            }
+        }*/
         Collections.sort(Category);
 
         PE = WebContent.edit();
@@ -297,35 +308,44 @@ public class SettingsActivity extends PreferenceActivity  {
         // https://jsoup.org/cookbook/extracting-data/dom-navigation
         // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
     }
-    protected String WebGet(String pkg){//TODO get null
+    protected String WebGet(String pkg) throws InterruptedException {//TODO get null
         String Domain = "https://play.google.com";
         String ShortURL = "/store/apps/details?id=";
         String ContrySet = "&hl=en";
         final String url = Domain + ShortURL + pkg + ContrySet;
+         final AtomicReference<String> b = new AtomicReference<String>();
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
-                //http://stackoverflow.com/questions/10710442/how-to-get-category-for-each-app-on-device-on-android
                 Document doc = null;
                 try {
-                    doc = Jsoup.connect(url).get();
+                    // Reference code
+                    // http://stackoverflow.com/questions/10710442/how-to-get-category-for-each-app-on-device-on-android
+                    // http://www.oodlestechnologies.com/blogs/Getting-app-information-from-Google-play-store-by-Url
+                    doc = connect(url);
+                    if(doc != null) {
+                       // Element link = doc.select("span[itemprop=genre]").first();
+                        Element Alink = doc.select("a.category").first();
+                        String ge = Alink.text();
+                        b.set(ge);
+                    }
                 }catch (Exception e) {
                     e.printStackTrace();
-                }
-                // Reference code
-                // http://www.oodlestechnologies.com/blogs/Getting-app-information-from-Google-play-store-by-Url
-                if(doc != null) {
-                    Element link = doc.select("span[itemprop=genre]").first();
-                    AppsCategorty = (link.text());
                 }
             }
         });
         t0.start();
-        // <a class="document-subtitle category" href="/store/apps/category/TRAVEL_AND_LOCAL">
-        // <span itemprop="genre">
-        // 旅遊XXXX
-        //</span>
-        // </a>
-        return AppsCategorty;
+        t0.join();
+        return b.get();
+    }
+    private static Document connect(String url) {
+        Document doc = null;
+        try {
+            doc = Jsoup.connect(url).timeout(1000*3).get();//.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0").referrer("http://www.google.com")
+        } catch (NullPointerException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return doc;
     }
 }
