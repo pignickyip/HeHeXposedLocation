@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+    <TextView
+        android:text="@string/feedbackIntro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/feedback_intro" />
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RadioGroup
+            android:id="@+id/comfortable_radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:text="@string/FeedbackChoice1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Strong" />
+
+            <RadioButton
+                android:text="@string/FeedbackChoice2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Suitable"
+                />
+
+            <RadioButton
+                android:text="@string/FeedbackChoice3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Week" />
+
+        </RadioGroup>
+    </LinearLayout>
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawSelectorOnTop="false"/>
+
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No data" />
+
+    <TextView
+        android:text="@string/feedbackIntro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/show" />
+</LinearLayout>

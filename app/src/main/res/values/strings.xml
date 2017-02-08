@@ -18,6 +18,10 @@
     <string name="settings_title">Settings</string>
     <string name="settings_noise">Noise</string>
 
+    <string name="inside_activity_name_feedback">Feedback</string>
+    <string name="feedback_category_1">The noise quality feedback</string>
+    <string name="feedback_category_2">Other feedback</string>
+
     <string name="whitelist_Search_hints">Type the apps name</string>
     <string name="whitelist_Search_button">FastKey</string>
 
@@ -45,9 +49,12 @@
         <item>Instructions</item>
         <item>Enable HeHeXposed</item>
         <item>Whitelist</item>
-        <item>Test</item>
+        <item>Category get</item>
         <item>Clear all Setting</item>
         <item>Apps List</item>
+        <item>Feedback</item>
+        <item>Model</item>
+        <item>Test</item>
     </string-array>
     <string-array name="def_setting">
         <item>Default</item>
@@ -56,6 +63,16 @@
         <item>Medium</item>
         <item>Highest</item>
     </string-array>
+
+    <string-array name="FeedbackList">
+        <item>Comfortable List</item>
+        <item>Email Feedback to Administration</item>
+    </string-array>
+    <string name="FeedbackChoice1">Too Strong</string>
+    <string name="FeedbackChoice2">Comfortable</string>
+    <string name="FeedbackChoice3">Too Week</string>
+    <string name="feedbackIntro">HI</string>
+    <string name="feedbackinput_hints">Please input what you want to tell me</string>
 
     <string name="Notice_def_setting">Restart your phone after update.</string>
     <string name="def_setting_intro">You can choose level: </string>

@@ -12,9 +12,9 @@ package com.hehe.hehexposedlocation.def_setting;
     * */
 
 public class FreeList{
-    public static final String[] PACKGE_LIST = { "android"," " };//"android" , "com.google.android.gms"
+    public static final String[] PACKAGE_LIST = { "android"," " };//"android" , "com.google.android.gms"
     public static final String[] KEYWORD_LIST = { " " };
-    public static final String[] APPSLICATION_CATEGORY_LIST = {
+    public static final String[] APPLICATION_CATEGORY_LIST = {
             "Art & Design" ,
             "Auto & Vehicles" ,
             "Beauty" ,
@@ -47,7 +47,7 @@ public class FreeList{
             "Travel & Local" ,
             "Video Players & Editors" ,
             "Weather" };
-    public static final String[] APPSLICATION_GAME_CATEGORY_LIST = {
+    public static final String[] APPLICATION_GAME_CATEGORY_LIST = {
             "Action",
             "Adventure",
             "Arcade",

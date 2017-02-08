@@ -128,6 +128,18 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".feedback.FeedbackActivity"
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/inside_activity_name_feedback"
+            android:noHistory="false"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
+        </activity>
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

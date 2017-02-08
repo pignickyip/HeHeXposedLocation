@@ -47,6 +47,7 @@ public class Common {
     public static final String WEB_CONTENT = "WEB_CONTENT";
     public static final String WEB_CONTENT_KEY = "WEB_CONTENT_KEY";
 
+    public static final String FEEDBACK_COMFORTABLE = "FEEDBACK_COMFORTABLE";
 
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();

@@ -1,14 +1,7 @@
 package com.hehe.hehexposedlocation.def_setting;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ResolveInfo;
-import android.location.GpsStatus;
-import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
@@ -16,9 +9,6 @@ import android.support.annotation.RequiresApi;
 import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.Common;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.select.Elements;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,11 +31,10 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-
-import static com.hehe.hehexposedlocation.def_setting.DefActivity.POSITION;
-import static com.hehe.hehexposedlocation.def_setting.FreeList.HoHo;
+import static com.hehe.hehexposedlocation.def_setting.FreeList.APPLICATION_CATEGORY_LIST;
+import static com.hehe.hehexposedlocation.def_setting.FreeList.APPLICATION_GAME_CATEGORY_LIST;
 import static com.hehe.hehexposedlocation.def_setting.FreeList.KEYWORD_LIST;
-import static com.hehe.hehexposedlocation.def_setting.FreeList.PACKGE_LIST;
+import static com.hehe.hehexposedlocation.def_setting.FreeList.PACKAGE_LIST;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findConstructorExact;
@@ -56,18 +45,22 @@ import static de.robv.android.xposed.XposedHelpers.setDoubleField;
  */
 //TODO the sharedPreferences_whitelist need to reset/clear
 public class DefNoise implements IXposedHookLoadPackage  {
-    final static int sdk = Build.VERSION.SDK_INT;
-    final static double MaxLat= -90.0;
-    final static double MinLat = 90.0;
-    final static double MaxLong = 180.0;
-    final static double MinLong = -180.0;
-    final static String[] FreePacketList = PACKGE_LIST;
-    final static String[] FreeKeywordList = KEYWORD_LIST;
-    final List<String> WhiteListappList = new ArrayList<String>();
-    final List<String> UserpkgName = new ArrayList<String>();
-    final List<String> SyspkgName = new ArrayList<String>();
-    final List<String> GetWebContent = new ArrayList<String>();
-    final Hashtable<String,String> WebContent = new Hashtable<String,String>();
+
+    private final static int sdk = Build.VERSION.SDK_INT;
+    private final static double MaxLat= -90.0;
+    private final static double MinLat = 90.0;
+    private final static double MaxLong = 180.0;
+    private final static double MinLong = -180.0;
+    private final static String[] FreePackageList = PACKAGE_LIST;
+    private final static String[] FreeKeywordList = KEYWORD_LIST;
+    private final static String[] AndroidPlayStoreApplicationCategory = APPLICATION_CATEGORY_LIST;
+    private final static String[] AndroidPlayStoreGameCategory = APPLICATION_GAME_CATEGORY_LIST;
+    private final List<String> WhiteListappList = new ArrayList<String>();
+    private final List<String> UserpkgName = new ArrayList<String>();
+    private final List<String> SyspkgName = new ArrayList<String>();
+    private final List<String> GetWebContent = new ArrayList<String>();
+    private final Hashtable<String,String> WebContent = new Hashtable<String,String>();
+
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -108,6 +101,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
             for(String User : UserpkgName){
                 if(Web.startsWith(User)) {
                     WebContent.put(User,Web.substring(User.length()));
+                    //TODO make the category to noise
                     //next = false;
                     //XposedBridge.log(User + " -  " + Web.substring(User.length()));
                     break;
@@ -152,6 +146,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     XposedBridge.log("The User chose Low, Medium, High.");
                 } else
                     XposedBridge.log("The SharePreferences get wrong...");
+
                 final int range = adapter;
             /*
             Source file of android location api
@@ -205,7 +200,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     String CurrpackageName = lpparam.packageName;
                                     try {
                                         double ori = (double) param.getResult();//get the original result
-                                        for (String List_pkg : FreePacketList) {
+                                        for (String List_pkg : FreePackageList) {
                                             //TODO escape
                                             //Check the package in free list -> created by admin
                                             if (Objects.equals(List_pkg, packageName) || (WhiteListappList.contains(packageName))) {
@@ -287,7 +282,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
 
                             try {
                                 double ori = (double) param.getResult();//get the original result
-                                for (String List_pkg : FreePacketList) {
+                                for (String List_pkg : FreePackageList) {
                                     //TODO escape
                                     if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
                                         if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){

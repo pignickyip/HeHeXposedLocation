@@ -203,9 +203,18 @@ public class SettingsActivity extends PreferenceActivity  {
                     break;
                 }
                 case 8: //Enable
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
-                    startActivity ( intent );
+                    //intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
+                    //startActivity ( intent );
                     break;
+                case 9:
+                    intent = new Intent( this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
+                    startActivity( intent );
+                    break;
+
+                case 10:
+
+                case 11:
+
                 default:
                     break;
             }
@@ -322,6 +331,10 @@ public class SettingsActivity extends PreferenceActivity  {
                     // Reference code
                     // http://stackoverflow.com/questions/10710442/how-to-get-category-for-each-app-on-device-on-android
                     // http://www.oodlestechnologies.com/blogs/Getting-app-information-from-Google-play-store-by-Url
+
+                    //Problem Solve by
+                    //http://stackoverflow.com/questions/7714432/how-do-i-get-returned-value-from-inner-thread-runnable-method-in-java
+                    // http://stackoverflow.com/questions/9148899/returning-value-from-thread
                     doc = connect(url);
                     if(doc != null) {
                        // Element link = doc.select("span[itemprop=genre]").first();

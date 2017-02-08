@@ -90,7 +90,6 @@ public class DefActivity extends Activity  {
 
         CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
 
-
     }
     protected void showInputDialog() {
 
