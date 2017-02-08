@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -62,12 +63,14 @@ public class FeedbackActivity extends PreferenceActivity {
     SharedPreferences.Editor PE;
 
     public static SharedPreferences ComfortableChoise = null;
+    private String Comfortabletest = "Comfortable";
 
     private RadioButton week;
     private RadioButton strong;
     private RadioButton suitable;
     private RadioGroup rgroup;
     private TextView show;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -78,6 +81,9 @@ public class FeedbackActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
+
+        ComfortableChoise = getSharedPreferences(Common.FEEDBACK_COMFORTABLE, MODE_WORLD_READABLE);
+
         SetRadio();
 
         Resources res = getResources();
@@ -87,34 +93,49 @@ public class FeedbackActivity extends PreferenceActivity {
                 android.R.layout.simple_list_item_1, menuItems);
         setListAdapter(adapter);
 
-        ComfortableChoise = getSharedPreferences(Common.FEEDBACK_COMFORTABLE, MODE_WORLD_READABLE);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
     }
     public void SetRadio(){
-
-        week = (RadioButton) findViewById(R.id.Strong);
-        strong = (RadioButton) findViewById(R.id.Suitable);
-        suitable = (RadioButton) findViewById(R.id.Week);
+        strong = (RadioButton) findViewById(R.id.Strong);
+        suitable = (RadioButton) findViewById(R.id.Suitable);
+        week = (RadioButton) findViewById(R.id.Week);
+        
         rgroup = (RadioGroup) findViewById(R.id.comfortable_radio_group);
         show = (TextView) findViewById(R.id.show);
+
+        String getback = ComfortableChoise.getString(Comfortabletest, " ");
+        if(Objects.equals(getback, "Strong"))
+            strong.setChecked(true);
+        else if(Objects.equals(getback, "Suitable"))
+            suitable.setChecked(true);
+        else if(Objects.equals(getback, "Week"))
+            week.setChecked(true);
+
         rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
                 int buttonId = radioGroup.getCheckedRadioButtonId();
+                SharedPreferences.Editor spe = ComfortableChoise.edit();
+                // find the radiobutton by returned id
+                RadioButton returnvalue = (RadioButton) findViewById(buttonId);
                 switch(buttonId) {
                     case R.id.Strong:
-                        Toast.makeText(getApplicationContext(), "Your Male", Toast.LENGTH_SHORT).show();
+                        spe.putString(Comfortabletest,"Strong");
+                        Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Suitable:
-                        Toast.makeText(getApplicationContext(), "Your Female", Toast.LENGTH_SHORT).show();
+                        spe.putString(Comfortabletest,"Suitable");
+                        Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Week:
-                        Toast.makeText(getApplicationContext(), "Your Other", Toast.LENGTH_SHORT).show();
+                        spe.putString(Comfortabletest,"Week");
+                        Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                 }
+                spe.commit();
             }
         });
     }
