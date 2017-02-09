@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingLeft="8dp"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp"
+    android:weightSum="1">
 
     <TextView
         android:text="@string/feedbackIntro"
@@ -16,7 +17,7 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="148dp" >
 
         <RadioGroup
             android:id="@+id/comfortable_radio_group"
@@ -46,21 +47,24 @@
         </RadioGroup>
     </LinearLayout>
 
-    <ListView
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:drawSelectorOnTop="false"/>
-
     <TextView
-        android:id="@android:id/empty"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="No data" />
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="@string/feedback_other"
+        android:id="@+id/OtherFeedbackInro"
+        android:layout_weight="0.10" />
+
+    <Button
+        android:text="Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/feedback_button" />
 
     <TextView
         android:text="@string/feedbackIntro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/show" />
+
 </LinearLayout>

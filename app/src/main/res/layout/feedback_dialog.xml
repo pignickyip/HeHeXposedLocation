@@ -10,8 +10,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/Customer_setting"
-        android:id="@+id/textView" />
+        android:text="@string/feedback_dialog_intro"
+        android:id="@+id/feedback_dialog" />
 
     <EditText
         android:id="@+id/feedback_text"
@@ -28,14 +28,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textEmailAddress"
-        android:ems="10"
-        android:id="@+id/Your_contact_email" />
+        android:id="@+id/Your_contact_email"
+        android:hint="@string/Email_hints"/>
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:inputType="phone"
-        android:ems="10"
-        android:id="@+id/Your_contact_phone" />
+        android:ems="11"
+        android:maxLines="1"
+        android:maxLength="8"
+        android:id="@+id/Your_contact_phone"
+        android:hint="@string/Contact_hints"/>
 
 </LinearLayout>

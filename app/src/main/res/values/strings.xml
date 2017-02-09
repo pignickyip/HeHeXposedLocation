@@ -3,6 +3,7 @@
     <string name="app_name">HeHeXposed</string>
     <string name="app_mod_summary">We are IS&#8230;</string>
     <string name="title_activity_whitelist">Whitelist Settings</string>
+    <string name="admin_email">15049782d@connect.polyu.hk</string>
     <string name="main_activity_inroo">Here get Smart Location Obfuscation</string>
     <string name="empty_state">Add apps that you want this module to spoof. All apps can currently detect your Mock Locations setting.</string>
     <string name="all_apps_whitelisted_state">No apps should be able to detect that Mock Locations is on.</string>
@@ -71,8 +72,13 @@
     <string name="FeedbackChoice1">Too Strong</string>
     <string name="FeedbackChoice2">Comfortable</string>
     <string name="FeedbackChoice3">Too Week</string>
-    <string name="feedbackIntro">HI</string>
+    <string name="feedback_other">Your outher opinion: </string>
+    <string name="feedbackIntro">Thank you for your using,  here you can choose your opinion of this module:</string>
     <string name="feedbackinput_hints">Please input what you want to tell me</string>
+    <string name="Contact_hints">Please input your contact</string>
+    <string name="Email_hints">Please input your email</string>
+    <string name="feedback_dialog_intro">Please type your feedback to me: </string>
+
 
     <string name="Notice_def_setting">Restart your phone after update.</string>
     <string name="def_setting_intro">You can choose level: </string>

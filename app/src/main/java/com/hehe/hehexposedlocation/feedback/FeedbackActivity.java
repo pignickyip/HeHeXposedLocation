@@ -1,6 +1,7 @@
 package com.hehe.hehexposedlocation.feedback;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.Fragment;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -52,24 +54,29 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class FeedbackActivity extends PreferenceActivity {
+public class FeedbackActivity extends Activity {
     private GoogleApiClient client;
 
     String[] menuItems;
 
     private PackageManager pm;
-
-    SharedPreferences clear;
-    SharedPreferences.Editor PE;
+    private Resources res;
 
     public static SharedPreferences ComfortableChoise = null;
-    private String Comfortabletest = "Comfortable";
+    private final String Comfortabletest = "Comfortable";
+    private final String ComfortableBoolean = "ComfortableBoolean";
 
     private RadioButton week;
     private RadioButton strong;
     private RadioButton suitable;
     private RadioGroup rgroup;
+
+    private TextView FeedbackIntro;
     private TextView show;
+    private EditText feedbackContent;
+    private EditText feedbackEmail;
+    private EditText feedbackCellphone;
+    private Button ShowMeFeedback;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -82,30 +89,47 @@ public class FeedbackActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
 
-        ComfortableChoise = getSharedPreferences(Common.FEEDBACK_COMFORTABLE, MODE_WORLD_READABLE);
-
+        initSet();
         SetRadio();
-
-        Resources res = getResources();
-        menuItems = res.getStringArray(R.array.FeedbackList);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, menuItems);
-        setListAdapter(adapter);
-
+        ShowMeFeedback = (Button)findViewById(R.id.feedback_button);
+        ShowMeFeedback.setOnClickListener(new Button.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                SetOtherFeedback();
+            }
+        });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-
     }
-    public void SetRadio(){
+    protected void initSet(){
+        res  = getResources();
+        ComfortableChoise = getSharedPreferences(Common.FEEDBACK_COMFORTABLE, MODE_WORLD_READABLE);
+
         strong = (RadioButton) findViewById(R.id.Strong);
         suitable = (RadioButton) findViewById(R.id.Suitable);
         week = (RadioButton) findViewById(R.id.Week);
-        
         rgroup = (RadioGroup) findViewById(R.id.comfortable_radio_group);
-        show = (TextView) findViewById(R.id.show);
 
+        FeedbackIntro = (TextView) findViewById(R.id.feedback_intro);
+        boolean hehe = ComfortableChoise.getBoolean(ComfortableBoolean, true);
+        if(!hehe) {
+            String Choise = ComfortableChoise.getString(Comfortabletest, " ");
+            String msg = "";
+            if(Objects.equals(Choise, "Strong"))
+                msg = "Your using the 1/2x Noise";
+            else if(Objects.equals(Choise, "Suitable"))
+                msg = "Thank you for your using.";
+            else if(Objects.equals(Choise, "Week"))
+                msg = "Your using the 2x Noise";
+            FeedbackIntro.setText(msg);
+        }
+        show = (TextView) findViewById(R.id.show);
+        String showmsg = "Administration email: " + res.getString(R.string.admin_email);
+        show.setText(showmsg);
+    }
+    public void SetRadio(){
         String getback = ComfortableChoise.getString(Comfortabletest, " ");
         if(Objects.equals(getback, "Strong"))
             strong.setChecked(true);
@@ -121,6 +145,7 @@ public class FeedbackActivity extends PreferenceActivity {
                 SharedPreferences.Editor spe = ComfortableChoise.edit();
                 // find the radiobutton by returned id
                 RadioButton returnvalue = (RadioButton) findViewById(buttonId);
+                spe.putBoolean(ComfortableBoolean, false);
                 switch(buttonId) {
                     case R.id.Strong:
                         spe.putString(Comfortabletest,"Strong");
@@ -139,88 +164,38 @@ public class FeedbackActivity extends PreferenceActivity {
             }
         });
     }
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onListItemClick(ListView parent, View v, int position, long id) {
-        switch (position) {
-            case 0: //
-               /* final Dialog dialog = new Dialog(this);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.comfortable_radiogroup);
-
-                dialog.setTitle("Choise which you want?");
-                dialog.setCancelable(true);
-
-                rgroup = (RadioGroup) dialog.findViewById(R.id.comfortable_radio_group);
-                int rgid = rgroup.getCheckedRadioButtonId();
-                final RadioButton rb = (RadioButton) findViewById(rgid);
-                week  = new RadioButton(this);
-                suitable  = new RadioButton(this);
-                strong  = new RadioButton(this);
-                boolean temp = ComfortableChoise.getBoolean("Strong", true);
-                if(temp)
-                    if(ComfortableChoise.getBoolean("Suitable", true))
-                        suitable.setChecked(true);
-                    else
-                        week.setChecked(true);
-                else
-                    strong.setChecked(true);
-
-                rgroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                    public void onCheckedChanged(RadioGroup group, int checkedId) {
-                        SharedPreferences.Editor spe = ComfortableChoise.edit();
-                        if (checkedId == R.id.Strong) {
-                            spe.putBoolean("Strong",false);
+    protected void SetOtherFeedback(){
+        LayoutInflater layoutInflater = LayoutInflater.from(this);
+        View promptView = layoutInflater.inflate(R.layout.feedback_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(promptView);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        int haha = R.id.feedback_text;
+                        Intent i = new Intent(Intent.ACTION_SEND);
+                        i.setType("message/rfc822");
+                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"15049782d@connect.polyu.hk"});
+                        i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
+                        i.putExtra(Intent.EXTRA_TEXT   , "body of email");
+                        try {
+                            startActivity(Intent.createChooser(i, "Send mail..."));
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(FeedbackActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                         }
-                        else if (checkedId == R.id.Suitable) {
-                            spe.putBoolean("Suitable",false);
-                        }
-                        else if (checkedId == R.id.Week) {
-                            spe.putBoolean("Week",false);
-                        }
-                        spe.commit();
                     }
-                });
-                dialog.show();
-*/
-                break;
-            case 1:
-                LayoutInflater layoutInflater = LayoutInflater.from(this);
-                View promptView = layoutInflater.inflate(R.layout.feedback_text_dialog, null);
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-                alertDialogBuilder.setView(promptView);
-
-                // setup a dialog window
-                alertDialogBuilder.setCancelable(false)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
-                                int haha = R.id.feedback_text;
-                                Intent i = new Intent(Intent.ACTION_SEND);
-                                i.setType("message/rfc822");
-                                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"15049782d@connect.polyu.hk"});
-                                i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
-                                i.putExtra(Intent.EXTRA_TEXT   , "body of email");
-                                try {
-                                    startActivity(Intent.createChooser(i, "Send mail..."));
-                                } catch (android.content.ActivityNotFoundException ex) {
-                                    Toast.makeText(FeedbackActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-                                }
+                                dialog.cancel();
                             }
-                        })
-                        .setNegativeButton("Cancel",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        });
 
-                // create an alert dialog
-                AlertDialog alert = alertDialogBuilder.create();
-                alert.show();
-                break;
-            default:
-                break;
-        }
-
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 
     /**
