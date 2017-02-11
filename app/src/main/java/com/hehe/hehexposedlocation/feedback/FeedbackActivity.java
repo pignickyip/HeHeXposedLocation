@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.RequiresApi;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -63,8 +64,6 @@ public class FeedbackActivity extends Activity {
     private Resources res;
 
     public static SharedPreferences ComfortableChoise = null;
-    private final String Comfortabletest = "Comfortable";
-    private final String ComfortableBoolean = "ComfortableBoolean";
 
     private RadioButton week;
     private RadioButton strong;
@@ -73,9 +72,6 @@ public class FeedbackActivity extends Activity {
 
     private TextView FeedbackIntro;
     private TextView show;
-    private EditText feedbackContent;
-    private EditText feedbackEmail;
-    private EditText feedbackCellphone;
     private Button ShowMeFeedback;
 
     /**
@@ -91,12 +87,34 @@ public class FeedbackActivity extends Activity {
 
         initSet();
         SetRadio();
+
         ShowMeFeedback = (Button)findViewById(R.id.feedback_button);
         ShowMeFeedback.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
-                SetOtherFeedback();
+                LayoutInflater layoutInflater = LayoutInflater.from(FeedbackActivity.this);
+                View promptView = layoutInflater.inflate(R.layout.feedback_dialog, null);
+                AlertDialog.Builder b = new AlertDialog.Builder(FeedbackActivity.this);
+                b.setView(promptView);
+                final EditText feedbackContent= (EditText) promptView.findViewById(R.id.feedback_text);
+                b.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String content = feedbackContent.getText().toString();
+                        Intent i = new Intent(Intent.ACTION_SEND);
+                        i.setType("message/rfc822");
+                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"15049782d@connect.polyu.hk"});
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Opinion of HeHeXposed Xposed module");
+                        i.putExtra(Intent.EXTRA_TEXT   , content);
+                        try {
+                            startActivity(Intent.createChooser(i, "Send mail..."));
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(FeedbackActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                b.setNegativeButton("CANCEL", null);
+                b.show();
             }
         });
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -113,9 +131,10 @@ public class FeedbackActivity extends Activity {
         rgroup = (RadioGroup) findViewById(R.id.comfortable_radio_group);
 
         FeedbackIntro = (TextView) findViewById(R.id.feedback_intro);
-        boolean hehe = ComfortableChoise.getBoolean(ComfortableBoolean, true);
+
+        boolean hehe = ComfortableChoise.getBoolean(Common.FEEDBACK_COMFORTABLE_CHECK, true);
         if(!hehe) {
-            String Choise = ComfortableChoise.getString(Comfortabletest, " ");
+            String Choise = ComfortableChoise.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
             String msg = "";
             if(Objects.equals(Choise, "Strong"))
                 msg = "Your using the 1/2x Noise";
@@ -125,12 +144,13 @@ public class FeedbackActivity extends Activity {
                 msg = "Your using the 2x Noise";
             FeedbackIntro.setText(msg);
         }
+
         show = (TextView) findViewById(R.id.show);
         String showmsg = "Administration email: " + res.getString(R.string.admin_email);
         show.setText(showmsg);
     }
     public void SetRadio(){
-        String getback = ComfortableChoise.getString(Comfortabletest, " ");
+        String getback = ComfortableChoise.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
         if(Objects.equals(getback, "Strong"))
             strong.setChecked(true);
         else if(Objects.equals(getback, "Suitable"))
@@ -145,18 +165,18 @@ public class FeedbackActivity extends Activity {
                 SharedPreferences.Editor spe = ComfortableChoise.edit();
                 // find the radiobutton by returned id
                 RadioButton returnvalue = (RadioButton) findViewById(buttonId);
-                spe.putBoolean(ComfortableBoolean, false);
+                spe.putBoolean(Common.FEEDBACK_COMFORTABLE_CHECK, false);
                 switch(buttonId) {
                     case R.id.Strong:
-                        spe.putString(Comfortabletest,"Strong");
+                        spe.putString(Common.FEEDBACK_COMFORTABLE_KEY,"Strong");
                         Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Suitable:
-                        spe.putString(Comfortabletest,"Suitable");
+                        spe.putString(Common.FEEDBACK_COMFORTABLE_KEY,"Suitable");
                         Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.Week:
-                        spe.putString(Comfortabletest,"Week");
+                        spe.putString(Common.FEEDBACK_COMFORTABLE_KEY,"Week");
                         Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                 }
@@ -164,40 +184,6 @@ public class FeedbackActivity extends Activity {
             }
         });
     }
-    protected void SetOtherFeedback(){
-        LayoutInflater layoutInflater = LayoutInflater.from(this);
-        View promptView = layoutInflater.inflate(R.layout.feedback_dialog, null);
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(promptView);
-        // setup a dialog window
-        alertDialogBuilder.setCancelable(false)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        int haha = R.id.feedback_text;
-                        Intent i = new Intent(Intent.ACTION_SEND);
-                        i.setType("message/rfc822");
-                        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"15049782d@connect.polyu.hk"});
-                        i.putExtra(Intent.EXTRA_SUBJECT, "subject of email");
-                        i.putExtra(Intent.EXTRA_TEXT   , "body of email");
-                        try {
-                            startActivity(Intent.createChooser(i, "Send mail..."));
-                        } catch (android.content.ActivityNotFoundException ex) {
-                            Toast.makeText(FeedbackActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        // create an alert dialog
-        AlertDialog alert = alertDialogBuilder.create();
-        alert.show();
-    }
-
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -217,7 +203,6 @@ public class FeedbackActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -227,7 +212,6 @@ public class FeedbackActivity extends Activity {
     @Override
     public void onStop() {
         super.onStop();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());

@@ -46,7 +46,8 @@ public class FreeList{
             "Tools" ,
             "Travel & Local" ,
             "Video Players & Editors" ,
-            "Weather" };
+            "Weather",
+            ".instllerTools"};
     public static final String[] APPLICATION_GAME_CATEGORY_LIST = {
             "Action",
             "Adventure",

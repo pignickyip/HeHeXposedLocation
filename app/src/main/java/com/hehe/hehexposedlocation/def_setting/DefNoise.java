@@ -65,58 +65,60 @@ public class DefNoise implements IXposedHookLoadPackage  {
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.html
+        //White List
         final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
+        //Setting
         final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
         final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_CUSTOMER);
+        //Application reset
         final XSharedPreferences sharedPreferences_UserApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
         final XSharedPreferences sharedPreferences_SystemApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
         final XSharedPreferences sharedPreferences_WebContent = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WEB_CONTENT);
-
+        //Feedback
+        final XSharedPreferences sharedPreferences_Feedback = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.FEEDBACK_COMFORTABLE);
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
         sharedPreferences_customer.makeWorldReadable();
         sharedPreferences_UserApplicationFile.makeWorldReadable();
         sharedPreferences_SystemApplicationFile.makeWorldReadable();
         sharedPreferences_WebContent.makeWorldReadable();
+        sharedPreferences_Feedback.makeWorldReadable();
 
         WhiteListappList.clear();
         WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
         Collections.sort(WhiteListappList);
 
         UserpkgName.clear();
-        UserpkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.USER_PACKET_NAME_KEY,new HashSet<String>()));
+        UserpkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(UserpkgName);
 
         SyspkgName.clear();
-        SyspkgName.addAll(sharedPreferences_SystemApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY,new HashSet<String>()));
+        SyspkgName.addAll(sharedPreferences_SystemApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(SyspkgName);
 
         GetWebContent.clear();
-        GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY,new HashSet<String>()));
+        GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
         Collections.sort(GetWebContent);
 
         WebContent.clear();
-        for(String Web : GetWebContent){
-            //Boolean next =true;
-            for(String User : UserpkgName){
-                if(Web.startsWith(User)) {
-                    WebContent.put(User,Web.substring(User.length()));
-                    //TODO make the category to noise
-                    //next = false;
-                    //XposedBridge.log(User + " -  " + Web.substring(User.length()));
+        for (String Web : GetWebContent) {
+            Boolean next =true;
+            for (String User : UserpkgName) {
+                if (Web.startsWith(User)) {
+                    WebContent.put(User, Web.substring(User.length()));
+                    next = false;
                     break;
                 }
             }
-            /*if(next){
+            if(next){
                 for(String System : SyspkgName){
                     if(Web.startsWith(System)) {
                         WebContent.put(System,Web.substring(System.length()));
                         break;
                     }
                 }
-            }*/
+            }
         }
-
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
@@ -147,7 +149,20 @@ public class DefNoise implements IXposedHookLoadPackage  {
                 } else
                     XposedBridge.log("The SharePreferences get wrong...");
 
-                final int range = adapter;
+                int FeedbackValue = 1;
+                String Feedback_choice = sharedPreferences_Feedback.getString(Common.FEEDBACK_COMFORTABLE_KEY," ");
+                if(Objects.equals(Feedback_choice, "Strong")) {
+                    FeedbackValue = adapter / 2;
+                }
+                else if(Objects.equals(Feedback_choice, "Week")) {
+                    FeedbackValue = adapter * 2;
+                }
+                else if(Objects.equals(Feedback_choice, "Suitable")){
+                    FeedbackValue = adapter;
+                }else if (Objects.equals(Feedback_choice, " ")){
+                    FeedbackValue = adapter;
+                }
+                final int range = FeedbackValue;
             /*
             Source file of android location api
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/Location.java
@@ -195,6 +210,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     //Original value + random value
                                     double RanLat = (
                                             (rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) * 1000 / 1000
+                                            //(rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) / 1000
                                     );
                                     String packageName = AndroidAppHelper.currentPackageName();
                                     String CurrpackageName = lpparam.packageName;
@@ -202,18 +218,33 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                         double ori = (double) param.getResult();//get the original result
                                         for (String List_pkg : FreePackageList) {
                                             //TODO escape
+                                            String Category_1 = WebContent.get(packageName);
+                                            String Category_2 = WebContent.get(CurrpackageName);
+                                            //Todo not yet done
                                             //Check the package in free list -> created by admin
-                                            if (Objects.equals(List_pkg, packageName) || (WhiteListappList.contains(packageName))) {
+                                            if(Objects.equals(Category_1, "Travel & Local")) {
+                                                param.setResult(ori);
+                                                XposedBridge.log(packageName +  Category_1  );
+                                                break;
+                                            }
+                                            else if( Objects.equals(Category_2, "Travel & Local")){
+                                                param.setResult(ori);
+                                                XposedBridge.log(CurrpackageName + Category_2);
+                                                break;
+                                            }
+                                            else if (Objects.equals(List_pkg, packageName) || (WhiteListappList.contains(packageName))) {
                                                 //within white list
                                                 if(Objects.equals(List_pkg, CurrpackageName) ||(WhiteListappList.contains(CurrpackageName))){
                                                     param.setResult(ori);
                                                     XposedBridge.log(packageName + " needs the accuracy location" );
+                                                    break;
                                                 }
                                                 else{//if not in white list
-                                                    double ra = rand.nextInt(5) / 10000000;
+                                                    double ra = rand.nextInt(10) / 100000;
                                                     ra += ori;
                                                     param.setResult(ra);
                                                     XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
+                                                    break;
                                                 }
 
                                             } else {
@@ -234,7 +265,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                             }
                                                         }
                                                         param.setResult(result);
-                                                        XposedBridge.log(packageName + " get the Latitude " + result);
+                                                        XposedBridge.log(packageName + " get the Latitude " + result +" - "+Category_1);
                                                     } else {
                                                         double result = ori;
                                                         switch (PlusORMinus) {
@@ -248,7 +279,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                             }
                                                         }
                                                         param.setResult(result);
-                                                        XposedBridge.log( packageName + " get the Latitude " + result);
+                                                        XposedBridge.log( packageName + " get the Latitude " + result+" - "+Category_1);
                                                     }
                                                 }
                                             }
@@ -271,6 +302,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             Random rand = new Random(range);
                             //Original value + random value
                             double RanLong = (
+                                    //Change the value
                                     (rand.nextDouble() % (MaxLong)) / rand.nextInt(range) * 1000 / 1000
                             );
                             String packageName = AndroidAppHelper.currentPackageName();
@@ -280,17 +312,33 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
                             Collections.sort(appList);
 
+                            String Category = WebContent.get(packageName);
                             try {
                                 double ori = (double) param.getResult();//get the original result
                                 for (String List_pkg : FreePackageList) {
                                     //TODO escape
-                                    if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
-                                        if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName))){
+                                    String Category_1 = WebContent.get(packageName);
+                                    String Category_2 = WebContent.get(CurrpackageName);
+                                    //Todo not yet done
+                                    //Check the package in free list -> created by admin
+                                    if(Objects.equals(Category_1, "Travel & Local")) {
+                                        param.setResult(ori);
+                                        XposedBridge.log(packageName +  Category_1  );
+                                        break;
+                                    }
+                                    else if( Objects.equals(Category_2, "Travel & Local")){
+                                        param.setResult(ori);
+                                        XposedBridge.log(CurrpackageName + Category_2);
+                                        break;
+                                    }
+                                    else if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
+
+                                        if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName)) || Objects.equals(Category, "Travel & Local")){
                                             param.setResult(ori);
                                             XposedBridge.log(packageName + " needs the accuracy location" );
                                         }
                                         else{
-                                            double ra = rand.nextInt(5) / 10000000;
+                                            double ra = rand.nextInt(10) / 100000;
                                             ra += ori;
                                             param.setResult(ra);
                                             XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
@@ -312,7 +360,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                     }
                                                 }
                                                 param.setResult(result);
-                                                XposedBridge.log(packageName + " get the getLongitude " + result);
+                                                XposedBridge.log(packageName + " get the Longitude " + result);
                                             } else {
                                                 double result = ori;
                                                 switch (PlusORMinus) {
@@ -326,7 +374,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                     }
                                                 }
                                                 param.setResult(result);
-                                                XposedBridge.log(packageName + " get the getLongitude " + result);
+                                                XposedBridge.log(packageName + " get the Longitude " + result);
                                             }
                                         }
                                     }

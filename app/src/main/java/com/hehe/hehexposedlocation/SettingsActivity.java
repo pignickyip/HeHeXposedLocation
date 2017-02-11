@@ -152,7 +152,6 @@ public class SettingsActivity extends PreferenceActivity  {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    //Toast.makeText(getApplicationContext(), hoho , Toast.LENGTH_LONG).show();
                     break;
                 case 7: //clear all setting
                 {
@@ -179,6 +178,12 @@ public class SettingsActivity extends PreferenceActivity  {
                             PE.clear();
                             PE.apply();
                             clear = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+
+                            //Web content
+                            clear = WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
                             PE = clear.edit();
                             PE.clear();
                             PE.apply();
@@ -303,12 +308,12 @@ public class SettingsActivity extends PreferenceActivity  {
             }
         }
         //Wait Dr.hu declar need or not
-        /*for(String System : SyspkgName){
+        for(String System : SyspkgName){
             String temp = WebGet(System);
             if(temp != null) {
                 Category.add(System + temp);
             }
-        }*/
+        }
         Collections.sort(Category);
 
         PE = WebContent.edit();
