@@ -100,7 +100,8 @@ public class DefNoise implements IXposedHookLoadPackage  {
         GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
         Collections.sort(GetWebContent);
 
-        WebContent.clear();
+        if(!(WebContent.size() == GetWebContent.size()))
+            WebContent.clear();
         for (String Web : GetWebContent) {
             Boolean next =true;
             for (String User : UserpkgName) {
@@ -208,10 +209,15 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     //super.afterHookedMethod(param);
                                     Random rand = new Random(range);
                                     //Original value + random value
+                                    double ha =  (rand.nextDouble() % (MaxLat));
+                                    //int he =(rand.nextInt(range)) ;
+                                   // he /= 10;
+                                    double he = (rand.nextDouble() % (range));
                                     double RanLat = (
-                                            (rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) * 1000 / 1000
+                                           ha%he
                                             //(rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) / 1000
                                     );
+                                    XposedBridge.log("ghisd" + RanLat);
                                     String packageName = AndroidAppHelper.currentPackageName();
                                     String CurrpackageName = lpparam.packageName;
                                     try {
@@ -224,24 +230,24 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                             //Check the package in free list -> created by admin
                                             if(Objects.equals(Category_1, "Travel & Local")) {
                                                 param.setResult(ori);
-                                                XposedBridge.log(packageName +  Category_1  );
                                                 break;
                                             }
                                             else if( Objects.equals(Category_2, "Travel & Local")){
                                                 param.setResult(ori);
-                                                XposedBridge.log(CurrpackageName + Category_2);
                                                 break;
                                             }
-                                            else if (Objects.equals(List_pkg, packageName) || (WhiteListappList.contains(packageName))) {
+                                            else if (Objects.equals(List_pkg, packageName) || Objects.equals(List_pkg, CurrpackageName) ) {
                                                 //within white list
-                                                if(Objects.equals(List_pkg, CurrpackageName) ||(WhiteListappList.contains(CurrpackageName))){
+                                                if((WhiteListappList.contains(packageName))||(WhiteListappList.contains(CurrpackageName))){
                                                     param.setResult(ori);
                                                     XposedBridge.log(packageName + " needs the accuracy location" );
                                                     break;
                                                 }
                                                 else{//if not in white list
-                                                    double ra = rand.nextInt(10) / 100000;
+                                                    double ra = rand.nextDouble()%0.01;
+                                                    XposedBridge.log("hihi"+ra);
                                                     ra += ori;
+                                                    ra = MakeItNegOrPost(ra,range);
                                                     param.setResult(ra);
                                                     XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
                                                     break;
@@ -250,36 +256,16 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                             } else {
                                                 //Match apart of
                                                 for (String List_keyword : FreeKeywordList) {
-                                                    int PlusORMinus = rand.nextInt(1);
-
                                                     if (packageName.startsWith(List_keyword)) {
-                                                        double result = ori;
-                                                        switch (PlusORMinus) {
-                                                            case 0: {
-                                                                result = ori + (RanLat * (range - 1));
-                                                                break;
-                                                            }
-                                                            case 1: {
-                                                                result = ori - (RanLat * (range - 1));
-                                                                break;
-                                                            }
-                                                        }
+                                                        double result = ori + RanLat;
+                                                        result = MakeItNegOrPost(result,range);
                                                         param.setResult(result);
-                                                        XposedBridge.log(packageName + " get the Latitude " + result +" - "+Category_1);
+                                                        XposedBridge.log(packageName + " get the Latitude " + result);
                                                     } else {
-                                                        double result = ori;
-                                                        switch (PlusORMinus) {
-                                                            case 0: {
-                                                                result = ori + ((RanLat * (range - 1)) * 2);
-                                                                break;
-                                                            }
-                                                            case 1: {
-                                                                result = ori - ((RanLat * (range - 1)) * 2);
-                                                                break;
-                                                            }
-                                                        }
+                                                        double result = ori + RanLat*2;
+                                                        result = MakeItNegOrPost(result,range);
                                                         param.setResult(result);
-                                                        XposedBridge.log( packageName + " get the Latitude " + result+" - "+Category_1);
+                                                        XposedBridge.log( packageName + " get the Latitude " + result);
                                                     }
                                                 }
                                             }
@@ -340,39 +326,21 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                         else{
                                             double ra = rand.nextInt(10) / 100000;
                                             ra += ori;
+                                            ra = MakeItNegOrPost(ra,range);
                                             param.setResult(ra);
                                             XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
                                         }
                                     } else {
                                         //Match apart of
                                         for (String List_keyword : FreeKeywordList) {
-                                            int PlusORMinus = rand.nextInt(1);
                                             if (packageName.startsWith(List_keyword)) {
                                                 double result = ori;
-                                                switch (PlusORMinus) {
-                                                    case 0: {
-                                                        result = ori + (RanLong * (range - 1));
-                                                        break;
-                                                    }
-                                                    case 1: {
-                                                        result = ori - (RanLong * (range - 1));
-                                                        break;
-                                                    }
-                                                }
+                                                result = MakeItNegOrPost(result,range);
                                                 param.setResult(result);
                                                 XposedBridge.log(packageName + " get the Longitude " + result);
                                             } else {
                                                 double result = ori;
-                                                switch (PlusORMinus) {
-                                                    case 0: {
-                                                        result = ori + ((RanLong * (range - 1)) * 2);
-                                                        break;
-                                                    }
-                                                    case 1: {
-                                                        result = ori - ((RanLong * (range - 1)) * 2);
-                                                        break;
-                                                    }
-                                                }
+                                                result = MakeItNegOrPost(result,range);
                                                 param.setResult(result);
                                                 XposedBridge.log(packageName + " get the Longitude " + result);
                                             }
@@ -389,5 +357,13 @@ public class DefNoise implements IXposedHookLoadPackage  {
                 XposedBridge.log("Wrong here");
             }
         }
+    }
+    public double MakeItNegOrPost(double haha, int range){
+        double change = haha;
+        Random rand = new Random(range);
+        int Mod = rand.nextInt()%2;
+        if(Mod == 1)
+            change *= (-1);
+        return change;
     }
 }
