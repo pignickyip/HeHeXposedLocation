@@ -13,6 +13,8 @@ import com.hehe.hehexposedlocation.Common;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -212,11 +214,16 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     double ha =  (rand.nextDouble() % (MaxLat));
                                     //int he =(rand.nextInt(range)) ;
                                    // he /= 10;
-                                    double he = (rand.nextDouble() % (range));
-                                    double RanLat = (
-                                           ha%he
+                                    double he = (rand.nextDouble() % (range))%0.01;
+                                    double RanLat =
+                                            BigDecimal.valueOf(ha%he)
+                                            .setScale(5, RoundingMode.HALF_UP)
+                                            .doubleValue();
+                                   // double RanLat = (
+                                           //ha%he
                                             //(rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) / 1000
-                                    );
+                                    //);
+
                                     XposedBridge.log("ghisd" + RanLat);
                                     String packageName = AndroidAppHelper.currentPackageName();
                                     String CurrpackageName = lpparam.packageName;
@@ -244,7 +251,11 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                                     break;
                                                 }
                                                 else{//if not in white list
-                                                    double ra = rand.nextDouble()%0.01;
+                                                    double ra =
+                                                            BigDecimal.valueOf(rand.nextDouble()%0.01)
+                                                            .setScale(5, RoundingMode.HALF_UP)
+                                                            .doubleValue();
+
                                                     XposedBridge.log("hihi"+ra);
                                                     ra += ori;
                                                     ra = MakeItNegOrPost(ra,range);
