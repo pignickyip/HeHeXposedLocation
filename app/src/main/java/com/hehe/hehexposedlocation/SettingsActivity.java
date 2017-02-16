@@ -148,6 +148,7 @@ public class SettingsActivity extends PreferenceActivity  {
                     break;
                 case 6:
                     try {
+                        //http://androidexample.com/Show_Loader_To_Open_Url_In_WebView__-_Android_Example/index.php?view=article_discription&aid=125
                         GetFile();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -183,7 +184,7 @@ public class SettingsActivity extends PreferenceActivity  {
                             PE.apply();
 
                             //Web content
-                            clear = WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
+                            clear = getSharedPreferences(Common.WEB_CONTENT, 0);
                             PE = clear.edit();
                             PE.clear();
                             PE.apply();

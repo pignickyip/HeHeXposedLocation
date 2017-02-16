@@ -2,6 +2,7 @@ package com.hehe.hehexposedlocation.def_setting;
 
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
@@ -12,10 +13,12 @@ import com.hehe.hehexposedlocation.Common;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,10 +49,10 @@ import static de.robv.android.xposed.XposedHelpers.setDoubleField;
  * The Spinner noise setting
  */
 //TODO the sharedPreferences_whitelist need to reset/clear
-public class DefNoise implements IXposedHookLoadPackage  {
+public class DefNoise implements IXposedHookLoadPackage {
 
     private final static int sdk = Build.VERSION.SDK_INT;
-    private final static double MaxLat= -90.0;
+    private final static double MaxLat = -90.0;
     private final static double MinLat = 90.0;
     private final static double MaxLong = 180.0;
     private final static double MinLong = -180.0;
@@ -61,12 +64,13 @@ public class DefNoise implements IXposedHookLoadPackage  {
     private final List<String> UserpkgName = new ArrayList<String>();
     private final List<String> SyspkgName = new ArrayList<String>();
     private final List<String> GetWebContent = new ArrayList<String>();
-    private final Hashtable<String,String> WebContent = new Hashtable<String,String>();
+    private final Hashtable<String, String> WebContent = new Hashtable<String, String>();
+    private final HashMap<String, String> Record = new HashMap<>();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.html
+        //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.
         //White List
         final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
         //Setting
@@ -102,10 +106,10 @@ public class DefNoise implements IXposedHookLoadPackage  {
         GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
         Collections.sort(GetWebContent);
 
-        if(!(WebContent.size() == GetWebContent.size()))
+        if (!(WebContent.size() == GetWebContent.size()))
             WebContent.clear();
         for (String Web : GetWebContent) {
-            Boolean next =true;
+            Boolean next = true;
             for (String User : UserpkgName) {
                 if (Web.startsWith(User)) {
                     WebContent.put(User, Web.substring(User.length()));
@@ -113,10 +117,10 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     break;
                 }
             }
-            if(next){
-                for(String System : SyspkgName){
-                    if(Web.startsWith(System)) {
-                        WebContent.put(System,Web.substring(System.length()));
+            if (next) {
+                for (String System : SyspkgName) {
+                    if (Web.startsWith(System)) {
+                        WebContent.put(System, Web.substring(System.length()));
                         break;
                     }
                 }
@@ -125,6 +129,7 @@ public class DefNoise implements IXposedHookLoadPackage  {
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
+
             try {
                 Random rand = new Random(sdk);
                 int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_POSITION, 0);
@@ -153,16 +158,14 @@ public class DefNoise implements IXposedHookLoadPackage  {
                     XposedBridge.log("The SharePreferences get wrong...");
 
                 int FeedbackValue = 1;
-                String Feedback_choice = sharedPreferences_Feedback.getString(Common.FEEDBACK_COMFORTABLE_KEY," ");
-                if(Objects.equals(Feedback_choice, "Strong")) {
+                String Feedback_choice = sharedPreferences_Feedback.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
+                if (Objects.equals(Feedback_choice, "Strong")) {
                     FeedbackValue = adapter / 2;
-                }
-                else if(Objects.equals(Feedback_choice, "Week")) {
+                } else if (Objects.equals(Feedback_choice, "Week")) {
                     FeedbackValue = adapter * 2;
-                }
-                else if(Objects.equals(Feedback_choice, "Suitable")){
+                } else if (Objects.equals(Feedback_choice, "Suitable")) {
                     FeedbackValue = adapter;
-                }else if (Objects.equals(Feedback_choice, " ")){
+                } else if (Objects.equals(Feedback_choice, " ")) {
                     FeedbackValue = adapter;
                 }
                 final int range = FeedbackValue;
@@ -211,73 +214,61 @@ public class DefNoise implements IXposedHookLoadPackage  {
                                     //super.afterHookedMethod(param);
                                     Random rand = new Random(range);
                                     //Original value + random value
-                                    double ha =  (rand.nextDouble() % (MaxLat));
-                                    //int he =(rand.nextInt(range)) ;
-                                   // he /= 10;
-                                    double he = (rand.nextDouble() % (range))%0.01;
+                                    double ha = (rand.nextDouble() % (MaxLat));
+                                    double he = (rand.nextDouble() % (range)) % 0.1;
                                     double RanLat =
-                                            BigDecimal.valueOf(ha%he)
-                                            .setScale(5, RoundingMode.HALF_UP)
-                                            .doubleValue();
-                                   // double RanLat = (
-                                           //ha%he
-                                            //(rand.nextDouble() % (MaxLat)) / (rand.nextInt(range)) / 1000
-                                    //);
-
+                                            BigDecimal.valueOf(ha % he)
+                                                    .setScale(5, RoundingMode.HALF_UP)
+                                                    .doubleValue();
                                     XposedBridge.log("ghisd" + RanLat);
                                     String packageName = AndroidAppHelper.currentPackageName();
                                     String CurrpackageName = lpparam.packageName;
+                                    String ho123 = Record.get(packageName);
+                                    String ha123 = Record.get(CurrpackageName);
                                     try {
                                         double ori = (double) param.getResult();//get the original result
-                                        for (String List_pkg : FreePackageList) {
-                                            //TODO escape
-                                            String Category_1 = WebContent.get(packageName);
-                                            String Category_2 = WebContent.get(CurrpackageName);
-                                            //Todo not yet done
-                                            //Check the package in free list -> created by admin
-                                            if(Objects.equals(Category_1, "Travel & Local")) {
+                                        //TODO escape
+                                        String Category_1 = WebContent.get(packageName);
+                                        String Category_2 = WebContent.get(CurrpackageName);
+                                        //Check the package in free list -> created by admin
+                                        if (Objects.equals(Category_1, "Travel & Local")) {
+                                            param.setResult(ori);
+                                            XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_1);
+                                            if (Objects.equals(ho123, ha123))
+                                                Record.put(ho123, "Original");
+                                        } else if (Objects.equals(Category_2, "Travel & Local")) {
+                                            param.setResult(ori);
+                                            XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
+                                        } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
+                                            //within white list
+                                            if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
                                                 param.setResult(ori);
-                                                break;
+                                                XposedBridge.log(packageName + " needs the accuracy location");
+                                            } else {//if not in white list
+                                                double ra =
+                                                        BigDecimal.valueOf(rand.nextDouble() % 0.1)
+                                                                .setScale(5, RoundingMode.HALF_UP)
+                                                                .doubleValue();
+                                                ra += ori;
+                                                ra = MakeItNegOrPost(ra, range);
+                                                param.setResult(ra);
+                                                XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
                                             }
-                                            else if( Objects.equals(Category_2, "Travel & Local")){
-                                                param.setResult(ori);
-                                                break;
-                                            }
-                                            else if (Objects.equals(List_pkg, packageName) || Objects.equals(List_pkg, CurrpackageName) ) {
-                                                //within white list
-                                                if((WhiteListappList.contains(packageName))||(WhiteListappList.contains(CurrpackageName))){
-                                                    param.setResult(ori);
-                                                    XposedBridge.log(packageName + " needs the accuracy location" );
-                                                    break;
-                                                }
-                                                else{//if not in white list
-                                                    double ra =
-                                                            BigDecimal.valueOf(rand.nextDouble()%0.01)
-                                                            .setScale(5, RoundingMode.HALF_UP)
-                                                            .doubleValue();
-
-                                                    XposedBridge.log("hihi"+ra);
-                                                    ra += ori;
-                                                    ra = MakeItNegOrPost(ra,range);
-                                                    param.setResult(ra);
-                                                    XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
-                                                    break;
-                                                }
-
-                                            } else {
-                                                //Match apart of
-                                                for (String List_keyword : FreeKeywordList) {
-                                                    if (packageName.startsWith(List_keyword)) {
-                                                        double result = ori + RanLat;
-                                                        result = MakeItNegOrPost(result,range);
-                                                        param.setResult(result);
-                                                        XposedBridge.log(packageName + " get the Latitude " + result);
-                                                    } else {
-                                                        double result = ori + RanLat*2;
-                                                        result = MakeItNegOrPost(result,range);
-                                                        param.setResult(result);
-                                                        XposedBridge.log( packageName + " get the Latitude " + result);
-                                                    }
+                                        } else if (Objects.equals(ha123, "Original")) {
+                                            param.setResult(ori);
+                                        } else {
+                                            //Match apart of
+                                            for (String List_keyword : FreeKeywordList) {
+                                                if (packageName.startsWith(List_keyword)) {
+                                                    double result = ori + RanLat;
+                                                    result = MakeItNegOrPost(result, range);
+                                                    param.setResult(result);
+                                                    XposedBridge.log(packageName + " get the Latitude " + result);
+                                                } else {
+                                                    double result = ori + RanLat * 2;
+                                                    result = MakeItNegOrPost(result, range);
+                                                    param.setResult(result);
+                                                    XposedBridge.log(packageName + " get the Latitude " + result);
                                                 }
                                             }
                                         }
@@ -298,65 +289,61 @@ public class DefNoise implements IXposedHookLoadPackage  {
                             //super.afterHookedMethod(param); Math.floor
                             Random rand = new Random(range);
                             //Original value + random value
-                            double RanLong = (
-                                    //Change the value
-                                    (rand.nextDouble() % (MaxLong)) / rand.nextInt(range) * 1000 / 1000
-                            );
+                            double ha = (rand.nextDouble() % (MaxLong));
+                            //int he =(rand.nextInt(range)) ;
+                            // he /= 10;
+                            double he = (rand.nextDouble() % (range)) % 0.1;
+                            double RanLong =
+                                    BigDecimal.valueOf(ha % he)
+                                            .setScale(5, RoundingMode.HALF_UP)
+                                            .doubleValue();
                             String packageName = AndroidAppHelper.currentPackageName();
                             String CurrpackageName = lpparam.packageName;
 
                             List<String> appList = new ArrayList<String>();
                             appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
                             Collections.sort(appList);
-
-                            String Category = WebContent.get(packageName);
                             try {
                                 double ori = (double) param.getResult();//get the original result
-                                for (String List_pkg : FreePackageList) {
-                                    //TODO escape
-                                    String Category_1 = WebContent.get(packageName);
-                                    String Category_2 = WebContent.get(CurrpackageName);
-                                    //Todo not yet done
-                                    //Check the package in free list -> created by admin
-                                    if(Objects.equals(Category_1, "Travel & Local")) {
+                                //TODO escape
+                                String Category_1 = WebContent.get(packageName);
+                                String Category_2 = WebContent.get(CurrpackageName);
+                                //Check the package in free list -> created by admin
+                                if (Objects.equals(Category_1, "Travel & Local")) {
+                                    param.setResult(ori);
+                                    XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_1);
+                                } else if (Objects.equals(Category_2, "Travel & Local")) {
+                                    param.setResult(ori);
+                                    XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
+                                } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
+                                    if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
                                         param.setResult(ori);
-                                        XposedBridge.log(packageName +  Category_1  );
-                                        break;
-                                    }
-                                    else if( Objects.equals(Category_2, "Travel & Local")){
-                                        param.setResult(ori);
-                                        XposedBridge.log(CurrpackageName + Category_2);
-                                        break;
-                                    }
-                                    else if (Objects.equals(List_pkg, packageName) || (appList.contains(packageName))) {
-
-                                        if(Objects.equals(List_pkg, CurrpackageName) ||(appList.contains(CurrpackageName)) || Objects.equals(Category, "Travel & Local")){
-                                            param.setResult(ori);
-                                            XposedBridge.log(packageName + " needs the accuracy location" );
-                                        }
-                                        else{
-                                            double ra = rand.nextInt(10) / 100000;
-                                            ra += ori;
-                                            ra = MakeItNegOrPost(ra,range);
-                                            param.setResult(ra);
-                                            XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra );
-                                        }
+                                        XposedBridge.log(packageName + " needs the accuracy location");
                                     } else {
-                                        //Match apart of
-                                        for (String List_keyword : FreeKeywordList) {
-                                            if (packageName.startsWith(List_keyword)) {
-                                                double result = ori;
-                                                result = MakeItNegOrPost(result,range);
-                                                param.setResult(result);
-                                                XposedBridge.log(packageName + " get the Longitude " + result);
-                                            } else {
-                                                double result = ori;
-                                                result = MakeItNegOrPost(result,range);
-                                                param.setResult(result);
-                                                XposedBridge.log(packageName + " get the Longitude " + result);
-                                            }
+                                        double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
+                                                .setScale(5, RoundingMode.HALF_UP)
+                                                .doubleValue();
+                                        ra += ori;
+                                        ra = MakeItNegOrPost(ra, range);
+                                        param.setResult(ra);
+                                        XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
+                                    }
+                                } else {
+                                    //Match apart of
+                                    for (String List_keyword : FreeKeywordList) {
+                                        if (packageName.startsWith(List_keyword)) {
+                                            double result = ori + RanLong;
+                                            result = MakeItNegOrPost(result, range);
+                                            param.setResult(result);
+                                            XposedBridge.log(packageName + " get the Longitude " + result);
+                                        } else {
+                                            double result = ori + RanLong * 2;
+                                            result = MakeItNegOrPost(result, range);
+                                            param.setResult(result);
+                                            XposedBridge.log(packageName + " get the Longitude " + result);
                                         }
                                     }
+
                                 }
                             } catch (Exception e) {
                                 XposedBridge.log("Problem 1 at " + e);
@@ -369,11 +356,12 @@ public class DefNoise implements IXposedHookLoadPackage  {
             }
         }
     }
-    public double MakeItNegOrPost(double haha, int range){
+
+    private double MakeItNegOrPost(double haha, int range) {
         double change = haha;
         Random rand = new Random(range);
-        int Mod = rand.nextInt()%2;
-        if(Mod == 1)
+        int Mod = rand.nextInt() % 2;
+        if (Mod == 1)
             change *= (-1);
         return change;
     }

@@ -89,6 +89,7 @@ public class FeedbackActivity extends Activity {
         SetRadio();
 
         ShowMeFeedback = (Button)findViewById(R.id.feedback_button);
+        ShowMeFeedback.setText("Feedback Option");
         ShowMeFeedback.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {
