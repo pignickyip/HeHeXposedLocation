@@ -101,6 +101,7 @@ public class ModeActivity extends Activity {
             restmode.setText(msg);
         }
     }
+    //TODO overlap checking
     private void ButtonAction(){
 
         Button rest_start_but = (Button) findViewById(R.id.but_starttime_rest);
@@ -132,7 +133,7 @@ public class ModeActivity extends Activity {
                         PE.commit();
                     }
                 }, hour, minute, true);
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Select Rest start Time");
                 mTimePicker.setCancelable(true);
                 mTimePicker.show();
             }
@@ -160,7 +161,7 @@ public class ModeActivity extends Activity {
                         PE.commit();
                     }
                 }, hour, minute, true);
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Select Rest end Time");
                 mTimePicker.show();
             }
         });
@@ -188,7 +189,7 @@ public class ModeActivity extends Activity {
                         PE.commit();
                     }
                 }, hour, minute, true);
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Select Work start Time");
                 mTimePicker.show();
             }
         });
@@ -215,7 +216,7 @@ public class ModeActivity extends Activity {
                         PE.commit();
                     }
                 }, hour, minute, true);
-                mTimePicker.setTitle("Select Time");
+                mTimePicker.setTitle("Select Work end Time");
                 mTimePicker.show();
             }
         });
