@@ -45,8 +45,35 @@ public class ModeActivity extends Activity {
         ToggleSetting();
     }
     private void initSet(){
-        Rest = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
         Work = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
+        workmode = (TextView) findViewById(R.id.workmode);
+        Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY,false);
+        Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
+        Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
+        if( Work_Setup && WorkStart_Setup && WorkEnd_Setup) {
+            String msg = "Work mode is working";
+            workmode.setText(msg);
+        }
+        else if(Work_Setup || !(WorkStart_Setup && WorkEnd_Setup)){
+            if(Work_Setup) {
+                String msg = "Work mode is not working since not yet set up the start time and end time";
+                workmode.setText(msg);
+            }
+            else if(WorkStart_Setup || WorkEnd_Setup){
+                String msg = "Work mode is not working since only one time settle up";
+                workmode.setText(msg);
+            }
+            else {
+                String msg = "Work mode is not working";
+                workmode.setText(msg);
+            }
+        }
+        else {
+            String msg = "Work mode is not working";
+            workmode.setText(msg);
+        }
+
+        Rest = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
         restmode = (TextView) findViewById(R.id.restmode);
         Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
         Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY,false);
@@ -56,28 +83,22 @@ public class ModeActivity extends Activity {
             restmode.setText(msg);
         }
         else if(Rest_Setup || !(RestStart_Setup && RestEnd_Setup)){
-            String msg = "Rest mode is not working since not yet set up the start time and end time";
-            restmode.setText(msg);
+            if(Rest_Setup) {
+                String msg = "Rest mode is not working since not yet set up the start time and end time";
+                restmode.setText(msg);
+            }
+            else if(RestStart_Setup || RestEnd_Setup){
+                String msg = "Rest mode is not working since not yet set up the start time and end time";
+                restmode.setText(msg);
+            }
+            else {
+                String msg = "Rest mode is not working";
+                restmode.setText(msg);
+            }
         }
         else {
             String msg = "Rest mode is not working";
             restmode.setText(msg);
-        }
-        workmode = (TextView) findViewById(R.id.workmode);
-        Boolean Work_Setup = Rest.getBoolean(Common.MODE_WORK_SETUP_KEY,false);
-        Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
-        Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
-        if( Work_Setup && WorkStart_Setup && WorkEnd_Setup) {
-            String msg = "Work mode is working";
-            workmode.setText(msg);
-        }
-        else if(Work_Setup || !(WorkStart_Setup && WorkEnd_Setup)){
-            String msg = "Work mode is not working since not yet set up the start time and end time";
-            restmode.setText(msg);
-        }
-        else {
-            String msg = "Work mode is not working";
-            workmode.setText(msg);
         }
     }
     private void ButtonAction(){
@@ -101,6 +122,10 @@ public class ModeActivity extends Activity {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         restmode.setText( "The Start time set as " + selectedHour + ":" + selectedMinute);
                         PE = Rest.edit();
+                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY);
+                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR);
+                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES);
+
                         PE.putBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY,true);
                         PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR,selectedHour);
                         PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES,selectedMinute);
@@ -125,6 +150,10 @@ public class ModeActivity extends Activity {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         restmode.setText( "The End time set as " + selectedHour + ":" + selectedMinute);
                         PE = Rest.edit();
+                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY);
+                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR);
+                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES);
+
                         PE.putBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,true);
                         PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR,selectedHour);
                         PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES,selectedMinute);
@@ -149,6 +178,10 @@ public class ModeActivity extends Activity {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         workmode.setText( "The Start time set as " + selectedHour + ":" + selectedMinute);
                         PE = Work.edit();
+                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY);
+                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR);
+                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES);
+
                         PE.putBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,true);
                         PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR,selectedHour);
                         PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES,selectedMinute);
@@ -172,6 +205,10 @@ public class ModeActivity extends Activity {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         workmode.setText( "The End time set as " + selectedHour + ":" + selectedMinute);
                         PE = Work.edit();
+                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY);
+                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR);
+                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES);
+
                         PE.putBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,true);
                         PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR,selectedHour);
                         PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES,selectedMinute);
@@ -245,7 +282,7 @@ public class ModeActivity extends Activity {
         final ToggleButton WorkModeOn = (ToggleButton) findViewById(R.id.WorkModeOn);
         final Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
         final Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
-        final Boolean Work_Setup = Rest.getBoolean(Common.MODE_WORK_SETUP_KEY,false);
+        final Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY,false);
 
         Boolean Workcheck = false;
         if(Work_Setup)
@@ -254,8 +291,13 @@ public class ModeActivity extends Activity {
         WorkModeOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 PE = Work.edit();
-                PE.putBoolean(Common.MODE_WORK_SETUP_KEY,true);
+                PE.remove(Common.MODE_WORK_SETUP_KEY);
+                if(Work_Setup)
+                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY,false);
+                else
+                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY,true);
                 PE.commit();
 
                 String status = "Work mode : " + WorkModeOn.getText();
@@ -270,7 +312,7 @@ public class ModeActivity extends Activity {
         final ToggleButton RestModeOn = (ToggleButton) findViewById(R.id.RestModeOn);
         final Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
         final Boolean RestEnd_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,false);
-        final Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,false);
+        final Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
         Boolean Restcheck = false;
         if(Rest_Setup)
             Restcheck = true;
@@ -279,7 +321,11 @@ public class ModeActivity extends Activity {
             @Override
             public void onClick(View v) {
                 PE = Rest.edit();
-                PE.putBoolean(Common.MODE_REST_SETUP_KEY,true);
+                PE.remove(Common.MODE_REST_SETUP_KEY);
+                if(Rest_Setup)
+                    PE.putBoolean(Common.MODE_REST_SETUP_KEY,false);
+                else
+                    PE.putBoolean(Common.MODE_REST_SETUP_KEY,true);
                 PE.commit();
 
                 String status = "Rest mode : " + RestModeOn.getText();
