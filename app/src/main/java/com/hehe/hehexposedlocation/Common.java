@@ -51,6 +51,21 @@ public class Common {
     public static final String FEEDBACK_COMFORTABLE_KEY = "FEEDBACK_COMFORTABLE_KEY";
     public static final String FEEDBACK_COMFORTABLE_CHECK = "FEEDBACK_COMFORTABLE_CHECK";
 
+    public static final String MODE_REST_SETUP = "MODE_REST_SETUP";
+    public static final String MODE_REST_SETUP_STARTTIME_KEY =  "MODE_REST_SETUP_STARTTIME_KEY";
+    public static final String MODE_REST_SETUP_STARTTIME_KEY_HOUR = "MODE_REST_SETUP_STARTTIME_KEY_HOUR";
+    public static final String MODE_REST_SETUP_STARTTIME_KEY_MINUTES = "MODE_REST_SETUP_STARTTIME_KEY_MINUTES";
+    public static final String MODE_REST_SETUP_ENDTIME_KEY = "MODE_REST_SETUP_ENDTIME_KEY";
+    public static final String MODE_REST_SETUP_ENDTIME_KEY_HOUR = "MODE_REST_SETUP_ENDTIME_KEY_HOUR";
+    public static final String MODE_REST_SETUP_ENDTIME_KEY_MINUTES = "MODE_REST_SETUP_ENDTIME_KEY_MINUTES";
+    public static final String MODE_WORK_SETUP = "MODE_WORK_SETUP";
+    public static final String MODE_WORK_SETUP_STARTTIME_KEY =  "MODE_WORK_SETUP_STARTTIME_KEY";
+    public static final String MODE_WORK_SETUP_STARTTIME_KEY_HOUR = "MODE_WORK_SETUP_STARTTIME_KEY_HOUR";
+    public static final String MODE_WORK_SETUP_STARTTIME_KEY_MINUTES = "MODE_WORK_SETUP_STARTTIME_KEY_MINUTES";
+    public static final String MODE_WORK_SETUP_ENDTIME_KEY = "MODE_WORK_SETUP_ENDTIME_KEY";
+    public static final String MODE_WORK_SETUP_ENDTIME_KEY_HOUR = "MODE_WORK_SETUP_ENDTIME_KEY_HOUR";
+    public static final String MODE_WORK_SETUP_ENDTIME_KEY_MINUTES = "MODE_WORK_SETUP_ENDTIME_KEY_MINUTES";
+
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();
     public static final PrefSet COMMANDS = new CommandSet();

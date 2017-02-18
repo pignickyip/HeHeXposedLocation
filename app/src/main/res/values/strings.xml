@@ -79,6 +79,16 @@
     <string name="Email_hints">Please input your email</string>
     <string name="feedback_dialog_intro">Please type your feedback to me: </string>
 
+    <string name="inside_activity_name_mode">Mode</string>
+    <string name="mode_rest_start_time_button">Rest start time Set up</string>
+    <string name="mode_rest_end_time_button">Rest end time Set up</string>
+    <string name="mode_work_start_time_button">Work start time Set up</string>
+    <string name="mode_work_end_time_button">Work end time Set up</string>
+    <string name="clear_rest_but_title">Clear Rest mode setting</string>
+    <string name="clear_work_but_titile">Clear Work mode setting</string>
+    <string name="stop_rest_mode">Stop Rest mode</string>
+    <string name="stop_work_mode">Stop Work mode</string>
+    <string name="default_text">Text</string>
 
     <string name="Notice_def_setting">Restart your phone after update.</string>
     <string name="def_setting_intro">You can choose level: </string>

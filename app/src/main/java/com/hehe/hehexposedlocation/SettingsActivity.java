@@ -189,6 +189,16 @@ public class SettingsActivity extends PreferenceActivity  {
                             PE.clear();
                             PE.apply();
 
+                            //Mode
+                            clear = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+                            clear = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
+                            PE = clear.edit();
+                            PE.clear();
+                            PE.apply();
+
                             Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
                             dialog.dismiss();
                             //SettingsActivity.this.finish();
@@ -216,9 +226,10 @@ public class SettingsActivity extends PreferenceActivity  {
                     intent = new Intent( this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
                     startActivity( intent );
                     break;
-
                 case 10:
-
+                    intent = new Intent( this, com.hehe.hehexposedlocation.mode.ModeActivity.class);
+                    startActivity( intent );
+                    break;
                 case 11:
 
                 default:

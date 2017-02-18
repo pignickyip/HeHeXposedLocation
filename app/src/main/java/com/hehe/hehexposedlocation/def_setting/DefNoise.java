@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -82,6 +83,8 @@ public class DefNoise implements IXposedHookLoadPackage {
         final XSharedPreferences sharedPreferences_WebContent = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WEB_CONTENT);
         //Feedback
         final XSharedPreferences sharedPreferences_Feedback = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.FEEDBACK_COMFORTABLE);
+        //Mode
+        final XSharedPreferences sharedPreferences_Mode = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
         sharedPreferences_customer.makeWorldReadable();
@@ -89,6 +92,7 @@ public class DefNoise implements IXposedHookLoadPackage {
         sharedPreferences_SystemApplicationFile.makeWorldReadable();
         sharedPreferences_WebContent.makeWorldReadable();
         sharedPreferences_Feedback.makeWorldReadable();
+        sharedPreferences_Mode.makeWorldReadable();
 
         WhiteListappList.clear();
         WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
@@ -123,6 +127,61 @@ public class DefNoise implements IXposedHookLoadPackage {
                         WebContent.put(System, Web.substring(System.length()));
                         break;
                     }
+                }
+            }
+        }
+        Boolean TimeModeCheck = true;
+        Calendar mcurrentTime = Calendar.getInstance();
+        int Curr_Hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+        int Curr_Minute = mcurrentTime.get(Calendar.MINUTE);
+        //Mode change
+        Boolean WorkMode_StartON = sharedPreferences_Mode.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
+        Boolean WorkMode_EndON = sharedPreferences_Mode.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
+        final int WorkMode_Start_Hour = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, 0);
+        final int WorkMode_Start_Mintues = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, 0);
+        final int WorkMode_End_Hour = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, 0);
+        final int WorkMode_End_Mintues = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, 0);
+        if(WorkMode_EndON && WorkMode_StartON) {
+            if(WorkMode_Start_Hour <= Curr_Hour){
+                if (WorkMode_Start_Mintues <= Curr_Minute) {
+                    TimeModeCheck = false;
+                }
+            }
+            else if (WorkMode_End_Hour <= Curr_Hour) {
+                if (WorkMode_End_Mintues < Curr_Minute) {
+                    TimeModeCheck = true;
+                }
+            }
+        }
+        Boolean RestMode_StartON = sharedPreferences_Mode.getBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY,false);
+        Boolean RestMode_EndON = sharedPreferences_Mode.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,false);
+        final int RestMode_Start_Hour = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, 0);
+        final int RestMode_Start_Mintues = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, 0);
+        final int RestMode_End_Hour = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, 0);
+        final int RestMode_End_Mintues = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, 0);
+        if(RestMode_StartON && RestMode_EndON) {
+            if(RestMode_Start_Hour <= Curr_Hour){
+                if (RestMode_Start_Mintues <= Curr_Minute) {
+                    TimeModeCheck = false;
+                }
+            }
+            else if (RestMode_End_Hour <= Curr_Hour) {
+                if (RestMode_End_Mintues < Curr_Minute) {
+                    TimeModeCheck = true;
+                }
+            }
+        }
+        if(RestMode_StartON && RestMode_EndON && WorkMode_EndON && WorkMode_StartON){
+            if(WorkMode_Start_Hour == RestMode_Start_Hour) {
+                if(WorkMode_Start_Mintues == RestMode_Start_Mintues) {
+                    TimeModeCheck = true;
+                    XposedBridge.log("User set the same Rest mode and Work mode start");
+                }
+            }
+            else if(WorkMode_End_Hour == RestMode_End_Hour) {
+                if(WorkMode_End_Mintues == RestMode_End_Mintues) {
+                    TimeModeCheck = true;
+                    XposedBridge.log("User set the same Rest mode and Work mode start");
                 }
             }
         }
