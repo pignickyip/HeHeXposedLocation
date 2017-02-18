@@ -86,8 +86,8 @@
     <string name="mode_work_end_time_button">Work end time Set up</string>
     <string name="clear_rest_but_title">Clear Rest mode setting</string>
     <string name="clear_work_but_titile">Clear Work mode setting</string>
-    <string name="stop_rest_mode">Stop Rest mode</string>
-    <string name="stop_work_mode">Stop Work mode</string>
+    <string name="rest_mode">Rest mode On</string>
+    <string name="work_mode">Work mode On</string>
     <string name="default_text">Text</string>
 
     <string name="Notice_def_setting">Restart your phone after update.</string>

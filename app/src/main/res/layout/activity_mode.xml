@@ -38,6 +38,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/but_clear_work" />
 
+        <ToggleButton
+            android:text="@string/work_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/WorkModeOn" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -70,6 +76,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/but_clear_rest" />
+
+        <ToggleButton
+            android:text="@string/rest_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/RestModeOn" />
 
     </LinearLayout>
 
