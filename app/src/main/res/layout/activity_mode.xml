@@ -19,7 +19,18 @@
             android:layout_height="wrap_content"
             android:text="@string/default_text"
             />
-
+        <TextView
+            android:id="@+id/workmode_starttime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/default_text"
+            />
+        <TextView
+            android:id="@+id/workmode_endtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/default_text"
+            />
         <Button
             android:id="@+id/but_starttime_work"
             android:layout_width="match_parent"
@@ -58,6 +69,18 @@
             android:layout_height="wrap_content"
             android:text="@string/default_text"
              />
+        <TextView
+            android:id="@+id/restmode_starttime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/default_text"
+            />
+        <TextView
+            android:id="@+id/restmode_endtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/default_text"
+            />
 
         <Button
             android:id="@+id/but_starttime_rest"
