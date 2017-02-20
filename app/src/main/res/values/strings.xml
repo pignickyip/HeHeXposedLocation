@@ -49,12 +49,13 @@
         <item>Reference List</item>
         <item>Instructions</item>
         <item>Enable HeHeXposed</item>
-        <item>Whitelist</item>
+        <item>Set the Whitelist</item>
         <item>Category get</item>
+        <item>Enable the Mode</item>
+        <item>Feedback</item>
+        <item>Enable Fgd and Bgd Noise</item>
         <item>Clear all Setting</item>
         <item>Apps List</item>
-        <item>Feedback</item>
-        <item>Model</item>
         <item>Test</item>
     </string-array>
     <string-array name="def_setting">

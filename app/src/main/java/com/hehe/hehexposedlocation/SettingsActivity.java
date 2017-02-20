@@ -154,84 +154,29 @@ public class SettingsActivity extends PreferenceActivity  {
                         e.printStackTrace();
                     }
                     break;
-                case 7: //clear all setting
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setMessage("Sure? One Way able");
-                    builder.setTitle("Clear All Setting");
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //Default setting position
-                            clear = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-                            //Customer setting value
-                            clear = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-
-                            //white list
-                            clear = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-                            clear = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-
-                            //Web content
-                            clear = getSharedPreferences(Common.WEB_CONTENT, 0);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-
-                            //Mode
-                            clear = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-                            clear = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
-                            PE = clear.edit();
-                            PE.clear();
-                            PE.apply();
-
-                            Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
-                            dialog.dismiss();
-                            //SettingsActivity.this.finish();
-                        }
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.create().show();
-                    /*boolean debugPref = sharedPref.getBoolean(Common.DEBUG_KEY, false);
-                    debugPref = !debugPref;
-                    sharedPref.edit()
-                            .putBoolean(Common.DEBUG_KEY, debugPref)
-                            .apply();*/
-                    break;
-                }
-                case 8: //Enable
-                    //intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
-                    //startActivity ( intent );
-                    break;
-                case 9:
-                    intent = new Intent( this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
-                    startActivity( intent );
-                    break;
-                case 10:
+                case 7:
                     intent = new Intent( this, com.hehe.hehexposedlocation.mode.ModeActivity.class);
                     startActivity( intent );
                     break;
-                case 11:
-
+                case 8:
+                    intent = new Intent( this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
+                    startActivity( intent );
+                    break;
+                case 9:{
+                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                case 10:{ //clear all setting
+                    ClearAllSetting();
+                    break;
+                }
+                case 11: //Enable
+                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
+                    //intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
+                    //startActivity ( intent );
+                    break;
+                case 12:
+                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
                 default:
                     break;
             }
@@ -272,6 +217,68 @@ public class SettingsActivity extends PreferenceActivity  {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+    }
+    private void ClearAllSetting(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Sure? One Way able");
+        builder.setTitle("Clear All Setting");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Default setting position
+                clear = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+                //Customer setting value
+                clear = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+
+                //white list
+                clear = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+                clear = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+
+                //Web content
+                clear = getSharedPreferences(Common.WEB_CONTENT, 0);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+
+                //Mode
+                clear = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+                clear = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
+                PE = clear.edit();
+                PE.clear();
+                PE.apply();
+
+                Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
+                dialog.dismiss();
+                //SettingsActivity.this.finish();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+                    /*boolean debugPref = sharedPref.getBoolean(Common.DEBUG_KEY, false);
+                    debugPref = !debugPref;
+                    sharedPref.edit()
+                            .putBoolean(Common.DEBUG_KEY, debugPref)
+                            .apply();*/
     }
     protected void GetFile() throws InterruptedException {
         UserpkgName.clear();

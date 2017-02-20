@@ -98,14 +98,13 @@ public class DefNoise implements IXposedHookLoadPackage {
         WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
         Collections.sort(WhiteListappList);
 
+        //Category
         UserpkgName.clear();
         UserpkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(UserpkgName);
-
         SyspkgName.clear();
         SyspkgName.addAll(sharedPreferences_SystemApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(SyspkgName);
-
         GetWebContent.clear();
         GetWebContent.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
         Collections.sort(GetWebContent);
@@ -130,7 +129,9 @@ public class DefNoise implements IXposedHookLoadPackage {
                 }
             }
         }
-        Boolean TimeModeCheck = true;
+
+        //Mode value
+        double TimeModeCheck = 1;
         Calendar mcurrentTime = Calendar.getInstance();
         int Curr_Hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int Curr_Minute = mcurrentTime.get(Calendar.MINUTE);
@@ -144,12 +145,12 @@ public class DefNoise implements IXposedHookLoadPackage {
         if(WorkMode_EndON && WorkMode_StartON) {
             if(WorkMode_Start_Hour <= Curr_Hour){
                 if (WorkMode_Start_Mintues <= Curr_Minute) {
-                    TimeModeCheck = false;
+                    TimeModeCheck = 0.9;
                 }
             }
             else if (WorkMode_End_Hour <= Curr_Hour) {
                 if (WorkMode_End_Mintues < Curr_Minute) {
-                    TimeModeCheck = true;
+                    TimeModeCheck = 1;
                 }
             }
         }
@@ -162,15 +163,17 @@ public class DefNoise implements IXposedHookLoadPackage {
         if(RestMode_StartON && RestMode_EndON) {
             if(RestMode_Start_Hour <= Curr_Hour){
                 if (RestMode_Start_Mintues <= Curr_Minute) {
-                    TimeModeCheck = false;
+                    TimeModeCheck = 1.1;
                 }
             }
             else if (RestMode_End_Hour <= Curr_Hour) {
                 if (RestMode_End_Mintues < Curr_Minute) {
-                    TimeModeCheck = true;
+                    TimeModeCheck = 1;
                 }
             }
         }
+        XposedBridge.log("Te num "+TimeModeCheck);
+        /*
         if(RestMode_StartON && RestMode_EndON && WorkMode_EndON && WorkMode_StartON){
             if(WorkMode_Start_Hour == RestMode_Start_Hour) {
                 if(WorkMode_Start_Mintues == RestMode_Start_Mintues) {
@@ -184,17 +187,15 @@ public class DefNoise implements IXposedHookLoadPackage {
                     XposedBridge.log("User set the same Rest mode and Work mode start");
                 }
             }
-        }
+        }*/
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
-
             try {
                 Random rand = new Random(sdk);
                 int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_POSITION, 0);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
-
                 int adapter = 1;
                 if (omg == 0) {//Default
                     //XposedBridge.log("The User chose Default");
@@ -260,6 +261,7 @@ public class DefNoise implements IXposedHookLoadPackage {
                                     });
                         }
                     }
+                    final double modeChange = TimeModeCheck;
                     findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                             new XC_MethodHook() {
                                 @Override
@@ -274,12 +276,11 @@ public class DefNoise implements IXposedHookLoadPackage {
                                     Random rand = new Random(range);
                                     //Original value + random value
                                     double ha = (rand.nextDouble() % (MaxLat));
-                                    double he = (rand.nextDouble() % (range)) % 0.1;
+                                    double he = (rand.nextDouble() % (range)) % 0.1*modeChange;
                                     double RanLat =
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
-                                    XposedBridge.log("ghisd" + RanLat);
                                     String packageName = AndroidAppHelper.currentPackageName();
                                     String CurrpackageName = lpparam.packageName;
                                     String ho123 = Record.get(packageName);
@@ -308,8 +309,8 @@ public class DefNoise implements IXposedHookLoadPackage {
                                                         BigDecimal.valueOf(rand.nextDouble() % 0.1)
                                                                 .setScale(5, RoundingMode.HALF_UP)
                                                                 .doubleValue();
-                                                ra += ori;
                                                 ra = MakeItNegOrPost(ra, range);
+                                                ra += ori;
                                                 param.setResult(ra);
                                                 XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
                                             }
@@ -319,13 +320,11 @@ public class DefNoise implements IXposedHookLoadPackage {
                                             //Match apart of
                                             for (String List_keyword : FreeKeywordList) {
                                                 if (packageName.startsWith(List_keyword)) {
-                                                    double result = ori + RanLat;
-                                                    result = MakeItNegOrPost(result, range);
+                                                    double result = ori + MakeItNegOrPost(RanLat, range);
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else {
-                                                    double result = ori + RanLat * 2;
-                                                    result = MakeItNegOrPost(result, range);
+                                                    double result = ori + MakeItNegOrPost(RanLat, range) * 2;
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 }
@@ -351,7 +350,7 @@ public class DefNoise implements IXposedHookLoadPackage {
                             double ha = (rand.nextDouble() % (MaxLong));
                             //int he =(rand.nextInt(range)) ;
                             // he /= 10;
-                            double he = (rand.nextDouble() % (range)) % 0.1;
+                            double he = (rand.nextDouble() % (range)) % 0.1 * modeChange;
                             double RanLong =
                                     BigDecimal.valueOf(ha % he)
                                             .setScale(5, RoundingMode.HALF_UP)
@@ -382,8 +381,8 @@ public class DefNoise implements IXposedHookLoadPackage {
                                         double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
                                                 .setScale(5, RoundingMode.HALF_UP)
                                                 .doubleValue();
-                                        ra += ori;
                                         ra = MakeItNegOrPost(ra, range);
+                                        ra += ori;
                                         param.setResult(ra);
                                         XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
                                     }
@@ -391,13 +390,11 @@ public class DefNoise implements IXposedHookLoadPackage {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
                                         if (packageName.startsWith(List_keyword)) {
-                                            double result = ori + RanLong;
-                                            result = MakeItNegOrPost(result, range);
+                                            double result = ori +  MakeItNegOrPost(RanLong, range);
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         } else {
-                                            double result = ori + RanLong * 2;
-                                            result = MakeItNegOrPost(result, range);
+                                            double result = ori +  MakeItNegOrPost(RanLong, range) * 2;
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         }
@@ -418,9 +415,8 @@ public class DefNoise implements IXposedHookLoadPackage {
 
     private double MakeItNegOrPost(double haha, int range) {
         double change = haha;
-        Random rand = new Random(range);
-        int Mod = rand.nextInt() % 2;
-        if (Mod == 1)
+        Random rand = new Random(sdk);
+        if (rand.nextBoolean())
             change *= (-1);
         return change;
     }
