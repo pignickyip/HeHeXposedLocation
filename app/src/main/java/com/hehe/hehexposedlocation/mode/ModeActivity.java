@@ -28,6 +28,7 @@ import com.hehe.hehexposedlocation.feedback.FeedbackActivity;
 import org.w3c.dom.Text;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class ModeActivity extends Activity {
     private SharedPreferences Rest = null;
@@ -41,6 +42,7 @@ public class ModeActivity extends Activity {
     private TextView workmode = null;
     private TextView WorkStartTime = null;
     private TextView WorkEndTime = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class ModeActivity extends Activity {
         clearsSetting();
         ToggleSetting();
     }
+
     private void initSet() {
         Work = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
 
@@ -61,10 +64,11 @@ public class ModeActivity extends Activity {
         Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
         Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY, false);
         Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY, false);
-        int WorkStartTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, 0);
-        int WorkStartTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, 0);
-        int WorkEndTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, 0);
-        int WorkEndTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, 0);
+
+        int WorkStartTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, -1);
+        int WorkStartTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
+        int WorkEndTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
+        int WorkEndTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
         if (Work_Setup && WorkStart_Setup && WorkEnd_Setup) {
             String msg = "Work mode is working";
             workmode.setText(msg);
@@ -134,10 +138,10 @@ public class ModeActivity extends Activity {
         Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY, false);
         Boolean RestEnd_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY, false);
 
-        int RestStartTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, 0);
-        int RestStartTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, 0);
-        int RestEndTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, 0);
-        int RestEndTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, 0);
+        int RestStartTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
+        int RestStartTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
+        int RestEndTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
+        int RestEndTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
         if (Rest_Setup && RestStart_Setup && RestEnd_Setup) {
             String msg = "Rest mode is working";
             restmode.setText(msg);
@@ -198,16 +202,14 @@ public class ModeActivity extends Activity {
             RestEndTime.setText(msg);
         }
     }
-    //TODO overlap checking
-    private void ButtonAction(){
 
+    private void ButtonAction() {
         Button rest_start_but = (Button) findViewById(R.id.but_starttime_rest);
-        Button rest_end_but= (Button) findViewById(R.id.but_endtime_rest);
+        Button rest_end_but = (Button) findViewById(R.id.but_endtime_rest);
         Button work_start_but = (Button) findViewById(R.id.but_starttime_work);
         Button work_end_but = (Button) findViewById(R.id.but_endtime_work);
-
         ///Rest mode
-        rest_start_but.setOnClickListener(new Button.OnClickListener(){
+        rest_start_but.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -218,17 +220,22 @@ public class ModeActivity extends Activity {
                 mTimePicker = new TimePickerDialog(ModeActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        restmode.setText( "The Start time set as " + selectedHour + ":" + selectedMinute);
-                        RestStartTime.setText("Current Start time set as " + selectedHour + ":" + selectedMinute);
-                        PE = Rest.edit();
-                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY);
-                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR);
-                        PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES);
+                        if (OverlapChecking(selectedHour, selectedMinute, true, "Rest")) {
+                            restmode.setText("The Start time set as " + selectedHour + ":" + selectedMinute);
+                            RestStartTime.setText("Current Start time set as " + selectedHour + ":" + selectedMinute);
+                            PE = Rest.edit();
+                            PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY);
+                            PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR);
+                            PE.remove(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES);
 
-                        PE.putBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY,true);
-                        PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR,selectedHour);
-                        PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES,selectedMinute);
-                        PE.commit();
+                            PE.putBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY, true);
+                            PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, selectedHour);
+                            PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, selectedMinute);
+                            PE.commit();
+                        } else {
+                            restmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle("Select Rest start Time");
@@ -236,7 +243,7 @@ public class ModeActivity extends Activity {
                 mTimePicker.show();
             }
         });
-        rest_end_but.setOnClickListener(new Button.OnClickListener(){
+        rest_end_but.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -247,17 +254,22 @@ public class ModeActivity extends Activity {
                 mTimePicker = new TimePickerDialog(ModeActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        restmode.setText( "The End time set as " + selectedHour + ":" + selectedMinute);
-                        RestEndTime.setText("Current End time set as " + selectedHour + ":" + selectedMinute);
-                        PE = Rest.edit();
-                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY);
-                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR);
-                        PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES);
+                        if (OverlapChecking(selectedHour, selectedMinute, false, "Rest")) {
+                            restmode.setText("The End time set as " + selectedHour + ":" + selectedMinute);
+                            RestEndTime.setText("Current End time set as " + selectedHour + ":" + selectedMinute);
+                            PE = Rest.edit();
+                            PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY);
+                            PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR);
+                            PE.remove(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES);
 
-                        PE.putBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,true);
-                        PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR,selectedHour);
-                        PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES,selectedMinute);
-                        PE.commit();
+                            PE.putBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY, true);
+                            PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, selectedHour);
+                            PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, selectedMinute);
+                            PE.commit();
+                        } else {
+                            restmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle("Select Rest end Time");
@@ -265,7 +277,7 @@ public class ModeActivity extends Activity {
             }
         });
         //Work mode
-        work_start_but.setOnClickListener(new Button.OnClickListener(){
+        work_start_but.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -276,25 +288,30 @@ public class ModeActivity extends Activity {
                 mTimePicker = new TimePickerDialog(ModeActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        workmode.setText( "The Start time set as " + selectedHour + ":" + selectedMinute);
-                        WorkStartTime.setText("Current Start time set as " + selectedHour + ":" + selectedMinute);
+                        if (OverlapChecking(selectedHour, selectedMinute, true, "Work")) {
+                            workmode.setText("The Start time set as " + selectedHour + ":" + selectedMinute);
+                            WorkStartTime.setText("Current Start time set as " + selectedHour + ":" + selectedMinute);
 
-                        PE = Work.edit();
-                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY);
-                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR);
-                        PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES);
+                            PE = Work.edit();
+                            PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY);
+                            PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR);
+                            PE.remove(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES);
 
-                        PE.putBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,true);
-                        PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR,selectedHour);
-                        PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES,selectedMinute);
-                        PE.commit();
+                            PE.putBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY, true);
+                            PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, selectedHour);
+                            PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, selectedMinute);
+                            PE.commit();
+                        } else {
+                            workmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle("Select Work start Time");
                 mTimePicker.show();
             }
         });
-        work_end_but.setOnClickListener(new Button.OnClickListener(){
+        work_end_but.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Calendar mcurrentTime = Calendar.getInstance();
@@ -305,18 +322,23 @@ public class ModeActivity extends Activity {
                 mTimePicker = new TimePickerDialog(ModeActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        workmode.setText( "The End time set as " + selectedHour + ":" + selectedMinute);
-                        WorkEndTime.setText("Current End time set as " + selectedHour + ":" + selectedMinute);
+                        if (OverlapChecking(selectedHour, selectedMinute, false, "Work")) {
+                            workmode.setText("The End time set as " + selectedHour + ":" + selectedMinute);
+                            WorkEndTime.setText("Current End time set as " + selectedHour + ":" + selectedMinute);
 
-                        PE = Work.edit();
-                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY);
-                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR);
-                        PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES);
+                            PE = Work.edit();
+                            PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY);
+                            PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR);
+                            PE.remove(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES);
 
-                        PE.putBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,true);
-                        PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR,selectedHour);
-                        PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES,selectedMinute);
-                        PE.commit();
+                            PE.putBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY, true);
+                            PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, selectedHour);
+                            PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, selectedMinute);
+                            PE.commit();
+                        } else {
+                            workmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
+                            Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }, hour, minute, true);
                 mTimePicker.setTitle("Select Work end Time");
@@ -324,9 +346,10 @@ public class ModeActivity extends Activity {
             }
         });
     }
-    private void clearsSetting(){
+
+    private void clearsSetting() {
         Button ClearRest = (Button) findViewById(R.id.but_clear_rest);
-        ClearRest.setOnClickListener(new Button.OnClickListener(){
+        ClearRest.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ModeActivity.this);
@@ -352,8 +375,8 @@ public class ModeActivity extends Activity {
                 builder.create().show();
             }
         });
-        Button ClearWork= (Button) findViewById(R.id.but_clear_work);
-        ClearWork.setOnClickListener(new Button.OnClickListener(){
+        Button ClearWork = (Button) findViewById(R.id.but_clear_work);
+        ClearWork.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(ModeActivity.this);
@@ -380,16 +403,17 @@ public class ModeActivity extends Activity {
             }
         });
     }
-    private void ToggleSetting(){
+
+    private void ToggleSetting() {
         final String Special_msg = ". \nNotice that the setting not yet done. It would not executed";
 
         final ToggleButton WorkModeOn = (ToggleButton) findViewById(R.id.WorkModeOn);
-        final Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
-        final Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
-        final Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY,false);
+        final Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY, false);
+        final Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY, false);
+        final Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
 
         Boolean Workcheck = false;
-        if(Work_Setup)
+        if (Work_Setup)
             Workcheck = true;
         WorkModeOn.setChecked(Workcheck);
         WorkModeOn.setOnClickListener(new View.OnClickListener() {
@@ -398,27 +422,27 @@ public class ModeActivity extends Activity {
 
                 PE = Work.edit();
                 PE.remove(Common.MODE_WORK_SETUP_KEY);
-                if(Work_Setup)
-                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY,false);
+                if (Work_Setup)
+                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY, false);
                 else
-                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY,true);
+                    PE.putBoolean(Common.MODE_WORK_SETUP_KEY, true);
                 PE.commit();
 
                 String status = "Work mode : " + WorkModeOn.getText();
                 Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show(); // display the current state of toggle button's
 
-                if(!(WorkStart_Setup&&WorkEnd_Setup))
+                if (!(WorkStart_Setup && WorkEnd_Setup))
                     status += Special_msg;
                 workmode.setText(status);
             }
         });
 
         final ToggleButton RestModeOn = (ToggleButton) findViewById(R.id.RestModeOn);
-        final Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
-        final Boolean RestEnd_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,false);
-        final Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
+        final Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY, false);
+        final Boolean RestEnd_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY, false);
+        final Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY, false);
         Boolean Restcheck = false;
-        if(Rest_Setup)
+        if (Rest_Setup)
             Restcheck = true;
         RestModeOn.setChecked(Restcheck);
         RestModeOn.setOnClickListener(new View.OnClickListener() {
@@ -426,18 +450,88 @@ public class ModeActivity extends Activity {
             public void onClick(View v) {
                 PE = Rest.edit();
                 PE.remove(Common.MODE_REST_SETUP_KEY);
-                if(Rest_Setup)
-                    PE.putBoolean(Common.MODE_REST_SETUP_KEY,false);
+                if (Rest_Setup)
+                    PE.putBoolean(Common.MODE_REST_SETUP_KEY, false);
                 else
-                    PE.putBoolean(Common.MODE_REST_SETUP_KEY,true);
+                    PE.putBoolean(Common.MODE_REST_SETUP_KEY, true);
                 PE.commit();
 
                 String status = "Rest mode : " + RestModeOn.getText();
                 Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show(); // display the current state of toggle button's
-                if(!(RestStart_Setup&&RestEnd_Setup))
+                if (!(RestStart_Setup && RestEnd_Setup))
                     status += Special_msg;
                 restmode.setText(status);
             }
         });
+    }
+
+    private boolean OverlapChecking(int hour, int min, boolean startOrend, String mode) {
+        Boolean Work_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
+        Boolean WorkStart_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY, false);
+        Boolean WorkEnd_Setup = Work.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY, false);
+        int WorkStartTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, -1);
+        int WorkStartTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
+        int WorkEndTimeHourValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
+        int WorkEndTimeMinValue = Work.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
+
+        Boolean Rest_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_KEY, false);
+        Boolean RestStart_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY, false);
+        Boolean RestEnd_Setup = Rest.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY, false);
+        int RestStartTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
+        int RestStartTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
+        int RestEndTimeHourValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
+        int RestEndTimeMinValue = Rest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
+
+        if (Objects.equals(mode, "Work")) {
+            if (startOrend) {//Set up the Start
+                if (WorkEnd_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, WorkEndTimeHourValue, WorkEndTimeMinValue))
+                        return false;
+                }
+                if (RestStart_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, RestStartTimeHourValue, RestStartTimeMinValue))
+                        return false;
+                }
+            } else {//Set up the End
+                if (WorkStart_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, WorkStartTimeHourValue, WorkStartTimeMinValue))
+                        return false;
+                }
+                if (RestEnd_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, RestEndTimeHourValue, RestEndTimeMinValue))
+                        return false;
+                }
+            }
+        } else if (Objects.equals(mode, "Rest")) {
+            if (startOrend) {//Set up the Start
+                if (RestEnd_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, RestEndTimeHourValue, RestEndTimeMinValue))
+                        return false;
+                }
+                if (WorkStart_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, WorkStartTimeHourValue, WorkStartTimeMinValue))
+                        return false;
+                }
+            } else {//Set up the End
+                if (RestStart_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, RestStartTimeHourValue, RestStartTimeMinValue))
+                        return false;
+                }
+                if (WorkEnd_Setup) {
+                    if (!OverlapCheckingLogic(hour, min, WorkEndTimeHourValue, WorkEndTimeMinValue))
+                        return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean OverlapCheckingLogic(int hour, int min, int TimeHourValue, int TimeMinValue) {
+        if (hour == TimeHourValue) {
+            if (min == TimeMinValue) {
+                return false;
+            }
+        }
+        return true;
     }
 }
