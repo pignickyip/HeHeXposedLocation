@@ -84,7 +84,9 @@ public class DefNoise implements IXposedHookLoadPackage {
         //Feedback
         final XSharedPreferences sharedPreferences_Feedback = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.FEEDBACK_COMFORTABLE);
         //Mode
-        final XSharedPreferences sharedPreferences_Mode = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
+        final XSharedPreferences sharedPreferences_ModeWork = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_WORK_SETUP);
+        final XSharedPreferences sharedPreferences_ModeRest = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
+
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
         sharedPreferences_customer.makeWorldReadable();
@@ -92,7 +94,8 @@ public class DefNoise implements IXposedHookLoadPackage {
         sharedPreferences_SystemApplicationFile.makeWorldReadable();
         sharedPreferences_WebContent.makeWorldReadable();
         sharedPreferences_Feedback.makeWorldReadable();
-        sharedPreferences_Mode.makeWorldReadable();
+        sharedPreferences_ModeWork.makeWorldReadable();
+        sharedPreferences_ModeRest.makeWorldReadable();
 
         WhiteListappList.clear();
         WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
@@ -129,38 +132,39 @@ public class DefNoise implements IXposedHookLoadPackage {
                 }
             }
         }
-
         //Mode value
-        double TimeModeCheck = 1;
+        double TimeModeCheck = -1;
         Calendar mcurrentTime = Calendar.getInstance();
         int Curr_Hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int Curr_Minute = mcurrentTime.get(Calendar.MINUTE);
         //Mode change
-        Boolean WorkMode_StartON = sharedPreferences_Mode.getBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY,false);
-        Boolean WorkMode_EndON = sharedPreferences_Mode.getBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY,false);
-        final int WorkMode_Start_Hour = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, 0);
-        final int WorkMode_Start_Mintues = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, 0);
-        final int WorkMode_End_Hour = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, 0);
-        final int WorkMode_End_Mintues = sharedPreferences_Mode.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, 0);
-        if(WorkMode_EndON && WorkMode_StartON) {
-            if(WorkMode_Start_Hour <= Curr_Hour){
+        final boolean WorkMode_ON = sharedPreferences_ModeWork.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
+        final int WorkMode_Start_Hour = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, -1);
+        final int WorkMode_Start_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
+        final int WorkMode_End_Hour = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
+        final int WorkMode_End_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
+        if(WorkMode_ON ) {
+            if (WorkMode_Start_Hour <= Curr_Hour) {
                 if (WorkMode_Start_Mintues <= Curr_Minute) {
-                    TimeModeCheck = 0.9;
+                    if (WorkMode_Start_Hour != -1)
+                        TimeModeCheck = 0.9;
                 }
-            }
-            else if (WorkMode_End_Hour <= Curr_Hour) {
+            } else if (WorkMode_End_Hour <= Curr_Hour) {
                 if (WorkMode_End_Mintues < Curr_Minute) {
                     TimeModeCheck = 1;
+                    XposedBridge.log("Current " + Curr_Hour + ":" + Curr_Minute);
                 }
             }
         }
-        Boolean RestMode_StartON = sharedPreferences_Mode.getBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY,false);
-        Boolean RestMode_EndON = sharedPreferences_Mode.getBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY,false);
-        final int RestMode_Start_Hour = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, 0);
-        final int RestMode_Start_Mintues = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, 0);
-        final int RestMode_End_Hour = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, 0);
-        final int RestMode_End_Mintues = sharedPreferences_Mode.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, 0);
-        if(RestMode_StartON && RestMode_EndON) {
+        else
+            TimeModeCheck = WorkMode_Start_Hour;
+
+        Boolean RestMode_ON = sharedPreferences_ModeRest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
+        final int RestMode_Start_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
+        final int RestMode_Start_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
+        final int RestMode_End_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
+        final int RestMode_End_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
+        if(RestMode_ON) {
             if(RestMode_Start_Hour <= Curr_Hour){
                 if (RestMode_Start_Mintues <= Curr_Minute) {
                     TimeModeCheck = 1.1;
@@ -172,7 +176,6 @@ public class DefNoise implements IXposedHookLoadPackage {
                 }
             }
         }
-        XposedBridge.log("Te num "+TimeModeCheck);
         /*
         if(RestMode_StartON && RestMode_EndON && WorkMode_EndON && WorkMode_StartON){
             if(WorkMode_Start_Hour == RestMode_Start_Hour) {
@@ -261,6 +264,7 @@ public class DefNoise implements IXposedHookLoadPackage {
                                     });
                         }
                     }
+
                     final double modeChange = TimeModeCheck;
                     findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                             new XC_MethodHook() {

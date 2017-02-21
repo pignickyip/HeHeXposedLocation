@@ -7,6 +7,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:text="@string/Notice_def_setting"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/Notice_restart_mode"
+        android:layout_weight="0.14"
+        android:gravity="center"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -18,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/default_text"
-            />
+            android:textSize="30sp" />
         <TextView
             android:id="@+id/workmode_starttime"
             android:layout_width="match_parent"

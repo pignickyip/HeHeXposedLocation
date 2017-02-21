@@ -55,7 +55,7 @@ public class ModeActivity extends Activity {
     }
 
     private void initSet() {
-        Work = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
+        Work = getSharedPreferences(Common.MODE_WORK_SETUP,  MODE_WORLD_READABLE);
 
         workmode = (TextView) findViewById(R.id.workmode);
         WorkStartTime = (TextView) findViewById(R.id.workmode_starttime);
