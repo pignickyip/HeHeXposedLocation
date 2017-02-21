@@ -37,11 +37,8 @@
         <item>State</item>
     </string-array>
     <string-array name="ref_list">
-        <item>Rootcloak2</item>
         <item>HideMockLocation</item>
-        <item>Xprivacy</item>
         <item>XposedAppSettings</item>
-        <item>LogsFilter</item>
     </string-array>
     <string-array name="menu_array">
         <item>About Me</item>

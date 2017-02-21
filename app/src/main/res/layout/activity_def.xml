@@ -18,12 +18,17 @@
             android:text="@string/Notice_def_setting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/textView10"
+            android:id="@+id/Notice_restart_default"
             android:textSize="24sp" />
 
 
+        <Button
+            android:text="@string/default_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/restart_it" />
 
-    <TextView
+        <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/def_text"

@@ -42,15 +42,14 @@ import java.util.concurrent.atomic.AtomicReference;
 public class SettingsActivity extends PreferenceActivity  {
     private GoogleApiClient client;
 
-    SharedPreferences sharedPref;
-    String[] menuItems;
-    String instructionsString;
-    String instructionsTitle;
+    private String[] menuItems;
+    private String instructionsMsg;
+    private String instructionsTitle;
 
-    private PackageManager pm;
+    private PackageManager pm = null;
 
-    SharedPreferences clear;
-    SharedPreferences.Editor PE;
+    private SharedPreferences clear = null;
+    private SharedPreferences.Editor PE = null;
 
     public static SharedPreferences UserApplicationFile = null;
     public static SharedPreferences SystemApplicationFile = null;
@@ -71,8 +70,9 @@ public class SettingsActivity extends PreferenceActivity  {
         setContentView(R.layout.activity_settings_main );
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
-        instructionsString = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" + "\n\n"
-               + "\n\n"
+        instructionsMsg = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" +
+                "\n Second, Choose those function you want to use\n"
+               + "\n Remind that, you should restart the mobile phone to apply change\n"
                  + "\n\n";
 
         instructionsTitle = res.getString(R.string.instructions_title);
@@ -80,8 +80,6 @@ public class SettingsActivity extends PreferenceActivity  {
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, menuItems);
         setListAdapter(adapter);
-
-        sharedPref = getSharedPreferences(Common.PREFS_SETTINGS, MODE_WORLD_READABLE);
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -114,7 +112,7 @@ public class SettingsActivity extends PreferenceActivity  {
                 case 2: //Reference List
                     String[] ref_ar;
                     String ref = getString ( R.string.app_name ) + ": " + '\n'
-                            + "Using those module: \n";
+                            + "Thanks those module: \n";
                     ref_ar = getResources ().getStringArray ( R.array.ref_list );
                     List<String> ha = Arrays.asList ( ref_ar );
                     new AlertDialog.Builder ( this )
@@ -129,7 +127,7 @@ public class SettingsActivity extends PreferenceActivity  {
                     break;
                 case 3: //instructions
                     new AlertDialog.Builder ( this )
-                            .setMessage ( instructionsString )
+                            .setMessage ( instructionsMsg )
                             .setTitle ( instructionsTitle )
                             .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -163,7 +161,7 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity( intent );
                     break;
                 case 9:{
-                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
                     break;
                 }
                 case 10:{ //clear all setting
@@ -171,12 +169,12 @@ public class SettingsActivity extends PreferenceActivity  {
                     break;
                 }
                 case 11: //Enable
-                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
                     //intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
                     //startActivity ( intent );
                     break;
                 case 12:
-                    Toast.makeText(getApplicationContext(), "整緊呀屌你", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
                 default:
                     break;
             }
