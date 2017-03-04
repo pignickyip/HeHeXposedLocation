@@ -50,12 +50,12 @@ import java.util.concurrent.ExecutionException;
 import java.io.IOException;
 
 public class DefActivity extends Activity {
-    Spinner spinnerDef;
-    ArrayAdapter adapter;
-    static boolean te = true;
-    public static int POSITION;
-    public static SharedPreferences CUSTOMER = null;
-    public static SharedPreferences SAVE_ACTION = null;
+    private Spinner spinnerDef;
+    private ArrayAdapter adapter;
+    private static boolean te = true;
+    private static int POSITION;
+    private static SharedPreferences CUSTOMER = null;
+    private static SharedPreferences SAVE_ACTION = null;
     private Button Restart = null;
 
     @Override
@@ -112,7 +112,7 @@ public class DefActivity extends Activity {
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
             int OrigPosition = SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, -1);
-            //pass the position value to DefNoise
+            //pass the position value to HockNoise
             SharedPreferences.Editor PE = SAVE_ACTION.edit();
 
             PE.remove(Common.SHARED_PREFERENCES_POSITION);

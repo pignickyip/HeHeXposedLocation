@@ -1,4 +1,4 @@
-package com.hehe.hehexposedlocation.def_setting;
+package com.hehe.hehexposedlocation;
 
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
@@ -50,7 +50,7 @@ import static de.robv.android.xposed.XposedHelpers.setDoubleField;
  * The Spinner noise setting
  */
 //TODO the sharedPreferences_whitelist need to reset/clear
-public class DefNoise implements IXposedHookLoadPackage {
+public class HockNoise implements IXposedHookLoadPackage {
 
     private final static int sdk = Build.VERSION.SDK_INT;
     private final static double MaxLat = -90.0;
@@ -59,14 +59,13 @@ public class DefNoise implements IXposedHookLoadPackage {
     private final static double MinLong = -180.0;
     private final static String[] FreePackageList = PACKAGE_LIST;
     private final static String[] FreeKeywordList = KEYWORD_LIST;
-    private final static String[] AndroidPlayStoreApplicationCategory = APPLICATION_CATEGORY_LIST;
-    private final static String[] AndroidPlayStoreGameCategory = APPLICATION_GAME_CATEGORY_LIST;
     private final List<String> WhiteListappList = new ArrayList<String>();
     private final List<String> UserpkgName = new ArrayList<String>();
     private final List<String> SyspkgName = new ArrayList<String>();
     private final List<String> GetWebContent = new ArrayList<String>();
     private final Hashtable<String, String> WebContent = new Hashtable<String, String>();
     private final HashMap<String, String> Record = new HashMap<>();
+    private final List<String> RunningAppsList = new ArrayList<String>();
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -86,6 +85,8 @@ public class DefNoise implements IXposedHookLoadPackage {
         //Mode
         final XSharedPreferences sharedPreferences_ModeWork = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_WORK_SETUP);
         final XSharedPreferences sharedPreferences_ModeRest = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
+        //Background Service
+        final XSharedPreferences RunningApps = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.BGDFGDRECORDKEY);
 
         sharedPreferences_whitelist.makeWorldReadable();
         sharedPreferences_posit.makeWorldReadable();
@@ -96,6 +97,7 @@ public class DefNoise implements IXposedHookLoadPackage {
         sharedPreferences_Feedback.makeWorldReadable();
         sharedPreferences_ModeWork.makeWorldReadable();
         sharedPreferences_ModeRest.makeWorldReadable();
+        RunningApps.makeWorldReadable();
 
         WhiteListappList.clear();
         WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
@@ -176,21 +178,15 @@ public class DefNoise implements IXposedHookLoadPackage {
                 }
             }
         }
-        /*
-        if(RestMode_StartON && RestMode_EndON && WorkMode_EndON && WorkMode_StartON){
-            if(WorkMode_Start_Hour == RestMode_Start_Hour) {
-                if(WorkMode_Start_Mintues == RestMode_Start_Mintues) {
-                    TimeModeCheck = true;
-                    XposedBridge.log("User set the same Rest mode and Work mode start");
-                }
-            }
-            else if(WorkMode_End_Hour == RestMode_End_Hour) {
-                if(WorkMode_End_Mintues == RestMode_End_Mintues) {
-                    TimeModeCheck = true;
-                    XposedBridge.log("User set the same Rest mode and Work mode start");
-                }
-            }
-        }*/
+
+        RunningAppsList.clear();
+        //RunningAppsList.putAll((Map<? extends Integer, ? extends String>) RunningApps.getStringSet(Common.BGDFGDAPPLICATION, (Set<String>) new HashMap<Integer,String>());
+        RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION,new HashSet<String>()));
+        Collections.sort(RunningAppsList);
+        for(String RunningApp : RunningAppsList){
+            XposedBridge.log("The application "+RunningApp +" is running.");
+        }
+        XposedBridge.log(RunningApps.getString(Common.CURRENTAPPLICATION, "fdfd0f"));
         // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {

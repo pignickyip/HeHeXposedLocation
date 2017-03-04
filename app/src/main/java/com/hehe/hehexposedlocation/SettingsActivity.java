@@ -85,7 +85,7 @@ public class SettingsActivity extends PreferenceActivity  {
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
         @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    public void onListItemClick(ListView parent, View v, int position, long id) {
+    protected void onListItemClick(ListView parent, View v, int position, long id) {
             Intent intent;
             Fragment navFragment = null;
             switch (position) {
@@ -145,12 +145,25 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
-                    try {
-                        //http://androidexample.com/Show_Loader_To_Open_Url_In_WebView__-_Android_Example/index.php?view=article_discription&aid=125
-                        GetFile();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    new AlertDialog.Builder ( this )
+                            .setMessage ( "Assume you do it one only" )
+                            .setTitle ( "Get the category of all your mobile phone application" )
+                            .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    try {
+                                        //http://androidexample.com/Show_Loader_To_Open_Url_In_WebView__-_Android_Example/index.php?view=article_discription&aid=125
+                                        GetFile();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            } )
+                            .setNegativeButton("Cancel",new DialogInterface.OnClickListener () {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show ();
                     break;
                 case 7:
                     intent = new Intent( this, com.hehe.hehexposedlocation.mode.ModeActivity.class);
@@ -161,20 +174,22 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity( intent );
                     break;
                 case 9:{
-                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
+                    intent = new Intent( this, com.hehe.hehexposedlocation.advanced_function.BgdFgdEnableActivity.class);
+                    startActivity( intent );
                     break;
                 }
-                case 10:{ //clear all setting
+                case 10:{
+                    //clear all setting
                     ClearAllSetting();
                     break;
                 }
                 case 11: //Enable
-                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
-                    //intent = new Intent ( this, com.hehe.hehexposedlocation.appsettings.XposedModActivity.class );
-                    //startActivity ( intent );
+                    UserActivityIdentity();
                     break;
                 case 12:
-                    Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
+                    intent = new Intent( this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
+                    startActivity( intent );
+                    break;
                 default:
                     break;
             }
@@ -200,7 +215,6 @@ public class SettingsActivity extends PreferenceActivity  {
     @Override
     public void onStart() {
         super.onStart();
-
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -216,6 +230,11 @@ public class SettingsActivity extends PreferenceActivity  {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
+    private void UserActivityIdentity () {
+        //TODO http://stackoverflow.com/questions/27058741/detect-user-activity-running-cycling-driving-using-android
+        //https://developer.xamarin.com/samples/monodroid/google-services/Location/ActivityRecognition/
+        Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
+    }
     private void ClearAllSetting(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Sure? One Way able");
@@ -224,41 +243,20 @@ public class SettingsActivity extends PreferenceActivity  {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //Default setting position
-                clear = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
-                //Customer setting value
-                clear = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
+                ClearFunction(Common.SHARED_PREFERENCES_POSITION);
 
+                //Customer setting value
+                ClearFunction(Common.SHARED_PREDERENCES_CUSTOMER);
                 //white list
-                clear = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, MODE_WORLD_READABLE);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
-                clear = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, MODE_WORLD_READABLE);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
+                ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
+                ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
 
                 //Web content
-                clear = getSharedPreferences(Common.WEB_CONTENT, 0);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
+                ClearFunction(Common.WEB_CONTENT);
 
                 //Mode
-                clear = getSharedPreferences(Common.MODE_REST_SETUP, MODE_WORLD_READABLE);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
-                clear = getSharedPreferences(Common.MODE_WORK_SETUP, MODE_WORLD_READABLE);
-                PE = clear.edit();
-                PE.clear();
-                PE.apply();
+                ClearFunction(Common.MODE_REST_SETUP);
+                ClearFunction(Common.MODE_WORK_SETUP);
 
                 Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
                 dialog.dismiss();
@@ -278,7 +276,7 @@ public class SettingsActivity extends PreferenceActivity  {
                             .putBoolean(Common.DEBUG_KEY, debugPref)
                             .apply();*/
     }
-    protected void GetFile() throws InterruptedException {
+    private void GetFile() throws InterruptedException {
         UserpkgName.clear();
         SyspkgName.clear();
         //http://blog.csdn.net/feng88724/article/details/6198446
@@ -339,7 +337,7 @@ public class SettingsActivity extends PreferenceActivity  {
         // https://jsoup.org/cookbook/extracting-data/dom-navigation
         // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
     }
-    protected String WebGet(String pkg) throws InterruptedException {//TODO get null
+    private String WebGet(String pkg) throws InterruptedException {//TODO get null
         String Domain = "https://play.google.com";
         String ShortURL = "/store/apps/details?id=";
         String ContrySet = "&hl=en";
@@ -382,5 +380,11 @@ public class SettingsActivity extends PreferenceActivity  {
             e.printStackTrace();
         }
         return doc;
+    }
+    private void ClearFunction(String Key){
+        clear = getSharedPreferences(Key, 0);
+        PE = clear.edit();
+        PE.clear();
+        PE.apply();
     }
 }

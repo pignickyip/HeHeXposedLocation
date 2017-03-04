@@ -156,6 +156,32 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
+        <activity
+            android:name=".advanced_function.BgdFgdEnableActivity"
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/inside_activity_name_mode"
+            android:noHistory="false"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
+        </activity>
+        <service android:name=".advanced_function.BgdFgdListenService" />
+        <activity
+            android:name=".pwd.PwdActivity"
+            android:configChanges="orientation|screenSize"
+            android:enabled="true"
+            android:excludeFromRecents="true"
+            android:label="@string/inside_activity_name_mode"
+            android:noHistory="false"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
+        </activity>
+
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.

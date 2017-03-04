@@ -16,9 +16,8 @@
         <TextView
             android:text="@string/Notice_def_setting"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="41dp"
             android:id="@+id/Notice_restart_mode"
-            android:layout_weight="0.14"
             android:gravity="center"
             android:textSize="18sp" />
 

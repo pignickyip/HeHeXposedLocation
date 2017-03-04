@@ -68,6 +68,13 @@ public class Common {
     public static final String MODE_WORK_SETUP_ENDTIME_KEY_HOUR = "MODE_WORK_SETUP_ENDTIME_KEY_HOUR";
     public static final String MODE_WORK_SETUP_ENDTIME_KEY_MINUTES = "MODE_WORK_SETUP_ENDTIME_KEY_MINUTES";
 
+    public static final String BGDFGDRECORDKEY = "BGDFGDRECORDKEY";
+    public static final String BGDFGDRECORDKEYUP = "BGDFGDRECORDKEYUP";
+    public static final String BGDFGDAPPLICATION = "BGDFGDAPPLICATION";
+    public static final String BGDFGDAPPLICATIONID = "BGDFGDAPPLICATIONID";
+    public static final String CURRENTAPPLICATION = "CURRENTAPPLICATION";
+
+
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();
     public static final PrefSet COMMANDS = new CommandSet();

@@ -39,6 +39,7 @@
     <string-array name="ref_list">
         <item>HideMockLocation</item>
         <item>XposedAppSettings</item>
+        <item>Icon design: iconos de viajes</item>
     </string-array>
     <string-array name="menu_array">
         <item>About Me</item>
@@ -52,8 +53,8 @@
         <item>Feedback</item>
         <item>Enable Fgd and Bgd Noise</item>
         <item>Clear all Setting</item>
-        <item>Apps List</item>
-        <item>Test</item>
+        <item>Enable Movement</item>
+        <item>Password setting</item>
     </string-array>
     <string-array name="def_setting">
         <item>Default</item>
@@ -103,8 +104,11 @@
     <string name="intro_content6">This project aims to provide a security method to let the client get rid of the risk of monitoring, reduce the probability of the personal information like GPS location exposed by any action which client does not expect.</string>
     <string name="intro_content7">It will be an Android application that gains a lot of potential users and encourages a world to avoid monitoring each other.</string>
     <string name="email"><a href="mailto:15049782d@connect.polyu.hk">Contact Me</a></string>
-    <string name="cas_on">Debug is now on.</string>
-    <string name="cas_off">Debug is now off.</string>
+
+    <string name="bgdfgdStartService">Get start</string>
+    <string name="bgdfgdStopService">Stop it</string>
+
+
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="about">About Me</string>
@@ -335,4 +339,5 @@ Really go back and discard changes?</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_index">IndexActivity</string>
+    <string name="title_activity_pwd">PwdActivity</string>
 </resources>
