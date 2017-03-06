@@ -65,8 +65,6 @@ public class BgdFgdListenService extends Service {
         record = getSharedPreferences(Common.BGDFGDRECORDKEY, 0);
         String hehe = "";
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        final List<String> test = new ArrayList<>();
-        test.clear();
 //http://www.cnblogs.com/zdz8207/archive/2012/07/23/2605377.html must see
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             List<ActivityManager.AppTask> recentTasks = activityManager.getAppTasks();
@@ -86,7 +84,7 @@ public class BgdFgdListenService extends Service {
             List<ProcessManager.Process> processes = ProcessManager.getRunningApps();
             for (ProcessManager.Process process : processes) {
                 StringBuilder sb = new StringBuilder();
-                test.add(sb.append(process.name).toString());
+                RunningApps.add(sb.append(process.name).toString());
             }
             ProcessManager.getRunningApps();
         }
@@ -104,18 +102,13 @@ public class BgdFgdListenService extends Service {
         }
         Collections.sort(RunningApps);
         Collections.sort(RunningAppsID);
-        Collections.sort(test);
 
         PE = record.edit();
         PE.putStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>(RunningApps));
-        PE.putStringSet("fuck", new HashSet<String>(test));
         PE.putString(Common.CURRENTAPPLICATION, hehe);
         PE.putBoolean(Common.BGDFGDRECORDKEYUP, true);
         //PE.putStringSet(Common.BGDFGDAPPLICATIONID, new HashSet<Integer>(RunningAppsID));
         PE.apply();
-        for(String ho : test){
-            Toast.makeText(this, "df" + ho, Toast.LENGTH_LONG).show();
-        }
         Toast.makeText(this, "Service Success", Toast.LENGTH_LONG).show();
 
         return START_STICKY;

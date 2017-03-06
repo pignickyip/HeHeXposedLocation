@@ -1,5 +1,6 @@
 package com.hehe.hehexposedlocation.pwd;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
 import android.widget.Toast;
@@ -13,6 +14,10 @@ public class PwdActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pwd);
         Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
+
+        if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+            //https://developer.xamarin.com/guides/android/platform_features/fingerprint-authentication/
+        }
     }
 
 }

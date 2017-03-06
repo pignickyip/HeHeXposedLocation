@@ -189,11 +189,6 @@ public class HockNoise implements IXposedHookLoadPackage {
             OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");
             XposedBridge.log(OnRunningFrontgroundApplication);
         }
-        List<String> asd  = new ArrayList<String>();
-        asd.addAll(RunningApps.getStringSet("fuck", new HashSet<String>()));
-        for(String sda : asd){
-            XposedBridge.log(sda);
-        }
         //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
