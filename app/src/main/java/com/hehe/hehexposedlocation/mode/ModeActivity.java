@@ -231,7 +231,7 @@ public class ModeActivity extends Activity {
                             PE.putBoolean(Common.MODE_REST_SETUP_STARTTIME_KEY, true);
                             PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, selectedHour);
                             PE.putInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, selectedMinute);
-                            PE.commit();
+                            PE.apply();
                         } else {
                             restmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
                             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
@@ -265,7 +265,7 @@ public class ModeActivity extends Activity {
                             PE.putBoolean(Common.MODE_REST_SETUP_ENDTIME_KEY, true);
                             PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, selectedHour);
                             PE.putInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, selectedMinute);
-                            PE.commit();
+                            PE.apply();
                         } else {
                             restmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
                             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
@@ -300,7 +300,7 @@ public class ModeActivity extends Activity {
                             PE.putBoolean(Common.MODE_WORK_SETUP_STARTTIME_KEY, true);
                             PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, selectedHour);
                             PE.putInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, selectedMinute);
-                            PE.commit();
+                            PE.apply();
                         } else {
                             workmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
                             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
@@ -334,7 +334,7 @@ public class ModeActivity extends Activity {
                             PE.putBoolean(Common.MODE_WORK_SETUP_ENDTIME_KEY, true);
                             PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, selectedHour);
                             PE.putInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, selectedMinute);
-                            PE.commit();
+                            PE.apply();
                         } else {
                             workmode.setText("Set up error since " + selectedHour + ":" + selectedMinute + " have conflict with others time.");
                             Toast.makeText(getApplicationContext(), "Error", Toast.LENGTH_LONG).show();
@@ -360,7 +360,7 @@ public class ModeActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         PE = Rest.edit();
                         PE.clear();
-                        PE.commit();
+                        PE.apply();
                         String msg = "Rest mode already reset";
                         restmode.setText(msg);
                         Toast.makeText(getApplicationContext(), "Successfully reset it", Toast.LENGTH_LONG).show();

@@ -65,7 +65,9 @@ public class HockNoise implements IXposedHookLoadPackage {
     private final List<String> GetWebContent = new ArrayList<String>();
     private final Hashtable<String, String> WebContent = new Hashtable<String, String>();
     private final HashMap<String, String> Record = new HashMap<>();
+
     private final List<String> RunningAppsList = new ArrayList<String>();
+    private String OnRunningFrontgroundApplication;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -145,7 +147,7 @@ public class HockNoise implements IXposedHookLoadPackage {
         final int WorkMode_Start_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
         final int WorkMode_End_Hour = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
         final int WorkMode_End_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
-        if(WorkMode_ON ) {
+        if (WorkMode_ON) {
             if (WorkMode_Start_Hour <= Curr_Hour) {
                 if (WorkMode_Start_Mintues <= Curr_Minute) {
                     if (WorkMode_Start_Hour != -1)
@@ -157,37 +159,42 @@ public class HockNoise implements IXposedHookLoadPackage {
                     XposedBridge.log("Current " + Curr_Hour + ":" + Curr_Minute);
                 }
             }
-        }
-        else
+        } else
             TimeModeCheck = WorkMode_Start_Hour;
 
-        Boolean RestMode_ON = sharedPreferences_ModeRest.getBoolean(Common.MODE_REST_SETUP_KEY,false);
+        Boolean RestMode_ON = sharedPreferences_ModeRest.getBoolean(Common.MODE_REST_SETUP_KEY, false);
         final int RestMode_Start_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
         final int RestMode_Start_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
         final int RestMode_End_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
         final int RestMode_End_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
-        if(RestMode_ON) {
-            if(RestMode_Start_Hour <= Curr_Hour){
+        if (RestMode_ON) {
+            if (RestMode_Start_Hour <= Curr_Hour) {
                 if (RestMode_Start_Mintues <= Curr_Minute) {
                     TimeModeCheck = 1.1;
                 }
-            }
-            else if (RestMode_End_Hour <= Curr_Hour) {
+            } else if (RestMode_End_Hour <= Curr_Hour) {
                 if (RestMode_End_Mintues < Curr_Minute) {
                     TimeModeCheck = 1;
                 }
             }
         }
-
-        RunningAppsList.clear();
-        //RunningAppsList.putAll((Map<? extends Integer, ? extends String>) RunningApps.getStringSet(Common.BGDFGDAPPLICATION, (Set<String>) new HashMap<Integer,String>());
-        RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION,new HashSet<String>()));
-        Collections.sort(RunningAppsList);
-        for(String RunningApp : RunningAppsList){
-            XposedBridge.log("The application "+RunningApp +" is running.");
+        final boolean RunBgdFgd = RunningApps.getBoolean(Common.BGDFGDRECORDKEYUP, false);
+        if (RunBgdFgd) {
+            RunningAppsList.clear();
+            RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>()));
+            Collections.sort(RunningAppsList);
+            for (String RunningApp : RunningAppsList) {
+                XposedBridge.log("The application " + RunningApp + " is running.");
+            }
+            OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");
+            XposedBridge.log(OnRunningFrontgroundApplication);
         }
-        XposedBridge.log(RunningApps.getString(Common.CURRENTAPPLICATION, "fdfd0f"));
-        // https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
+        List<String> asd  = new ArrayList<String>();
+        asd.addAll(RunningApps.getStringSet("fuck", new HashSet<String>()));
+        for(String sda : asd){
+            XposedBridge.log(sda);
+        }
+        //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
             try {
@@ -247,20 +254,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                         }
                                     }
                                 });
-                        if (Build.VERSION.SDK_INT >= 17) {
-                            findAndHookMethod("android.provider.Settings.Secure", lpparam.classLoader, "getStringForUser",
-                                    ContentResolver.class, String.class, Integer.TYPE, new XC_MethodHook() {
-                                        @Override
-                                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                            String requested = (String) param.args[1];
-                                            if (requested.equals(Settings.Secure.ALLOW_MOCK_LOCATION)) {
-                                                param.setResult("0");
-                                            }
-                                        }
-                                    });
-                        }
                     }
-
                     final double modeChange = TimeModeCheck;
                     findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                             new XC_MethodHook() {
@@ -276,7 +270,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     Random rand = new Random(range);
                                     //Original value + random value
                                     double ha = (rand.nextDouble() % (MaxLat));
-                                    double he = (rand.nextDouble() % (range)) % 0.1*modeChange;
+                                    double he = (rand.nextDouble() % (range)) % 0.1 * modeChange;
                                     double RanLat =
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
@@ -323,8 +317,16 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                     double result = ori + MakeItNegOrPost(RanLat, range);
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
+                                                } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
+                                                    double result = ori + (MakeItNegOrPost(RanLat, range) * 1.1);
+                                                    if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
+                                                            || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
+                                                        result *= 1.5;
+                                                    }
+                                                    param.setResult(result);
+                                                    XposedBridge.log("The running application " + packageName + " get the Latitude " + result);
                                                 } else {
-                                                    double result = ori + MakeItNegOrPost(RanLat, range) * 2;
+                                                    double result = ori + (MakeItNegOrPost(RanLat, range) * 2);
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 }
@@ -390,11 +392,11 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
                                         if (packageName.startsWith(List_keyword)) {
-                                            double result = ori +  MakeItNegOrPost(RanLong, range);
+                                            double result = ori + MakeItNegOrPost(RanLong, range);
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         } else {
-                                            double result = ori +  MakeItNegOrPost(RanLong, range) * 2;
+                                            double result = ori + (MakeItNegOrPost(RanLong, range) * 2);
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         }

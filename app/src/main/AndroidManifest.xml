@@ -6,8 +6,8 @@
     android:versionName="1.4">
 
     <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="23" />
+        android:minSdkVersion="19"
+        android:targetSdkVersion="25" />
 
     <!-- User Defined -->
     <permission-tree android:name="com.hehe.hehexposedlocation" />
@@ -31,6 +31,10 @@
     <uses-permission android:name="android.permission.UPDATE_PERMISSIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    // Declare USAGE_STATS permisssion in manifest
+
+    <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS" tools:ignore="ProtectedPermissions" />
+
 
     <permission android:name="android.permission.REBOOT" />
     <permission android:name="android.permission.MODIFY_PHONE_STATE" />
@@ -40,7 +44,8 @@
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo">
+        android:theme="@android:style/Theme.Holo"
+        tools:replace="android:icon, android:theme">
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
@@ -168,7 +173,13 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
-        <service android:name=".advanced_function.BgdFgdListenService" />
+        <service
+            android:name=".advanced_function.BgdFgdListenService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+        <intent-filter>
+            <action android:name="android.accessibilityservice.AccessibilityService" />
+        </intent-filter>
+        </service>
         <activity
             android:name=".pwd.PwdActivity"
             android:configChanges="orientation|screenSize"

@@ -9,7 +9,7 @@ android {
     defaultConfig {
         applicationId "com.hehe.hehexposedlocation"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 6
         versionName "2.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -42,8 +42,8 @@ dependencies {
     //https://jsoup.org/cookbook/introduction/parsing-a-document
     compile project(':jsoup-1.10.2')
     compile project(':jsoup-1.10.2-javadoc')
+    compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
     //compile project(':jsoup-1.10.2-sources')
-
     compile 'com.android.support:support-annotations:25.2.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:25.2.0'
