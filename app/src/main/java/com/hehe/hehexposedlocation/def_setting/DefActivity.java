@@ -53,7 +53,6 @@ public class DefActivity extends Activity {
     private Spinner spinnerDef;
     private ArrayAdapter adapter;
     private static boolean te = true;
-    private static int POSITION;
     private static SharedPreferences CUSTOMER = null;
     private static SharedPreferences SAVE_ACTION = null;
     private Button Restart = null;
@@ -66,6 +65,9 @@ public class DefActivity extends Activity {
         initControls();
         Restart = (Button) findViewById(R.id.restart_it);
         String msg = "Don't need to restart now";
+        boolean setTextMsg = CUSTOMER.getBoolean(Common.DISPLAY_SPINNER_DEFAULT_RESTARTBUTTON,false);
+        if(!setTextMsg)
+            msg = "You should restart now";
         Restart.setText(msg);
         Restart.setOnClickListener(new Button.OnClickListener() {
             @Override
@@ -95,28 +97,28 @@ public class DefActivity extends Activity {
         // Apply the adapter to the spinner
         spinnerDef.setAdapter(adapter);
 
-        SAVE_ACTION = getSharedPreferences(Common.SHARED_PREFERENCES_POSITION, 0);
+        SAVE_ACTION = getSharedPreferences(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0);
         if (!(SAVE_ACTION == null))
-            spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, 0));
+            spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
-        CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_CUSTOMER, 0);
+        CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 0);
 
     }
 
-    public class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
+    private class MyOnItemSelectedListener implements AdapterView.OnItemSelectedListener {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             // On selecting a spinner item
             String item = parent.getItemAtPosition(position).toString();
             // Showing selected spinner item
             Toast.makeText(parent.getContext(), "Selected: " + item, Toast.LENGTH_LONG).show();
-            int OrigPosition = SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_POSITION, -1);
+            int OrigPosition = SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, -1);
             //pass the position value to HockNoise
             SharedPreferences.Editor PE = SAVE_ACTION.edit();
 
-            PE.remove(Common.SHARED_PREFERENCES_POSITION);
-            PE.putInt(Common.SHARED_PREFERENCES_POSITION, position);
+            PE.remove(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
+            PE.putInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, position);
             PE.apply();
             try {
                 if (Objects.equals(item, "Customer")) {
@@ -159,17 +161,20 @@ public class DefActivity extends Activity {
         alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 int haha = R.id.customer_text;
-                if (CUSTOMER.getBoolean(Common.SHARED_PREDERENCES_CUSTOMER_CHECK, true))
+                if (CUSTOMER.getBoolean(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER_CHECK, true))
                     te = false;
                 try {
                     SharedPreferences.Editor PE = CUSTOMER.edit();
-                    PE.putInt(Common.SHARED_PREDERENCES_CUSTOMER, haha);
-                    PE.putBoolean(Common.SHARED_PREDERENCES_CUSTOMER_CHECK, true);
-                    PE.putBoolean(Common.SHARED_PREDERENCES_CUSTOMER_RECORD, true);
+                    PE.putInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, haha);
+                    PE.putBoolean(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER_CHECK, true);
+                    PE.putBoolean(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER_RECORD, true);
+                    PE.putBoolean(Common.DISPLAY_SPINNER_DEFAULT_RESTARTBUTTON,true);
                     PE.apply();
                 } catch (Exception e) {
                     dialog.notify();
                 }
+                String msg = "Restart your phone is required";
+                Restart.setText(msg);
             }
         });
         alertDialogBuilder.setNegativeButton("Cancel",
@@ -191,6 +196,9 @@ public class DefActivity extends Activity {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                SharedPreferences.Editor PE = CUSTOMER.edit();
+                PE.remove(Common.DISPLAY_SPINNER_DEFAULT_RESTARTBUTTON);
+                PE.apply();
                 rebootAfterchange();
             }
         });

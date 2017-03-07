@@ -49,7 +49,6 @@ import static de.robv.android.xposed.XposedHelpers.setDoubleField;
 /**
  * The Spinner noise setting
  */
-//TODO the sharedPreferences_whitelist need to reset/clear
 public class HockNoise implements IXposedHookLoadPackage {
 
     private final static int sdk = Build.VERSION.SDK_INT;
@@ -63,9 +62,8 @@ public class HockNoise implements IXposedHookLoadPackage {
     private final List<String> UserpkgName = new ArrayList<String>();
     private final List<String> SyspkgName = new ArrayList<String>();
     private final List<String> GetWebContent = new ArrayList<String>();
-    private final Hashtable<String, String> WebContent = new Hashtable<String, String>();
-    private final HashMap<String, String> Record = new HashMap<>();
-
+    private final Hashtable<String, String> WebContent = new Hashtable<String,String>();
+    private final HashMap<String, String> Record = new HashMap<String,String>();
     private final List<String> RunningAppsList = new ArrayList<String>();
     private String OnRunningFrontgroundApplication;
 
@@ -76,8 +74,8 @@ public class HockNoise implements IXposedHookLoadPackage {
         //White List
         final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
         //Setting
-        final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_POSITION);
-        final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_CUSTOMER);
+        final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_DEFAULT_POSITION);
+        final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
         //Application reset
         final XSharedPreferences sharedPreferences_UserApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
         final XSharedPreferences sharedPreferences_SystemApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
@@ -180,28 +178,38 @@ public class HockNoise implements IXposedHookLoadPackage {
         }
         final boolean RunBgdFgd = RunningApps.getBoolean(Common.BGDFGDRECORDKEYUP, false);
         if (RunBgdFgd) {
+            /*List<String> temp = new ArrayList<String>();
+            temp.clear();
+            temp.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>()));
+            Collections.sort(temp);
+            XposedBridge.log("No such key");
+            RunningAppsList.clear();
+            for (String RunningApp : temp) {
+                if(WebContent.containsKey(RunningApp)){
+                    RunningAppsList.add(RunningApp);
+                    XposedBridge.log("Running Application: " + RunningApp +"-");
+                }
+                else
+                    XposedBridge.log("No such key");
+            }*/
             RunningAppsList.clear();
             RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>()));
             Collections.sort(RunningAppsList);
-            for (String RunningApp : RunningAppsList) {
-                XposedBridge.log("The application " + RunningApp + " is running.");
-            }
             OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");
-            XposedBridge.log(OnRunningFrontgroundApplication);
         }
         //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
             try {
                 Random rand = new Random(sdk);
-                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_POSITION, 0);
+                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
                 if (omg == 0) {//Default
                     //XposedBridge.log("The User chose Default");
                 } else if (omg == 1) {//Customer
-                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_CUSTOMER, 5);
+                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 5);
                     XposedBridge.log("The User chose Customer and the value is " + adapter);
                     if (sdk >= 21)
                         adapter = ThreadLocalRandom.current().nextInt(1, adapter);
@@ -313,6 +321,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
+                                                    //TODO TEST
                                                     double result = ori + (MakeItNegOrPost(RanLat, range) * 1.1);
                                                     if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
                                                             || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
@@ -390,7 +399,16 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             double result = ori + MakeItNegOrPost(RanLong, range);
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);
-                                        } else {
+                                        }else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
+                                            double result = ori + (MakeItNegOrPost(RanLong, range) * 1.1);
+                                            if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
+                                                    || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
+                                                result *= 1.5;
+                                            }
+                                            param.setResult(result);
+                                            XposedBridge.log("The running application " + packageName + " get the Latitude " + result);
+                                        }
+                                        else {
                                             double result = ori + (MakeItNegOrPost(RanLong, range) * 2);
                                             param.setResult(result);
                                             XposedBridge.log(packageName + " get the Longitude " + result);

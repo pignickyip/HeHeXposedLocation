@@ -19,18 +19,21 @@ import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
 
 
 public class Common {
-    public static final String PACKAGE_NAME = BuildConfig.APPLICATION_ID;
-
     public static final String SYSTEM_LOCATION = "android.location.Location";
     public static final String SYSTEM_LOCATION_MANGER = "android.location.LocationManager";
     public static final String SYSTEM_LOCATION_LISTENER = "android.location.LocationListener";
 
+    public static final String TIME_CATEGORY_GET = "TIME_CATEGORY_GET";
+    public static final String TIME_CATEGORY_GET_DISPLAY = "TIME_CATEGORY_GET_DISPLAY";
+
     public static final String SHARED_WHITELIST_PREFERENCES_FILE = "SHARED_WHITELIST_PREFERENCES_FILE";
     public static final String SHARED_WHITELIST_PKGS_PREFERENCES_FILE = "SHARED_WHITELIST_PKGS_PREFERENCES_FILE";
-    public static final String SHARED_PREFERENCES_POSITION = "position";
-    public static final String SHARED_PREDERENCES_CUSTOMER = "customer";
-    public static final String SHARED_PREDERENCES_CUSTOMER_CHECK = "customercheck";
-    public static final String SHARED_PREDERENCES_CUSTOMER_RECORD = "customerrecord";
+
+    public static final String SHARED_PREFERENCES_DEFAULT_POSITION = "SHARED_PREFERENCES_DEFAULT_POSITION";
+    public static final String SHARED_PREDERENCES_DEFAULT_CUSTOMER = "SHARED_PREDERENCES_DEFAULT_CUSTOMER";
+    public static final String SHARED_PREDERENCES_DEFAULT_CUSTOMER_CHECK = "SHARED_PREDERENCES_DEFAULT_CUSTOMER_CHECK";
+    public static final String SHARED_PREDERENCES_DEFAULT_CUSTOMER_RECORD = "SHARED_PREDERENCES_DEFAULT_CUSTOMER_RECORD";
+    public static final String DISPLAY_SPINNER_DEFAULT_RESTARTBUTTON = "DISPLAY_SPINNER_DEFAULT_RESTARTBUTTON";
 
     public static final String SHARE_APPLICATIONS_TYPE = "APPLICATIONTYPE";
     public static final String PREF_KEY_WHITELIST_ALL = "whitelist_all_apps";

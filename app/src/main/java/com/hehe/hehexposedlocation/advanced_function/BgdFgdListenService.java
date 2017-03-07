@@ -63,9 +63,9 @@ public class BgdFgdListenService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         // Let it continue running until it is stopped.
         record = getSharedPreferences(Common.BGDFGDRECORDKEY, 0);
+        RunningApps.clear();
         String hehe = "";
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//http://www.cnblogs.com/zdz8207/archive/2012/07/23/2605377.html must see
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             List<ActivityManager.AppTask> recentTasks = activityManager.getAppTasks();
             for (ActivityManager.AppTask task: recentTasks){
@@ -86,7 +86,6 @@ public class BgdFgdListenService extends Service {
                 StringBuilder sb = new StringBuilder();
                 RunningApps.add(sb.append(process.name).toString());
             }
-            ProcessManager.getRunningApps();
         }
         else {
             List<ActivityManager.RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);

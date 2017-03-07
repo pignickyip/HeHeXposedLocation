@@ -31,8 +31,12 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.IOException;
+import java.net.CookieHandler;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -51,9 +55,12 @@ public class SettingsActivity extends PreferenceActivity  {
     private SharedPreferences clear = null;
     private SharedPreferences.Editor PE = null;
 
-    public static SharedPreferences UserApplicationFile = null;
-    public static SharedPreferences SystemApplicationFile = null;
-    public static SharedPreferences WebContent = null;
+    private static SharedPreferences UserApplicationFile = null;
+    private static SharedPreferences SystemApplicationFile = null;
+    private static SharedPreferences WebContent = null;
+    private static SharedPreferences GetFileDisplay = null;
+
+    int NumberOfWebGetFunction = 0;
 
     final List<String> UserpkgName = new ArrayList<String>();
     final List<String> SyspkgName = new ArrayList<String>();
@@ -68,6 +75,7 @@ public class SettingsActivity extends PreferenceActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_main );
+        GetFileDisplay = getSharedPreferences(Common.TIME_CATEGORY_GET, 0);
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
         instructionsMsg = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" +
@@ -145,8 +153,11 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
+                    //TODO make an annoucement to userhe already done or not
+                    String LastTime = GetFileDisplay.getString(Common.TIME_CATEGORY_GET_DISPLAY,"Never");
+
                     new AlertDialog.Builder ( this )
-                            .setMessage ( "Assume you do it one only" )
+                            .setMessage ( "This action require you connect to network! \nLast time to get the category: " + LastTime )
                             .setTitle ( "Get the category of all your mobile phone application" )
                             .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -242,16 +253,18 @@ public class SettingsActivity extends PreferenceActivity  {
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+
                 //Default setting position
-                ClearFunction(Common.SHARED_PREFERENCES_POSITION);
+                ClearFunction(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
 
                 //Customer setting value
-                ClearFunction(Common.SHARED_PREDERENCES_CUSTOMER);
+                ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
                 //white list
                 ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
                 ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
 
                 //Web content
+                ClearFunction(Common.TIME_CATEGORY_GET);
                 ClearFunction(Common.WEB_CONTENT);
 
                 //Mode
@@ -331,11 +344,23 @@ public class SettingsActivity extends PreferenceActivity  {
         }
         Collections.sort(Category);
 
+        boolean Cant = false;
+        if(Category.isEmpty())
+            Cant = true;
+
         PE = WebContent.edit();
         PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
         PE.apply();
+
+        if(!Cant) {
+            Announcement();
+            Toast.makeText(getApplicationContext(), "Category already Get", Toast.LENGTH_SHORT).show();
+        }
+        else
+            Toast.makeText(getApplicationContext(), "Not successfully get the category", Toast.LENGTH_SHORT).show();
         // https://jsoup.org/cookbook/extracting-data/dom-navigation
         // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
+
     }
     private String WebGet(String pkg) throws InterruptedException {//TODO get null
         String Domain = "https://play.google.com";
@@ -380,6 +405,16 @@ public class SettingsActivity extends PreferenceActivity  {
             e.printStackTrace();
         }
         return doc;
+    }
+    private void Announcement(){
+        Calendar cal = Calendar.getInstance();
+        @SuppressLint("SimpleDateFormat")
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy EEE MMM dd hh:mm:ss");
+        String display = dateFormat.format(cal.getTime());
+
+        PE = GetFileDisplay.edit();
+        PE.putString(Common.TIME_CATEGORY_GET_DISPLAY,display);
+        PE.apply();
     }
     private void ClearFunction(String Key){
         clear = getSharedPreferences(Key, 0);
