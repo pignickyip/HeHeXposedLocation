@@ -77,6 +77,10 @@ public class Common {
     public static final String BGDFGDAPPLICATIONID = "BGDFGDAPPLICATIONID";
     public static final String CURRENTAPPLICATION = "CURRENTAPPLICATION";
 
+    public static final String PASSWORD_SETTING = "PASSWORD_SETTING";
+    public static final String PASSWORD_SETTING_ON = "PASSWORD_SETTING_ON";
+    public static final String PASSWORD_ALREADY_UP = "PASSWORD_ALREADY_UP";
+    public static final String PASSWORD_PIN_CODE = "PASSWORD_PIN_CODE";
 
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();

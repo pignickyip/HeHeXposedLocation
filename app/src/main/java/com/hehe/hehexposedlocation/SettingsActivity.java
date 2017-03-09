@@ -201,6 +201,10 @@ public class SettingsActivity extends PreferenceActivity  {
                     intent = new Intent( this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
                     startActivity( intent );
                     break;
+                case 13:
+                    intent = new Intent( this, com.hehe.hehexposedlocation.LoginActivity.class);
+                    startActivity( intent );
+                    break;
                 default:
                     break;
             }
@@ -300,7 +304,7 @@ public class SettingsActivity extends PreferenceActivity  {
         //获取手机内所有应用
         List<PackageInfo> paklist = pm.getInstalledPackages(0);
         for (int i = 0; i < paklist.size(); i++) {
-            PackageInfo pak = (PackageInfo) paklist.get(i);
+            PackageInfo pak = paklist.get(i);
             //判断是否为非系统预装的应用程序
             if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
                 // customs applications

@@ -6,4 +6,98 @@
     android:layout_height="match_parent"
     tools:context="com.hehe.hehexposedlocation.pwd.PwdActivity">
 
+    <LinearLayout
+        android:layout_width="352dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <TextView
+            android:id="@+id/pwd_setting"
+            android:layout_width="fill_parent"
+            android:layout_height="64dp"
+            android:gravity="center"
+            android:text="@string/default_text"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textSize="24sp"
+            tools:layout_editor_absoluteX="169dp"
+            tools:layout_editor_absoluteY="1dp" />
+
+        <TextView
+            android:id="@+id/statusview_pwd"
+            android:layout_width="fill_parent"
+            android:layout_height="85dp"
+            android:gravity="center"
+            android:text="@string/default_text"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textSize="16sp"
+            tools:layout_editor_absoluteX="174dp"
+            tools:layout_editor_absoluteY="53dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="73dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <EditText
+                android:id="@+id/pwdsetup"
+                android:layout_width="274dp"
+                android:layout_height="74dp"
+                android:background="@drawable/edittext_color"
+                android:drawable="@drawable/rounded_edittext"
+                android:ems="10"
+                android:focusable="true"
+                android:hint="@string/default_text"
+                android:inputType="numberPassword"
+                android:maxLength="4"
+                android:padding="5dip"
+                tools:layout_editor_absoluteX="85dp"
+                tools:layout_editor_absoluteY="96dp" />
+
+            <ImageButton
+                android:id="@+id/pwd_submit"
+                android:layout_width="match_parent"
+                android:layout_height="74dp"
+                android:background="@null"
+                android:src="@drawable/submit_but" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/reset_pwd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/resetPWD" />
+
+            <ToggleButton
+                android:id="@+id/UsePWD"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/default_text" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="352dp"
+            android:layout_height="105dp"
+            android:orientation="vertical"
+            android:weightSum="1"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="289dp">
+
+            <TextView
+                android:id="@+id/touchid_view"
+                android:layout_width="fill_parent"
+                android:layout_height="159dp"
+                android:gravity="center"
+                android:text="@string/default_text"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="34dp" />
+        </LinearLayout>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
