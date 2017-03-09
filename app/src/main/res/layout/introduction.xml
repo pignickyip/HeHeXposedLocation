@@ -12,7 +12,7 @@
     tools:context=".intro.MainActivity">
 
     <TextView
-        android:text="@string/into_tiltle"
+        android:text="@string/inside_activity_name_into"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
