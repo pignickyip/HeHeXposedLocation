@@ -210,7 +210,6 @@ public class PwdActivity extends Activity {
             touchid.setVisibility(View.INVISIBLE);
         }
     }
-
     private static String EncryptFunction(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

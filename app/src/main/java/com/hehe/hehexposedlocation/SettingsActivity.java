@@ -153,7 +153,7 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
-                    //TODO make an annoucement to userhe already done or not
+                    //TODO set an question when password enable
                     String LastTime = GetFileDisplay.getString(Common.TIME_CATEGORY_GET_DISPLAY,"Never");
 
                     new AlertDialog.Builder ( this )
