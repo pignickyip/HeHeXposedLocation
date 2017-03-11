@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/Customer_setting"
-        android:id="@+id/textView" />
+        android:id="@+id/Cutomer_dialog" />
 
     <EditText
         android:id="@+id/customer_text"

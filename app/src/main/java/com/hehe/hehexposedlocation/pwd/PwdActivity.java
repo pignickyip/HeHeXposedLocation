@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.annotation.RequiresApi;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -24,6 +25,7 @@ import com.hehe.hehexposedlocation.R;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
+import java.util.Objects;
 
 public class PwdActivity extends Activity {
     String msg = "";
@@ -33,8 +35,10 @@ public class PwdActivity extends Activity {
     ToggleButton OnOff;
     Button resetpwd;
     ImageButton touchid;
+    TextView touchidView;
     SharedPreferences password;
     SharedPreferences.Editor PE;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +49,7 @@ public class PwdActivity extends Activity {
         OnOff = (ToggleButton) findViewById(R.id.UsePWD);
         resetpwd = (Button) findViewById(R.id.reset_pwd);
         touchid = (ImageButton) findViewById(R.id.touchid_but);
+        touchidView = (TextView) findViewById(R.id.touchid_view);
         password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
 
         msg = "Here to set up your own password";
@@ -61,11 +66,10 @@ public class PwdActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 int length = input_pwd.length();
-                if(length < 4){
-                    msg = "You need to input " + (4-length) + " more.";
+                if (length < 4) {
+                    msg = "You need to input " + (4 - length) + " more.";
                     subview.setText(msg);
-                }
-                else{
+                } else {
                     msg = "Please submit your password";
                     subview.setText(msg);
                 }
@@ -76,20 +80,20 @@ public class PwdActivity extends Activity {
                 String adapter = input_pwd.getText().toString();
                 String pwd = (EncryptFunction(adapter));
                 //Integer.parseInt
-                Log.d("password",pwd);
+                Log.d("password", pwd);
             }
         });
         boolean setup_already = password.getBoolean(Common.PASSWORD_ALREADY_UP, false);
-        if(setup_already)
+        if (setup_already)
             input_pwd.setHint("You have already set up the password");
         else
             input_pwd.setHint("Here to set up");
         ImageButton pwd_submit_but = (ImageButton) findViewById(R.id.pwd_submit);
-        pwd_submit_but.setOnClickListener(new ImageButton.OnClickListener(){
+        pwd_submit_but.setOnClickListener(new ImageButton.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String adapter = input_pwd.getText().toString();
-                if(adapter.length() == 4){
+                if (adapter.length() == 4) {
                     String pwd = (EncryptFunction(adapter));
                     PE = password.edit();
                     PE.putString(Common.PASSWORD_PIN_CODE, pwd);
@@ -98,63 +102,100 @@ public class PwdActivity extends Activity {
 
                     input_pwd.setText("");
                     input_pwd.setHint("You have already set up the password");
-                    Toast.makeText(getApplicationContext(), "The password is up-to-date", Toast.LENGTH_LONG ).show();
-                }
-                else{
-                    Toast.makeText(getApplicationContext(), "Wrong action", Toast.LENGTH_LONG ).show();
+                    Toast.makeText(getApplicationContext(), "The password is up-to-date", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong action", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
-        resetpwd.setOnClickListener(new Button.OnClickListener(){
+        resetpwd.setOnClickListener(new Button.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                //TODO change to input dialog
-                new AlertDialog.Builder ( PwdActivity.this )
-                        .setMessage ( "Are you sure?" )
-                        .setTitle ( "Reset the password setting")
-                        .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
-                            public void onClick(DialogInterface dialog, int id) {
+                AlertDialog.Builder reset = new AlertDialog.Builder(PwdActivity.this);
+                reset.setTitle("Reset the password setting");
+                reset.setView(R.layout.password_dialog);
+                reset.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        int attempt = password.getInt(Common.PASSWORD_PIN_RESET_ATTEMPT, 0);
+                        if (attempt < 4) {
+                            EditText auth = (EditText) findViewById(R.id.pwd_auth);
+                            String challenge = EncryptFunction(auth.getText().toString());
+                            String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                            if (Objects.equals(challenge, real_pwd)) {
                                 PE = password.edit();
                                 PE.clear();
                                 PE.apply();
-
                                 input_pwd.setHint("Here to set up");
                                 msg = "Here to set up your own password";
                                 pwd_title.setText(msg);
                                 msg = "Password already reset";
                                 subview.setText(msg);
                                 OnOff.setChecked(false);
+                            } else {
+                                PE = password.edit();
+                                PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt+1);
+                                Toast.makeText(getApplicationContext(), "Wrong input", Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
                             }
-                        } )
-                        .show ();
+                        }
+                        else{
+                            //enable fnction in some mins
+                        }
+                    }
+                });
+                reset.show();
             }
         });
         final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
         OnOff.setChecked(isUp);
         OnOff.setOnClickListener(new View.OnClickListener() {
-                                     @Override
-                                     public void onClick(View v) {
-                                         PE = password.edit();
-                                         PE.remove(Common.PASSWORD_SETTING_ON);
-                                         if(isUp){//it is up already
-                                             PE.putBoolean(Common.PASSWORD_SETTING_ON, false);
-                                         }
-                                         else{
-                                             PE.putBoolean(Common.PASSWORD_SETTING_ON, true);
-                                         }
-                                         PE.apply();
-                                     }
-                                 });
+            @Override
+            public void onClick(View v) {
+                PE = password.edit();
+                PE.remove(Common.PASSWORD_SETTING_ON);
+                if (isUp) {//it is up already
+                    PE.putBoolean(Common.PASSWORD_SETTING_ON, false);
+                } else {
+                    PE.putBoolean(Common.PASSWORD_SETTING_ON, true);
+                }
+                PE.apply();
+            }
+        });
         //Pin
         //http://lomza.totem-soft.com/pin-input-view-in-android/
-        TextView touchidView = (TextView) findViewById(R.id.touchid_view);
-        if(android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP){
+
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             //https://developer.xamarin.com/guides/android/platform_features/fingerprint-authentication/
             msg = "Login by touch id";
             touchidView.setText(msg);
+            touchid.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(PwdActivity.this)
+                            .setMessage("Are you sure?")
+                            .setTitle("Enable the fingerprint")
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    PE = password.edit();
+                                    PE.putBoolean(Common.PASSWORD_FINGERPRINT_ON, true);
+                                    PE.apply();
+                                    Toast.makeText(getApplicationContext(), "Enable now", Toast.LENGTH_LONG).show();
+                                    msg = "Already enable fingerprint";
+                                    touchidView.setText(msg);
+                                }
+                            })
+                            .show();
+                }
+            });
+        }else{
+            msg = "Your mobile phone cannot use fingerprint, upgrade your android or user the PIN";
+            touchidView.setText(msg);
+            touchid.setVisibility(View.INVISIBLE);
         }
     }
+
     private static String EncryptFunction(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -166,21 +207,9 @@ public class PwdActivity extends Activity {
                 sha = "0" + sha;
             }
             return sha;
-        } catch( Exception e) {
+        } catch (Exception e) {
             Log.e("sha256", e.getMessage());
             return null;
         }
-    }
-    private void onSubmitClicked(View v)
-    {
-        String pass = input_pwd.getText().toString();
-        if(TextUtils.isEmpty(pass) || pass.length() < 4)
-        {
-            input_pwd.setError("You must have x characters in your password");
-            return;
-        }
-
-        //continue processing
-
     }
 }

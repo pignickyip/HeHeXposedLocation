@@ -2,6 +2,7 @@ package com.hehe.hehexposedlocation;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.app.Activity;
 
@@ -27,8 +28,9 @@ import com.hehe.hehexposedlocation.R;
  */
 public class LoginActivity extends Activity {
     String userEntered;
-    String userPin = "8888";
+    String userPin ;
 
+    SharedPreferences password = null;
     final int PIN_LENGTH = 4;
     boolean keyPadLockedFlag = false;
     Context appContext;
@@ -65,7 +67,9 @@ public class LoginActivity extends Activity {
 
         appContext = this;
         userEntered = "";
+        password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
 
+        userPin = password.getString(Common.PASSWORD_PIN_CODE, "");
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,

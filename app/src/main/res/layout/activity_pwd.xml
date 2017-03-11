@@ -61,7 +61,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="74dp"
                 android:background="@null"
-                android:src="@drawable/submit_but" />
+                android:src="@drawable/ic_submit_but" />
         </LinearLayout>
 
         <LinearLayout
@@ -93,7 +93,7 @@
             <TextView
                 android:id="@+id/touchid_view"
                 android:layout_width="fill_parent"
-                android:layout_height="51dp"
+                android:layout_height="35dp"
                 android:gravity="center"
                 android:text="@string/default_text"
                 tools:layout_editor_absoluteX="8dp"
@@ -101,9 +101,9 @@
             <ImageButton
                 android:id="@+id/touchid_but"
                 android:layout_width="match_parent"
-                android:layout_height="74dp"
+                android:layout_height="match_parent"
                 android:background="@null"
-                android:src="@drawable/touchid" />
+                android:src="@drawable/ic_fingerprint_enable" />
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

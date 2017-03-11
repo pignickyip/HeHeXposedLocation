@@ -23,6 +23,8 @@
     <string name="remove_app_title">Remove App</string>
     <string name="remove_app_message">Removed apps will detect Mock Locations is enabled.</string>
     <string name="restart_required">Force kill the target app to apply changes.</string>
+    <string name="dialog_remind">Are you sure?</string>
+    <string name="typeagain">type your password again</string>
 
     <!-- Settings screen -->
     <string name="settings_title">Settings</string>
