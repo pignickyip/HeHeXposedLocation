@@ -84,6 +84,7 @@ public class Common {
     public static final String PASSWORD_PIN_RESET_ATTEMPT = "PASSWORD_PIN_RESET_ATTEMPT";
     public static final String PASSWORD_FINGERPRINT_ON = "PASSWORD_FINGERPRINT_ON";
     public static final String PASSWORD_LOGIN_ATTEMPT = "PASSWORD_LOGIN_ATTEMPT";
+    public static final String PASSWORD_LAST_LOGIN_ATTEMPT = "PASSWORD_LAST_LOGIN_ATTEMPT";
 
     // public static final PrefSet APPS = new AppsSet();
     public static final PrefSet KEYWORDS = new KeywordSet();

@@ -16,11 +16,15 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.hehe.hehexposedlocation.R;
+
+import java.math.BigInteger;
+import java.security.MessageDigest;
 
 
 /**
@@ -28,7 +32,7 @@ import com.hehe.hehexposedlocation.R;
  */
 public class LoginActivity extends Activity {
     String userEntered;
-    String userPin ;
+    String userPin;
 
     SharedPreferences password = null;
     final int PIN_LENGTH = 4;
@@ -41,7 +45,6 @@ public class LoginActivity extends Activity {
     TextView pinBox1;
     TextView pinBox2;
     TextView pinBox3;
-
 
     TextView statusView;
 
@@ -56,8 +59,8 @@ public class LoginActivity extends Activity {
     Button button8;
     Button button9;
     Button button10;
-    Button buttonExit;
-    Button buttonDelete;
+    ImageButton buttonExit;
+    ImageButton buttonDelete;
     EditText passwordInput;
     ImageView backSpace;
 
@@ -65,24 +68,24 @@ public class LoginActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
         appContext = this;
         userEntered = "";
-        password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
 
-        userPin = password.getString(Common.PASSWORD_PIN_CODE, "");
-
+        boolean setup_already = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
+        if (setup_already)
+            userPin = password.getString(Common.PASSWORD_PIN_CODE, "");
+        else {
+            MovetoContent();
+        }
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
-
         //Typeface xpressive=Typeface.createFromAsset(getAssets(), "fonts/XpressiveBold.ttf");
-
         statusView = (TextView) findViewById(R.id.statusview);
         passwordInput = (EditText) findViewById(R.id.editText);
         backSpace = (ImageView) findViewById(R.id.imageView);
-        buttonExit = (Button) findViewById(R.id.buttonExit);
+        buttonExit = (ImageButton) findViewById(R.id.buttonExit);
         backSpace.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,85 +104,81 @@ public class LoginActivity extends Activity {
                                       }
         );
         //buttonExit.setTypeface(xpressive);
-
-        buttonDelete = (Button) findViewById(R.id.buttonDeleteBack);
+        buttonDelete = (ImageButton) findViewById(R.id.buttonDeleteBack);
         buttonDelete.setOnClickListener(new View.OnClickListener() {
                                             public void onClick(View v) {
-
                                                 if (keyPadLockedFlag == true) {
                                                     return;
                                                 }
-
                                                 if (userEntered.length() > 0) {
                                                     userEntered = userEntered.substring(0, userEntered.length() - 1);
                                                     passwordInput.setText("");
                                                 }
-
-
                                             }
 
                                         }
         );
-
         titleView = (TextView) findViewById(R.id.app_title);
         //titleView.setTypeface(xpressive);
 
 
         View.OnClickListener pinButtonHandler = new View.OnClickListener() {
             public void onClick(View v) {
-
                 if (keyPadLockedFlag == true) {
                     return;
                 }
-
                 Button pressedButton = (Button) v;
-
-
-                if (userEntered.length() < PIN_LENGTH) {
-                    userEntered = userEntered + pressedButton.getText();
-                    Log.v("PinView", "User entered=" + userEntered);
-
-                    //Update pin boxes
-                    passwordInput.setText(passwordInput.getText().toString() + "*");
-                    passwordInput.setSelection(passwordInput.getText().toString().length());
-
-                    if (userEntered.length() == PIN_LENGTH) {
-                        //Check if entered PIN is correct
-                        if (userEntered.equals(userPin)) {
-                            statusView.setTextColor(Color.GREEN);
-                            statusView.setText("Correct");
-                            Log.v("PinView", "Correct PIN");
-                            finish();
-                        } else {
-                            statusView.setTextColor(Color.RED);
-                            statusView.setText("Wrong PIN. Keypad Locked");
-                            keyPadLockedFlag = true;
-                            Log.v("PinView", "Wrong PIN");
-
-                            new LockKeyPadOperation().execute("");
+                int Login_attemp = password.getInt(Common.PASSWORD_LOGIN_ATTEMPT, 0);
+                SharedPreferences.Editor PE = password.edit();
+                if (Login_attemp < 4) {
+                    if (userEntered.length() < PIN_LENGTH) {
+                        userEntered = userEntered + pressedButton.getText();
+                        Log.v("PinView", "User entered=" + userEntered);
+                        //Update pin boxes
+                        passwordInput.setText(passwordInput.getText().toString() + "*");
+                        passwordInput.setSelection(passwordInput.getText().toString().length());
+                        if (userEntered.length() == PIN_LENGTH) {
+                            //Check if entered PIN is correct
+                            if (EncryptFunction(userEntered).equals(userPin)) {
+                                statusView.setTextColor(Color.GREEN);
+                                statusView.setText("Correct");
+                                PE.putBoolean(Common.PASSWORD_LAST_LOGIN_ATTEMPT, true);
+                                PE.remove(Common.PASSWORD_LOGIN_ATTEMPT);
+                                PE.putInt(Common.PASSWORD_LOGIN_ATTEMPT, 0);
+                                PE.apply();
+                                Log.v("PinView", "Correct PIN");
+                                MovetoContent();
+                            } else {
+                                statusView.setTextColor(Color.RED);
+                                statusView.setText("Wrong PIN. Keypad Locked");
+                                keyPadLockedFlag = true;
+                                Log.v("PinView", "Wrong PIN");
+                                PE.remove(Common.PASSWORD_LOGIN_ATTEMPT);
+                                PE.putInt(Common.PASSWORD_LOGIN_ATTEMPT, Login_attemp+1);
+                                PE.apply();
+                                new LockKeyPadOperation().execute("");
+                            }
                         }
+                    } else {
+                        //Roll over
+                        passwordInput.setText("");
+                        userEntered = "";
+                        statusView.setText("");
+                        userEntered = userEntered + pressedButton.getText();
+                        Log.v("PinView", "User entered=" + userEntered);
+                        //Update pin boxes
+                        passwordInput.setText("8");
                     }
                 } else {
-                    //Roll over
-                    passwordInput.setText("");
-
-                    userEntered = "";
-
-                    statusView.setText("");
-
-                    userEntered = userEntered + pressedButton.getText();
-                    Log.v("PinView", "User entered=" + userEntered);
-
-                    //Update pin boxes
-                    passwordInput.setText("8");
-
+                    statusView.setTextColor(Color.RED);
+                    statusView.setText("You cant login now");
+                    keyPadLockedFlag = true;
+                    PE.remove(Common.PASSWORD_LOGIN_ATTEMPT);
+                    PE.putInt(Common.PASSWORD_LOGIN_ATTEMPT, 0);
+                    PE.apply();
                 }
-
-
             }
         };
-
-
         button0 = (Button) findViewById(R.id.button0);
         //button0.setTypeface(xpressive);
         button0.setOnClickListener(pinButtonHandler);
@@ -222,7 +221,7 @@ public class LoginActivity extends Activity {
         button9.setOnClickListener(pinButtonHandler);
 
 
-        buttonDelete = (Button) findViewById(R.id.buttonDeleteBack);
+        buttonDelete = (ImageButton) findViewById(R.id.buttonDeleteBack);
         //buttonDelete.setTypeface(xpressive);
 
 
@@ -278,5 +277,28 @@ public class LoginActivity extends Activity {
         @Override
         protected void onProgressUpdate(Void... values) {
         }
+    }
+
+    private static String EncryptFunction(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes());
+            BigInteger number = new BigInteger(1, digest);
+            String sha = number.toString(16);
+
+            while (sha.length() < 64) {
+                sha = "0" + sha;
+            }
+            return sha;
+        } catch (Exception e) {
+            Log.e("sha256", e.getMessage());
+            return null;
+        }
+    }
+
+    private void MovetoContent() {
+        Intent intent = new Intent(this, com.hehe.hehexposedlocation.SettingsActivity.class);
+        startActivity(intent);
+        finish();
     }
 }

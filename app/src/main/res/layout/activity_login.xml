@@ -48,8 +48,8 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="1"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp"/>
 
             <Button
                 android:id="@+id/button2"
@@ -61,8 +61,8 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="2"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp"/>
 
             <Button
                 android:id="@+id/button3"
@@ -74,8 +74,8 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="3"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp" />
         </TableRow>
 
         <TableRow
@@ -83,20 +83,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <Button
                 android:id="@+id/button4"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="4"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
+                android:gravity="center"
+                android:padding="6dip"
+                android:text="4"
+                android:textColor="#000"
+                android:textSize="25sp" />
 
             <Button
                 android:id="@+id/button5"
@@ -108,8 +107,8 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="5"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp" />
 
             <Button
                 android:id="@+id/button6"
@@ -121,42 +120,40 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="6"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp" />
         </TableRow>
         <TableRow
             android:id="@+id/tableRow3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
+
             <Button
                 android:id="@+id/button7"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="7"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
+                android:gravity="center"
+                android:padding="6dip"
+                android:text="7"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
             <Button
                 android:id="@+id/button8"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="8"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
+                android:gravity="center"
+                android:padding="6dip"
+                android:text="8"
+                android:textColor="#000"
+                android:textSize="25sp" />
 
             <Button
                 android:id="@+id/button9"
@@ -168,56 +165,54 @@
                 android:gravity="center"
                 android:padding="6dip"
                 android:text="9"
-                android:textColor="#ffffff"
-                android:textSize="25sp"></Button>
+                android:textColor="#000"
+                android:textSize="25sp" />
         </TableRow>
         <TableRow
             android:id="@+id/tableRow4"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             >
-            <Button
+
+            <ImageButton
                 android:id="@+id/buttonExit"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Exit"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
+                android:gravity="center"
+                android:padding="6dip"
+                android:src="@drawable/ic_action_exit"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
             <Button
                 android:id="@+id/button0"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="0"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
-            <Button
+                android:gravity="center"
+                android:padding="6dip"
+                android:text="0"
+                android:textColor="#000"
+                android:textSize="25sp" />
+
+            <ImageButton
                 android:id="@+id/buttonDeleteBack"
                 android:layout_width="0dip"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Delete"
-                android:textSize="25sp"
-                android:textColor="#ffffff"
-                android:padding="6dip"
                 android:layout_margin="3dip"
+                android:layout_weight="1"
                 android:background="@android:color/transparent"
-                >
-            </Button>
+                android:src="@drawable/ic_action_cancel"
+                android:gravity="center"
+                android:padding="6dip"
+                android:text="Delete"
+                android:textColor="#000"
+                android:textSize="25sp" />
         </TableRow>
 
     </TableLayout>
@@ -234,24 +229,26 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
+        android:id="@+id/statusview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Enter Password"
-        android:id="@+id/statusview"
         android:layout_below="@+id/app_title"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:text="Enter Password"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000" />
 
     <TextView
+        android:id="@+id/app_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="@string/app_name"
-        android:id="@+id/app_title"
-        android:textSize="50sp"
-        android:layout_marginTop="14dp"
         android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="14dp"
+        android:text="@string/app_name"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000"
+        android:textSize="50sp" />
 
     <TextView
         android:id="@+id/errorText"

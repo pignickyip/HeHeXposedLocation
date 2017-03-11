@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import android.widget.ToggleButton;
 
 import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.R;
+import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -113,39 +115,7 @@ public class PwdActivity extends Activity {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder reset = new AlertDialog.Builder(PwdActivity.this);
-                reset.setTitle("Reset the password setting");
-                reset.setView(R.layout.password_dialog);
-                reset.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        int attempt = password.getInt(Common.PASSWORD_PIN_RESET_ATTEMPT, 0);
-                        if (attempt < 4) {
-                            EditText auth = (EditText) findViewById(R.id.pwd_auth);
-                            String challenge = EncryptFunction(auth.getText().toString());
-                            String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
-                            if (Objects.equals(challenge, real_pwd)) {
-                                PE = password.edit();
-                                PE.clear();
-                                PE.apply();
-                                input_pwd.setHint("Here to set up");
-                                msg = "Here to set up your own password";
-                                pwd_title.setText(msg);
-                                msg = "Password already reset";
-                                subview.setText(msg);
-                                OnOff.setChecked(false);
-                            } else {
-                                PE = password.edit();
-                                PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt+1);
-                                Toast.makeText(getApplicationContext(), "Wrong input", Toast.LENGTH_LONG).show();
-                                dialog.dismiss();
-                            }
-                        }
-                        else{
-                            //enable fnction in some mins
-                        }
-                    }
-                });
-                reset.show();
+                ShowpwdMatchDialog();
             }
         });
         final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
@@ -211,5 +181,57 @@ public class PwdActivity extends Activity {
             Log.e("sha256", e.getMessage());
             return null;
         }
+    }
+
+    private void ShowpwdMatchDialog(){
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(PwdActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.password_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PwdActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                int attempt = password.getInt(Common.PASSWORD_PIN_RESET_ATTEMPT, 0);
+                if (attempt < 4) {
+                    EditText auth = (EditText) findViewById(R.id.pwd_auth);
+                    String adapter = auth.getText().toString();
+                    String challenge = EncryptFunction(adapter);
+
+                    String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                    if (Objects.equals(challenge, real_pwd)) {
+                        PE = password.edit();
+                        PE.clear();
+                        PE.apply();
+                        input_pwd.setHint("Here to set up");
+                        msg = "Here to set up your own password";
+                        pwd_title.setText(msg);
+                        msg = "Password already reset";
+                        subview.setText(msg);
+                        OnOff.setChecked(false);
+                    } else {
+                        PE = password.edit();
+                        PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt+1);
+                        Toast.makeText(getApplicationContext(), "Wrong input", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                }
+                else{
+                    //enable fnction in some mins
+                }
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }
