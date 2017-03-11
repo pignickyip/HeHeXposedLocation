@@ -202,8 +202,6 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity( intent );
                     break;
                 case 13:
-                    intent = new Intent( this, com.hehe.hehexposedlocation.LoginActivity.class);
-                    startActivity( intent );
                     break;
                 default:
                     break;

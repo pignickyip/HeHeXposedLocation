@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +23,7 @@ import android.widget.ToggleButton;
 
 import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.R;
+import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -35,6 +37,7 @@ public class PwdActivity extends Activity {
     ToggleButton OnOff;
     Button resetpwd;
     ImageButton touchid;
+    ImageButton touchidCancel;
     TextView touchidView;
     SharedPreferences password;
     SharedPreferences.Editor PE;
@@ -49,6 +52,7 @@ public class PwdActivity extends Activity {
         OnOff = (ToggleButton) findViewById(R.id.UsePWD);
         resetpwd = (Button) findViewById(R.id.reset_pwd);
         touchid = (ImageButton) findViewById(R.id.touchid_but);
+        touchidCancel = (ImageButton) findViewById(R.id.touchid_cancel);
         touchidView = (TextView) findViewById(R.id.touchid_view);
         password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
 
@@ -108,67 +112,52 @@ public class PwdActivity extends Activity {
                 }
             }
         });
-
         resetpwd.setOnClickListener(new Button.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder reset = new AlertDialog.Builder(PwdActivity.this);
-                reset.setTitle("Reset the password setting");
-                reset.setView(R.layout.password_dialog);
-                reset.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        int attempt = password.getInt(Common.PASSWORD_PIN_RESET_ATTEMPT, 0);
-                        if (attempt < 4) {
-                            EditText auth = (EditText) findViewById(R.id.pwd_auth);
-                            String challenge = EncryptFunction(auth.getText().toString());
-                            String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
-                            if (Objects.equals(challenge, real_pwd)) {
-                                PE = password.edit();
-                                PE.clear();
-                                PE.apply();
-                                input_pwd.setHint("Here to set up");
-                                msg = "Here to set up your own password";
-                                pwd_title.setText(msg);
-                                msg = "Password already reset";
-                                subview.setText(msg);
-                                OnOff.setChecked(false);
-                            } else {
-                                PE = password.edit();
-                                PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt+1);
-                                Toast.makeText(getApplicationContext(), "Wrong input", Toast.LENGTH_LONG).show();
-                                dialog.dismiss();
-                            }
-                        }
-                        else{
-                            //enable fnction in some mins
-                        }
-                    }
-                });
-                reset.show();
+                ShowpwdMatchDialog();
             }
         });
+
         final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
         OnOff.setChecked(isUp);
         OnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PE = password.edit();
-                PE.remove(Common.PASSWORD_SETTING_ON);
-                if (isUp) {//it is up already
-                    PE.putBoolean(Common.PASSWORD_SETTING_ON, false);
-                } else {
-                    PE.putBoolean(Common.PASSWORD_SETTING_ON, true);
+                boolean input_pwd_exist = password.getBoolean(Common.PASSWORD_ALREADY_UP,false);
+                if(input_pwd_exist) {
+                    PE = password.edit();
+                    PE.remove(Common.PASSWORD_SETTING_ON);
+                    if (isUp) {//it is up already
+                        PE.putBoolean(Common.PASSWORD_SETTING_ON, false);
+                    } else {
+                        PE.putBoolean(Common.PASSWORD_SETTING_ON, true);
+                    }
+                    PE.apply();
                 }
-                PE.apply();
+                else{
+                    OnOff.setChecked(isUp);
+                    Toast.makeText(getApplicationContext(), "Wrong action", Toast.LENGTH_LONG).show();
+                }
             }
         });
         //Pin
         //http://lomza.totem-soft.com/pin-input-view-in-android/
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-            //https://developer.xamarin.com/guides/android/platform_features/fingerprint-authentication/
-            msg = "Login by touch id";
+            //http://www.androidhive.info/2016/11/android-add-fingerprint-authentication/
+            boolean touchUP = password.getBoolean(Common.PASSWORD_FINGERPRINT_ON,false);
+            if(touchUP) {
+                msg = "Already enable fingerprint";
+                touchid.setVisibility(View.INVISIBLE);
+                touchidCancel.setVisibility(View.VISIBLE);
+            }
+            else {
+                msg = "Enable touch id";
+                touchid.setVisibility(View.VISIBLE);
+                touchidCancel.setVisibility(View.INVISIBLE);
+            }
             touchidView.setText(msg);
             touchid.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -179,17 +168,43 @@ public class PwdActivity extends Activity {
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     PE = password.edit();
+                                    PE.remove(Common.PASSWORD_FINGERPRINT_ON);
                                     PE.putBoolean(Common.PASSWORD_FINGERPRINT_ON, true);
                                     PE.apply();
                                     Toast.makeText(getApplicationContext(), "Enable now", Toast.LENGTH_LONG).show();
-                                    msg = "Already enable fingerprint";
-                                    touchidView.setText(msg);
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
                                 }
                             })
                             .show();
                 }
             });
-        }else{
+            touchidCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new AlertDialog.Builder(PwdActivity.this)
+                            .setMessage("Are you sure?")
+                            .setTitle("Disable the fingerprint")
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    PE = password.edit();
+                                    PE.remove(Common.PASSWORD_FINGERPRINT_ON);
+                                    PE.apply();
+                                    Toast.makeText(getApplicationContext(), "Disable now", Toast.LENGTH_LONG).show();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            })
+                            .show();
+                }
+            });
+        } else {
             msg = "Your mobile phone cannot use fingerprint, upgrade your android or user the PIN";
             touchidView.setText(msg);
             touchid.setVisibility(View.INVISIBLE);
@@ -211,5 +226,55 @@ public class PwdActivity extends Activity {
             Log.e("sha256", e.getMessage());
             return null;
         }
+    }
+
+    private void ShowpwdMatchDialog() {
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(PwdActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.password_dialog, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PwdActivity.this);
+        alertDialogBuilder.setView(promptView);
+
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false);
+        final EditText auth_match = (EditText) promptView.findViewById(R.id.pwd_auth);
+        alertDialogBuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                int attempt = password.getInt(Common.PASSWORD_PIN_RESET_ATTEMPT, 0);
+                if (attempt < 4) {
+                    String adapter = auth_match.getText().toString();
+                    String challenge = EncryptFunction(adapter);
+                    String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                    if (Objects.equals(challenge, real_pwd)) {
+                        PE = password.edit();
+                        PE.clear();
+                        PE.apply();
+                        input_pwd.setHint("Here to set up");
+                        msg = "Here to set up your own password";
+                        pwd_title.setText(msg);
+                        msg = "Password already reset";
+                        subview.setText(msg);
+                        OnOff.setChecked(false);
+                    } else {
+                        PE = password.edit();
+                        PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt + 1);
+                        Toast.makeText(getApplicationContext(), "Wrong input", Toast.LENGTH_LONG).show();
+                        dialog.dismiss();
+                    }
+                } else {
+                    //enable fnction in some mins
+                }
+            }
+        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
     }
 }
