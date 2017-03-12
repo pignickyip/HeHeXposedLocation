@@ -532,7 +532,7 @@ public class XposedModActivity extends Activity {
 			public boolean onQueryTextSubmit(String query) {
 				nameFilter = query;
 				appListAdapter.getFilter().filter(nameFilter);
-				((SearchView) findViewById(R.id.searchApp)).clearFocus();
+				findViewById(R.id.searchApp).clearFocus();
 				return false;
 			}
 
@@ -545,7 +545,7 @@ public class XposedModActivity extends Activity {
 
 		});
 
-		((ImageButton) findViewById(R.id.btnFilter)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.btnFilter).setOnClickListener(new View.OnClickListener() {
 			Dialog filterDialog;
 			Map<String, FilterItemComponent> filterComponents;
 
@@ -553,7 +553,7 @@ public class XposedModActivity extends Activity {
 			public void onClick(View v) {
 				// set up dialog
 				filterDialog = new Dialog(XposedModActivity.this);
-				filterDialog.setContentView(R.layout.filter_dialog);
+				filterDialog.setContentView(R.layout.dialog_filter);
 				filterDialog.setTitle(R.string.filter_title);
 				filterDialog.setCancelable(true);
 				filterDialog.setOwnerActivity(XposedModActivity.this);
@@ -582,13 +582,13 @@ public class XposedModActivity extends Activity {
 				});
 
 				// Close the dialog with the possible options
-				((Button) filterDialog.findViewById(R.id.btnFilterCancel)).setOnClickListener(new View.OnClickListener() {
+				filterDialog.findViewById(R.id.btnFilterCancel).setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						filterDialog.dismiss();
 					}
 				});
-				((Button) filterDialog.findViewById(R.id.btnFilterClear)).setOnClickListener(new View.OnClickListener() {
+				filterDialog.findViewById(R.id.btnFilterClear).setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						filterAppType = FilterState.OVERRIDDEN;
@@ -601,7 +601,7 @@ public class XposedModActivity extends Activity {
 						appListAdapter.getFilter().filter(nameFilter);
 					}
 				});
-				((Button) filterDialog.findViewById(R.id.btnFilterApply)).setOnClickListener(new View.OnClickListener() {
+				filterDialog.findViewById(R.id.btnFilterApply).setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(View v) {
 						filterAppType = ((FilterItemComponent) filterDialog.findViewById(R.id.fltAppType)).getFilterState();
@@ -624,7 +624,7 @@ public class XposedModActivity extends Activity {
 			}
 		});
 
-		((ImageButton) findViewById(R.id.btnPermsFilter)).setOnClickListener(new View.OnClickListener() {
+		findViewById(R.id.btnPermsFilter).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 
@@ -660,7 +660,7 @@ public class XposedModActivity extends Activity {
 					@Override
 					public boolean onQueryTextSubmit(String query) {
 						adapter.getFilter().filter(query);
-						((SearchView) permsView.findViewById(R.id.searchPermission)).clearFocus();
+						permsView.findViewById(R.id.searchPermission).clearFocus();
 						return false;
 					}
 
@@ -696,7 +696,7 @@ public class XposedModActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			dialog = new ProgressDialog(((ListView) findViewById(R.id.lstApps)).getContext());
+			dialog = new ProgressDialog(findViewById(R.id.lstApps).getContext());
 			dialog.setMessage(getString(R.string.app_loading));
 			dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 			dialog.setCancelable(false);

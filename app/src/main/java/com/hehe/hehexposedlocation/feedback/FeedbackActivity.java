@@ -3,56 +3,31 @@ package com.hehe.hehexposedlocation.feedback;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
-import android.support.annotation.RequiresApi;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RadioGroup.OnCheckedChangeListener;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.hehe.hehexposedlocation.BuildConfig;
 import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.R;
-import com.hehe.hehexposedlocation.WhitelistActivity;
-import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 public class FeedbackActivity extends Activity {
@@ -94,7 +69,7 @@ public class FeedbackActivity extends Activity {
             @Override
             public void onClick(View v) {
                 LayoutInflater layoutInflater = LayoutInflater.from(FeedbackActivity.this);
-                View promptView = layoutInflater.inflate(R.layout.feedback_dialog, null);
+                View promptView = layoutInflater.inflate(R.layout.dialog_feedback, null);
                 AlertDialog.Builder b = new AlertDialog.Builder(FeedbackActivity.this);
                 b.setView(promptView);
                 final EditText feedbackContent= (EditText) promptView.findViewById(R.id.feedback_text);

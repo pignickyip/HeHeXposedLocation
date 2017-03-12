@@ -43,7 +43,7 @@ public class PermissionSettings {
 	 */
 	public PermissionSettings(Activity owner, String pkgName, boolean revoking, Set<String> disabledPermissions) throws NameNotFoundException {
 		dialog = new Dialog(owner);
-		dialog.setContentView(R.layout.permissions_dialog);
+		dialog.setContentView(R.layout.dialog_permission);
 		dialog.setTitle(R.string.perms_title);
 		dialog.setCancelable(true);
 		dialog.setOwnerActivity(owner);
@@ -76,7 +76,7 @@ public class PermissionSettings {
 		});
 		dialog.findViewById(R.id.lstPermissions).setBackgroundColor(revokeActive ? Color.BLACK : Color.DKGRAY);
 
-		((Button) dialog.findViewById(R.id.btnPermsCancel)).setOnClickListener(new View.OnClickListener() {
+		dialog.findViewById(R.id.btnPermsCancel).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (onCancelListener != null)
@@ -84,7 +84,7 @@ public class PermissionSettings {
 				dialog.dismiss();
 			}
 		});
-		((Button) dialog.findViewById(R.id.btnPermsOk)).setOnClickListener(new View.OnClickListener() {
+		dialog.findViewById(R.id.btnPermsOk).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (onOkListener != null)
@@ -176,9 +176,9 @@ public class PermissionSettings {
 	/**
 	 * Interface for the listeners of Ok/Cancel dismiss actions
 	 */
-	public static interface OnDismissListener {
+	public interface OnDismissListener {
 
-		public abstract void onDismiss(PermissionSettings obj);
+		void onDismiss(PermissionSettings obj);
 	}
 
 }

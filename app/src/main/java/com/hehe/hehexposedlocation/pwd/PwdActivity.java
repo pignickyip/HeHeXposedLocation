@@ -1,7 +1,6 @@
 package com.hehe.hehexposedlocation.pwd;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.RequiresApi;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,7 +21,6 @@ import android.widget.ToggleButton;
 
 import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.R;
-import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -125,18 +122,17 @@ public class PwdActivity extends Activity {
         OnOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean input_pwd_exist = password.getBoolean(Common.PASSWORD_ALREADY_UP,false);
-                if(input_pwd_exist) {
+                boolean input_pwd_exist = password.getBoolean(Common.PASSWORD_ALREADY_UP, false);
+                if (input_pwd_exist) {
                     PE = password.edit();
-                    PE.remove(Common.PASSWORD_SETTING_ON);
                     if (isUp) {//it is up already
-                        PE.putBoolean(Common.PASSWORD_SETTING_ON, false);
+                        AuthCheck();
                     } else {
+                        PE.remove(Common.PASSWORD_SETTING_ON);
                         PE.putBoolean(Common.PASSWORD_SETTING_ON, true);
                     }
                     PE.apply();
-                }
-                else{
+                } else {
                     OnOff.setChecked(isUp);
                     Toast.makeText(getApplicationContext(), "Wrong action", Toast.LENGTH_LONG).show();
                 }
@@ -147,13 +143,12 @@ public class PwdActivity extends Activity {
 
         if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
             //http://www.androidhive.info/2016/11/android-add-fingerprint-authentication/
-            boolean touchUP = password.getBoolean(Common.PASSWORD_FINGERPRINT_ON,false);
-            if(touchUP) {
+            boolean touchUP = password.getBoolean(Common.PASSWORD_FINGERPRINT_ON, false);
+            if (touchUP) {
                 msg = "Already enable fingerprint";
                 touchid.setVisibility(View.INVISIBLE);
                 touchidCancel.setVisibility(View.VISIBLE);
-            }
-            else {
+            } else {
                 msg = "Enable touch id";
                 touchid.setVisibility(View.VISIBLE);
                 touchidCancel.setVisibility(View.INVISIBLE);
@@ -210,6 +205,7 @@ public class PwdActivity extends Activity {
             touchid.setVisibility(View.INVISIBLE);
         }
     }
+
     private static String EncryptFunction(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -230,7 +226,7 @@ public class PwdActivity extends Activity {
     private void ShowpwdMatchDialog() {
         // get prompts.xml view
         LayoutInflater layoutInflater = LayoutInflater.from(PwdActivity.this);
-        View promptView = layoutInflater.inflate(R.layout.password_dialog, null);
+        View promptView = layoutInflater.inflate(R.layout.dialog_password, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PwdActivity.this);
         alertDialogBuilder.setView(promptView);
 
@@ -268,6 +264,51 @@ public class PwdActivity extends Activity {
         alertDialogBuilder.setNegativeButton("Cancel",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
+
+    private void AuthCheck() {
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(PwdActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.dialog_authcheck, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(PwdActivity.this);
+        alertDialogBuilder.setView(promptView);
+        final TextView authcheck_msg = (TextView) promptView.findViewById(R.id.authcheck_text);
+        final EditText auth_match = (EditText) promptView.findViewById(R.id.authcheck_Edittext);
+        final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
+        String msg = "Please input your password";
+        authcheck_msg.setText(msg);
+        msg = "PIN";
+        auth_match.setHint(msg);
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                String adapter = auth_match.getText().toString();
+                String challenge = EncryptFunction(adapter);
+                String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                if (Objects.equals(challenge, real_pwd)) {
+                    PE.remove(Common.PASSWORD_SETTING_ON);
+                    PE.apply();
+                    Toast.makeText(getApplicationContext(), "It is down!", Toast.LENGTH_LONG).show();
+                } else {
+                    OnOff.setChecked(isUp);
+                    Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                    dialog.cancel();
+                }
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        OnOff.setChecked(isUp);
                         dialog.cancel();
                     }
                 });

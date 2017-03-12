@@ -2,18 +2,8 @@ package com.hehe.hehexposedlocation.def_setting;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.FeatureGroupInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.os.AsyncTask;
-import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,26 +18,8 @@ import android.widget.Toast;
 import com.hehe.hehexposedlocation.*;
 import com.hehe.hehexposedlocation.Common;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.jsoup.helper.Validate;
-
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-
-import java.io.IOException;
 
 public class DefActivity extends Activity {
     private Spinner spinnerDef;
@@ -152,7 +124,7 @@ public class DefActivity extends Activity {
     private void showInputDialog() {
         // get prompts.xml view
         LayoutInflater layoutInflater = LayoutInflater.from(DefActivity.this);
-        View promptView = layoutInflater.inflate(R.layout.customer_dialog, null);
+        View promptView = layoutInflater.inflate(R.layout.dialog_customer, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DefActivity.this);
         alertDialogBuilder.setView(promptView);
 

@@ -426,7 +426,7 @@ public class ModeActivity extends Activity {
                     PE.putBoolean(Common.MODE_WORK_SETUP_KEY, false);
                 else
                     PE.putBoolean(Common.MODE_WORK_SETUP_KEY, true);
-                PE.commit();
+                PE.apply();
 
                 String status = "Work mode : " + WorkModeOn.getText();
                 Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show(); // display the current state of toggle button's
@@ -454,7 +454,7 @@ public class ModeActivity extends Activity {
                     PE.putBoolean(Common.MODE_REST_SETUP_KEY, false);
                 else
                     PE.putBoolean(Common.MODE_REST_SETUP_KEY, true);
-                PE.commit();
+                PE.apply();
 
                 String status = "Rest mode : " + RestModeOn.getText();
                 Toast.makeText(getApplicationContext(), status, Toast.LENGTH_SHORT).show(); // display the current state of toggle button's

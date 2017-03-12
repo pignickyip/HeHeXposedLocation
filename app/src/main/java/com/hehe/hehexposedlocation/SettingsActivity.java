@@ -15,9 +15,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.jsoup.Jsoup;
@@ -29,9 +33,12 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.hehe.hehexposedlocation.def_setting.DefActivity;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.CookieHandler;
+import java.security.MessageDigest;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,6 +47,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 
@@ -59,6 +67,7 @@ public class SettingsActivity extends PreferenceActivity  {
     private static SharedPreferences SystemApplicationFile = null;
     private static SharedPreferences WebContent = null;
     private static SharedPreferences GetFileDisplay = null;
+    private static SharedPreferences password = null;
 
     int NumberOfWebGetFunction = 0;
 
@@ -76,6 +85,7 @@ public class SettingsActivity extends PreferenceActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_main );
         GetFileDisplay = getSharedPreferences(Common.TIME_CATEGORY_GET, 0);
+        password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
         instructionsMsg = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" +
@@ -153,7 +163,6 @@ public class SettingsActivity extends PreferenceActivity  {
                     startActivity ( intent );
                     break;
                 case 6:
-                    //TODO set an question when password enable xx
                     String LastTime = GetFileDisplay.getString(Common.TIME_CATEGORY_GET_DISPLAY,"Never");
 
                     new AlertDialog.Builder ( this )
@@ -249,42 +258,70 @@ public class SettingsActivity extends PreferenceActivity  {
         Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
     }
     private void ClearAllSetting(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Sure? One Way able");
-        builder.setTitle("Clear All Setting");
-        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+        // get prompts.xml view
+        LayoutInflater layoutInflater = LayoutInflater.from(SettingsActivity.this);
+        View promptView = layoutInflater.inflate(R.layout.dialog_clearall, null);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
+        alertDialogBuilder.setView(promptView);
+        alertDialogBuilder.setTitle("Clear all setting");
+        String msg = "Sure? One Way only";
+        final TextView clearall_msg = (TextView) promptView.findViewById(R.id.clearall_text);
+        final EditText pwd_auth = (EditText) promptView.findViewById(R.id.clear_text);
+        final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
+        if(isUp){
+            clearall_msg.setText(msg + ", please input your password.");
+            msg = "Pin";
+            pwd_auth.setHint(msg);
+        }
+        else{
+            clearall_msg.setText(msg);
+            pwd_auth.setVisibility(View.INVISIBLE);
+        }
+        // setup a dialog window
+        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if(isUp){
+                    String adapter = pwd_auth.getText().toString();
+                    String challenge = EncryptFunction(adapter);
+                    String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                    if (Objects.equals(challenge, real_pwd)) {
+                        ClearFunction(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
 
-                //Default setting position
-                ClearFunction(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
+                        //Customer setting value
+                        ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
+                        //white list
+                        ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
+                        ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
 
-                //Customer setting value
-                ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
-                //white list
-                ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
-                ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
+                        //Web content
+                        ClearFunction(Common.TIME_CATEGORY_GET);
+                        ClearFunction(Common.WEB_CONTENT);
 
-                //Web content
-                ClearFunction(Common.TIME_CATEGORY_GET);
-                ClearFunction(Common.WEB_CONTENT);
+                        //Mode
+                        ClearFunction(Common.MODE_REST_SETUP);
+                        ClearFunction(Common.MODE_WORK_SETUP);
 
-                //Mode
-                ClearFunction(Common.MODE_REST_SETUP);
-                ClearFunction(Common.MODE_WORK_SETUP);
-
-                Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
-                dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
+                    }
+                    dialog.dismiss();
+                }
                 //SettingsActivity.this.finish();
             }
         });
-        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
+        alertDialogBuilder.setNegativeButton(R.string.cancel,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        // create an alert dialog
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
                     /*boolean debugPref = sharedPref.getBoolean(Common.DEBUG_KEY, false);
                     debugPref = !debugPref;
                     sharedPref.edit()
@@ -364,7 +401,7 @@ public class SettingsActivity extends PreferenceActivity  {
         // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
 
     }
-    private String WebGet(String pkg) throws InterruptedException {//TODO get null
+    private String WebGet(String pkg) throws InterruptedException {
         String Domain = "https://play.google.com";
         String ShortURL = "/store/apps/details?id=";
         String ContrySet = "&hl=en";
@@ -423,5 +460,21 @@ public class SettingsActivity extends PreferenceActivity  {
         PE = clear.edit();
         PE.clear();
         PE.apply();
+    }
+    private static String EncryptFunction(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(input.getBytes());
+            BigInteger number = new BigInteger(1, digest);
+            String sha = number.toString(16);
+
+            while (sha.length() < 64) {
+                sha = "0" + sha;
+            }
+            return sha;
+        } catch (Exception e) {
+            Log.e("sha256", e.getMessage());
+            return null;
+        }
     }
 }

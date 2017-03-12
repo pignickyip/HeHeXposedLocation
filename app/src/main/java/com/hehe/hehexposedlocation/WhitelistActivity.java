@@ -1,41 +1,25 @@
 package com.hehe.hehexposedlocation;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.PermissionInfo;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceActivity;
 import android.support.annotation.RequiresApi;
-import android.support.v4.view.MenuItemCompat;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.Toast;
-
-import com.hehe.hehexposedlocation.R;
-import com.hehe.hehexposedlocation.appsettings.FilterItemComponent;
-import com.hehe.hehexposedlocation.appsettings.XposedModActivity;
-import com.hehe.hehexposedlocation.appsettings.settings.PermissionsListAdapter;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -43,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -146,7 +129,7 @@ public class WhitelistActivity extends PreferenceActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void showAddAppDialog(final HashMap<String, String> nameMap, final HashMap<String, String> pkgMap,final String[] sortedNames) {
         progressDialog.dismiss();
-        final View view = getLayoutInflater().inflate(R.layout.whitelist_add_dialog, null);
+        final View view = getLayoutInflater().inflate(R.layout.dialog_whitelistadd, null);
         AlertDialog.Builder builder = new AlertDialog.Builder(WhitelistActivity.this);
         builder.setView(view);
         builder.setTitle(R.string.dialog_whitelist_title_add_app);
