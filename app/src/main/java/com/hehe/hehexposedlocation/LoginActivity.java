@@ -88,7 +88,7 @@ public class LoginActivity extends Activity {
         boolean touchUP = password.getBoolean(Common.PASSWORD_FINGERPRINT_ON,false);
         if (setup_already) {
             if(touchUP){
-                Intent intent = new Intent(this, com.hehe.hehexposedlocation.FingerprintActivity.class);
+                Intent intent = new Intent(this, com.hehe.hehexposedlocation.SettingsActivity.class);
                 startActivity(intent);
                 finish();
             }

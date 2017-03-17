@@ -50,6 +50,11 @@ public class Common {
     public static final String WEB_CONTENT = "WEB_CONTENT";
     public static final String WEB_CONTENT_KEY = "WEB_CONTENT_KEY";
 
+    public static final String WEB_CONTENT_RATE_COUNT = "WEB_CONTENT_RATE_COUNT";
+    public static final String WEB_CONTENT_RATE = "WEB_CONTENT_RATE";
+    public static final String WEB_CONTENT_NUMDOWNLOAD = "WEB_CONTENT_NUMDOWNLOAD";
+
+
     public static final String FEEDBACK_COMFORTABLE = "FEEDBACK_COMFORTABLE";
     public static final String FEEDBACK_COMFORTABLE_KEY = "FEEDBACK_COMFORTABLE_KEY";
     public static final String FEEDBACK_COMFORTABLE_CHECK = "FEEDBACK_COMFORTABLE_CHECK";

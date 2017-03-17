@@ -51,7 +51,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 
-public class SettingsActivity extends PreferenceActivity  {
+public class SettingsActivity extends PreferenceActivity {
     private GoogleApiClient client;
 
     private String[] menuItems;
@@ -69,10 +69,11 @@ public class SettingsActivity extends PreferenceActivity  {
     private static SharedPreferences GetFileDisplay = null;
     private static SharedPreferences password = null;
 
-    int NumberOfWebGetFunction = 0;
-
     final List<String> UserpkgName = new ArrayList<String>();
     final List<String> SyspkgName = new ArrayList<String>();
+    final List<String> ApplicationRate = new ArrayList<String>();
+    final List<String> ApplicationRateCount = new ArrayList<String>();
+    final List<String> ApplicationNumberDownoad = new ArrayList<String>();
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -83,15 +84,20 @@ public class SettingsActivity extends PreferenceActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings_main );
+        setContentView(R.layout.activity_settings_main);
         GetFileDisplay = getSharedPreferences(Common.TIME_CATEGORY_GET, 0);
         password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
+
+        ApplicationRate.clear();
+        ApplicationRateCount.clear();
+        ApplicationNumberDownoad.clear();
+
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
         instructionsMsg = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" +
                 "\n Second, Choose those function you want to use\n"
-               + "\n Remind that, you should restart the mobile phone to apply change\n"
-                 + "\n\n";
+                + "\n Remind that, you should restart the mobile phone to apply change\n"
+                + "\n\n";
 
         instructionsTitle = res.getString(R.string.instructions_title);
 
@@ -102,121 +108,122 @@ public class SettingsActivity extends PreferenceActivity  {
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
-        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     protected void onListItemClick(ListView parent, View v, int position, long id) {
-            Intent intent;
-            Fragment navFragment = null;
-            switch (position) {
-                case 0: //about me
-                    String aboutMsg = getString ( R.string.app_name ) + ": " + BuildConfig.VERSION_NAME
-                            + "\n The Hong Kong Polytechnic University \n Student Final Year Project - 2016 "
-                            + "\n Smart Location Obfuscation Module for \n Xposed Framework in Android "
-                            + "\n Yip Tim Yan";
+        Intent intent;
+        Fragment navFragment = null;
+        switch (position) {
+            case 0: //about me
+                String aboutMsg = getString(R.string.app_name) + ": " + BuildConfig.VERSION_NAME
+                        + "\n The Hong Kong Polytechnic University \n Student Final Year Project - 2016 "
+                        + "\n Smart Location Obfuscation Module for \n Xposed Framework in Android "
+                        + "\n Yip Tim Yan";
 
-                    new AlertDialog.Builder ( this )
-                            .setMessage ( aboutMsg )
-                            .setTitle ( R.string.about )
-                            .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel ();
-                                }
-                            } )
-                            .show ();
-                    break;
-                case 1: //Introduction
-                    intent = new Intent(this, com.hehe.hehexposedlocation.intro.MainActivity.class);
-                    startActivity(intent);
-                    break;
-                case 2: //Reference List
-                    String[] ref_ar;
-                    String ref = getString ( R.string.app_name ) + ": " + '\n'
-                            + "Thanks those module: \n";
-                    ref_ar = getResources ().getStringArray ( R.array.ref_list );
-                    List<String> ha = Arrays.asList ( ref_ar );
-                    new AlertDialog.Builder ( this )
-                            .setMessage ( ref + ha )
-                            .setTitle ( "Reference List" )
-                            .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel ();
-                                }
-                            } )
-                            .show ();
-                    break;
-                case 3: //instructions
-                    new AlertDialog.Builder ( this )
-                            .setMessage ( instructionsMsg )
-                            .setTitle ( instructionsTitle )
-                            .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel ();
-                                }
-                            } )
-                            .show ();
-                    break;
-                case 4: //Default Noise setting
-                    intent = new Intent ( this, com.hehe.hehexposedlocation.def_setting.DefActivity.class );
-                    startActivity ( intent );
-                    break;
-                case 5: //White List
-                    intent = new Intent ( this, WhitelistActivity.class );
-                    startActivity ( intent );
-                    break;
-                case 6:
-                    String LastTime = GetFileDisplay.getString(Common.TIME_CATEGORY_GET_DISPLAY,"Never");
+                new AlertDialog.Builder(this)
+                        .setMessage(aboutMsg)
+                        .setTitle(R.string.about)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                break;
+            case 1: //Introduction
+                intent = new Intent(this, com.hehe.hehexposedlocation.intro.MainActivity.class);
+                startActivity(intent);
+                break;
+            case 2: //Reference List
+                String[] ref_ar;
+                String ref = getString(R.string.app_name) + ": " + '\n'
+                        + "Thanks those module: \n";
+                ref_ar = getResources().getStringArray(R.array.ref_list);
+                List<String> ha = Arrays.asList(ref_ar);
+                new AlertDialog.Builder(this)
+                        .setMessage(ref + ha)
+                        .setTitle("Reference List")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                break;
+            case 3: //instructions
+                new AlertDialog.Builder(this)
+                        .setMessage(instructionsMsg)
+                        .setTitle(instructionsTitle)
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .show();
+                break;
+            case 4: //Default Noise setting
+                intent = new Intent(this, com.hehe.hehexposedlocation.def_setting.DefActivity.class);
+                startActivity(intent);
+                break;
+            case 5: //White List
+                intent = new Intent(this, WhitelistActivity.class);
+                startActivity(intent);
+                break;
+            case 6:
+                String LastTime = GetFileDisplay.getString(Common.TIME_CATEGORY_GET_DISPLAY, "Never");
 
-                    new AlertDialog.Builder ( this )
-                            .setMessage ( "This action require you connect to network! \nLast time to get the category: " + LastTime )
-                            .setTitle ( "Get the category of all your mobile phone application" )
-                            .setPositiveButton ( R.string.ok, new DialogInterface.OnClickListener () {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    try {
-                                        //http://androidexample.com/Show_Loader_To_Open_Url_In_WebView__-_Android_Example/index.php?view=article_discription&aid=125
-                                        GetFile();
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
+                new AlertDialog.Builder(this)
+                        .setMessage("This action require you connect to network! \nLast time to get the category: " + LastTime)
+                        .setTitle("Get the category of all your mobile phone application")
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                try {
+                                    //http://androidexample.com/Show_Loader_To_Open_Url_In_WebView__-_Android_Example/index.php?view=article_discription&aid=125
+                                    GetFile();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 }
-                            } )
-                            .setNegativeButton("Cancel",new DialogInterface.OnClickListener () {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                }
-                            })
-                            .show ();
-                    break;
-                case 7:
-                    intent = new Intent( this, com.hehe.hehexposedlocation.mode.ModeActivity.class);
-                    startActivity( intent );
-                    break;
-                case 8:
-                    intent = new Intent( this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
-                    startActivity( intent );
-                    break;
-                case 9:{
-                    intent = new Intent( this, com.hehe.hehexposedlocation.advanced_function.BgdFgdEnableActivity.class);
-                    startActivity( intent );
-                    break;
-                }
-                case 10:{
-                    //clear all setting
-                    ClearAllSetting();
-                    break;
-                }
-                case 11: //Enable
-                    UserActivityIdentity();
-                    break;
-                case 12:
-                    intent = new Intent( this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
-                    startActivity( intent );
-                    break;
-                case 13:
-                    break;
-                default:
-                    break;
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+                break;
+            case 7:
+                intent = new Intent(this, com.hehe.hehexposedlocation.mode.ModeActivity.class);
+                startActivity(intent);
+                break;
+            case 8:
+                intent = new Intent(this, com.hehe.hehexposedlocation.feedback.FeedbackActivity.class);
+                startActivity(intent);
+                break;
+            case 9: {
+                intent = new Intent(this, com.hehe.hehexposedlocation.advanced_function.BgdFgdEnableActivity.class);
+                startActivity(intent);
+                break;
             }
-
+            case 10: {
+                //clear all setting
+                ClearAllSetting();
+                break;
+            }
+            case 11: //Enable
+                UserActivityIdentity();
+                break;
+            case 12:
+                intent = new Intent(this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
+                startActivity(intent);
+                break;
+            case 13:
+                break;
+            default:
+                break;
         }
+
+    }
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -252,12 +259,14 @@ public class SettingsActivity extends PreferenceActivity  {
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }
-    private void UserActivityIdentity () {
+
+    private void UserActivityIdentity() {
         //TODO http://stackoverflow.com/questions/27058741/detect-user-activity-running-cycling-driving-using-android
         //https://developer.xamarin.com/samples/monodroid/google-services/Location/ActivityRecognition/
         Toast.makeText(getApplicationContext(), "整緊呀 _ 你", Toast.LENGTH_SHORT).show();
     }
-    private void ClearAllSetting(){
+
+    private void ClearAllSetting() {
         // get prompts.xml view
         LayoutInflater layoutInflater = LayoutInflater.from(SettingsActivity.this);
         View promptView = layoutInflater.inflate(R.layout.dialog_clearall, null);
@@ -268,47 +277,46 @@ public class SettingsActivity extends PreferenceActivity  {
         final TextView clearall_msg = (TextView) promptView.findViewById(R.id.clearall_text);
         final EditText pwd_auth = (EditText) promptView.findViewById(R.id.clear_text);
         final boolean isUp = password.getBoolean(Common.PASSWORD_SETTING_ON, false);
-        if(isUp){
+        if (isUp) {
             clearall_msg.setText(msg + ", please input your password.");
             msg = "Pin";
             pwd_auth.setHint(msg);
-        }
-        else{
+        } else {
             clearall_msg.setText(msg);
             pwd_auth.setVisibility(View.INVISIBLE);
         }
         // setup a dialog window
-        alertDialogBuilder.setCancelable(false);
+        alertDialogBuilder.setCancelable(true);
         alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                if(isUp){
-                    String adapter = pwd_auth.getText().toString();
-                    String challenge = EncryptFunction(adapter);
-                    String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
-                    if (Objects.equals(challenge, real_pwd)) {
-                        ClearFunction(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
+                String adapter = pwd_auth.getText().toString();
+                String challenge = EncryptFunction(adapter);
+                String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+                if (Objects.equals(challenge, real_pwd) || !isUp) {
+                    ClearFunction(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
 
-                        //Customer setting value
-                        ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
-                        //white list
-                        ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
-                        ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
+                    //Customer setting value
+                    ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
+                    //white list
+                    ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
+                    ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
 
-                        //Web content
-                        ClearFunction(Common.TIME_CATEGORY_GET);
-                        ClearFunction(Common.WEB_CONTENT);
+                    //Web content
+                    ClearFunction(Common.TIME_CATEGORY_GET);
+                    ClearFunction(Common.WEB_CONTENT);
 
-                        //Mode
-                        ClearFunction(Common.MODE_REST_SETUP);
-                        ClearFunction(Common.MODE_WORK_SETUP);
+                    //Mode
+                    ClearFunction(Common.MODE_REST_SETUP);
+                    ClearFunction(Common.MODE_WORK_SETUP);
 
-                        Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
-                    }
-                    else{
-                        Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
-                    }
-                    dialog.dismiss();
+                    ClearFunction(Common.TIME_CATEGORY_GET);
+
+                    Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
                 }
+                dialog.dismiss();
+
                 //SettingsActivity.this.finish();
             }
         });
@@ -328,9 +336,11 @@ public class SettingsActivity extends PreferenceActivity  {
                             .putBoolean(Common.DEBUG_KEY, debugPref)
                             .apply();*/
     }
+
     private void GetFile() throws InterruptedException {
         UserpkgName.clear();
         SyspkgName.clear();
+
         //http://blog.csdn.net/feng88724/article/details/6198446
         // Android】获取手机中已安装apk文件信息(PackageInfo、ResolveInfo)(应用图片、应用名、包名等)
         // 查询所有已经安装的应用程序
@@ -344,8 +354,7 @@ public class SettingsActivity extends PreferenceActivity  {
             if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
                 // customs applications
                 UserpkgName.add(pak.packageName);
-            }
-            else
+            } else
                 SyspkgName.add(pak.packageName);
         }
         Collections.sort(UserpkgName);
@@ -368,45 +377,51 @@ public class SettingsActivity extends PreferenceActivity  {
         Category.clear();
         WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
 
-        for(String User : UserpkgName) {
+        for (String User : UserpkgName) {
             String temp = WebGet(User);
-            if(temp != null) {
+            if (temp != null) {
                 Category.add(User + temp);
             }
         }
-        //Wait Dr.hu declar need or not
-        for(String System : SyspkgName){
+        for (String System : SyspkgName) {
             String temp = WebGet(System);
-            if(temp != null) {
+            if (temp != null) {
                 Category.add(System + temp);
             }
         }
         Collections.sort(Category);
+        Collections.sort(ApplicationRate);
+        Collections.sort(ApplicationRateCount);
+        Collections.sort(ApplicationNumberDownoad);
 
         boolean Cant = false;
-        if(Category.isEmpty())
+        if (Category.isEmpty())
             Cant = true;
 
+        //TODO test before renew the sim card
         PE = WebContent.edit();
         PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
+        PE.putStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>(ApplicationRate));
+        PE.putStringSet(Common.WEB_CONTENT_RATE_COUNT, new HashSet<String>(ApplicationRateCount));
+        PE.putStringSet(Common.WEB_CONTENT_NUMDOWNLOAD, new HashSet<String>(ApplicationNumberDownoad));
         PE.apply();
 
-        if(!Cant) {
+        if (!Cant) {
             Announcement();
             Toast.makeText(getApplicationContext(), "Category already Get", Toast.LENGTH_SHORT).show();
-        }
-        else
+        } else
             Toast.makeText(getApplicationContext(), "Not successfully get the category", Toast.LENGTH_SHORT).show();
         // https://jsoup.org/cookbook/extracting-data/dom-navigation
         // http://stackoverflow.com/questions/11026937/parsing-particular-data-from-website-in-android
 
     }
-    private String WebGet(String pkg) throws InterruptedException {
+
+    private String WebGet(final String pkg) throws InterruptedException {
         String Domain = "https://play.google.com";
         String ShortURL = "/store/apps/details?id=";
         String ContrySet = "&hl=en";
         final String url = Domain + ShortURL + pkg + ContrySet;
-         final AtomicReference<String> b = new AtomicReference<String>();
+        final AtomicReference<String> category = new AtomicReference<String>();
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -420,47 +435,64 @@ public class SettingsActivity extends PreferenceActivity  {
                     //http://stackoverflow.com/questions/7714432/how-do-i-get-returned-value-from-inner-thread-runnable-method-in-java
                     // http://stackoverflow.com/questions/9148899/returning-value-from-thread
                     doc = connect(url);
-                    if(doc != null) {
-                       // Element link = doc.select("span[itemprop=genre]").first();
+                    if (doc != null) {
+                        // Element link = doc.select("span[itemprop=genre]").first();
                         Element Alink = doc.select("a.category").first();
                         String ge = Alink.text();
-                        b.set(ge);
+                        category.set(ge);
+
+                        Element RateCountElement = doc.select("span.rating-count").first();
+                        String RateCount = RateCountElement.text();
+                        ApplicationRateCount.add(pkg + RateCount);
+
+                        Element RateElement = doc.select("div.score").first();
+                        String Rate = RateElement.text();
+                        ApplicationRate.add(pkg + Rate);
+
+                        Element NumberDownloadElement = doc.select("[itemprop=numDownloads]").first();
+                        String NumberDownload = NumberDownloadElement.text();
+                        ApplicationNumberDownoad.add(pkg + NumberDownload);
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
         t0.start();
         t0.join();
-        return b.get();
+        return category.get();
     }
+
     private static Document connect(String url) {
         Document doc = null;
         try {
-            doc = Jsoup.connect(url).timeout(1000*3).get();//.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0").referrer("http://www.google.com")
+            doc = Jsoup.connect(url).timeout(1000 * 3).get();//.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0").referrer("http://www.google.com")
         } catch (NullPointerException | IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return doc;
     }
-    private void Announcement(){
+
+    private void Announcement() {
         Calendar cal = Calendar.getInstance();
         @SuppressLint("SimpleDateFormat")
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy EEE MMM dd hh:mm:ss");
         String display = dateFormat.format(cal.getTime());
 
         PE = GetFileDisplay.edit();
-        PE.putString(Common.TIME_CATEGORY_GET_DISPLAY,display);
+        PE.putString(Common.TIME_CATEGORY_GET_DISPLAY, display);
         PE.apply();
     }
-    private void ClearFunction(String Key){
+
+    private void ClearFunction(String Key) {
         clear = getSharedPreferences(Key, 0);
         PE = clear.edit();
         PE.clear();
         PE.apply();
+        Log.d("Clear", Key);
     }
+
     private static String EncryptFunction(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");
