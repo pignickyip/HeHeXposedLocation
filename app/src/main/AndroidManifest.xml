@@ -75,7 +75,6 @@
             android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter> <!-- Make an APK -->
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -199,11 +198,36 @@
 
         <service
             android:name=".advanced_function.BgdFgdListenService"
-            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="false" android:process=":remote" android:enabled="true">
             <intent-filter>
+                <action android:name="com.hehe.hehexposedlocation.advanced_function.BgdFgdListenService"/>
+                <action android:name="android.intent.action.RESPOND_VIA_MESSAGE"/>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
         </service>
+        <receiver
+            android:name=".advanced_function.BgdFgdReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"  />
+                <action android:name="com.hehe.hehexposedlocation.advanced_function.BgdFgdListenService"/>
+                <action android:name="com.hehe.hehexposedlocation.advanced_function.BgdFgdReceiver"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name=".advanced_function.BgdFgdStartServiceReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"  />
+                <action android:name="com.hehe.hehexposedlocation.advanced_function.BgdFgdListenService"/>
+                <action android:name="com.hehe.hehexposedlocation.advanced_function.BgdFgdReceiver"/>
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".pwd.PwdActivity"

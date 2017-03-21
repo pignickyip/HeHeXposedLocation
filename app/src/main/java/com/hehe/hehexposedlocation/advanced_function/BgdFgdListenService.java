@@ -3,6 +3,7 @@ package com.hehe.hehexposedlocation.advanced_function;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -10,7 +11,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Binder;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.provider.SyncStateContract;
 import android.support.annotation.Nullable;
@@ -26,50 +29,75 @@ import com.hehe.hehexposedlocation.R;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import static android.content.ContentValues.TAG;
 
 //繼承android.app.Service
 public class BgdFgdListenService extends Service {
-    /**
-     * indicates how to behave if the service is killed
-     */
-    int SDK = android.os.Build.VERSION.SDK_INT;
-    /**
-     * indicates whether onRebind should be used
-     */
-    boolean mAllowRebind;
+    //找到UI工人的經紀人，這樣才能派遣工作  (找到顯示畫面的UI Thread上的Handler)
+    private Handler mUI_Handler = new Handler();
+    //宣告特約工人的經紀人
+    private Handler mThreadHandler;
+    //宣告特約工人
+    private HandlerThread mThread;
 
-    private Handler handler = new Handler();
-    private SharedPreferences record = null;
-    private SharedPreferences.Editor PE = null;
-    private final List<String> RunningApps = new ArrayList<>();
-    private final List<Integer> RunningAppsID = new ArrayList<>();
+    private final ArrayList<String> RunningApps = new ArrayList<>();
+    private final ArrayList<Integer> RunningAppsID = new ArrayList<>();
+    List<ActivityManager.AppTask> recentTasks;
 
-    /**
-     * Called when the service is being created.
-     */
-    @Override
-    public void onCreate() {
+    Context ctx;
+    public Context getCtx() {
+        return ctx;
+    }
+    public BgdFgdListenService(Context applicationContext) {
+        super();
+        ctx = applicationContext;
+        Log.i("Service", "here I am!");
+    }
+    public BgdFgdListenService() {
+        super();
+    }
+    // 与界面交互的类，由于service跟界面总是运行在同一程序里，所以不用处理IPC
+    public class LocalBinder extends Binder {
+        BgdFgdListenService getService() {
+            return BgdFgdListenService.this;
+        }
     }
 
-    /**
-     * The service is starting, due to a call to startService()
-     */
     @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // Let it continue running until it is stopped.
-        record = getSharedPreferences(Common.BGDFGDRECORDKEY, 0);
-        RunningApps.clear();
-        String hehe = "";
+    public void onCreate() {
+        Log.d("HEHEXPOSED_TEST", "MainService onCreate");
+        findApp();
+    }
+    private void findApp(){
+        //聘請一個特約工人，有其經紀人派遣其工人做事 (另起一個有Handler的Thread)
+        mThread = new HandlerThread("name");
+        //讓Worker待命，等待其工作 (開啟Thread)
+        mThread.start();
+        //找到特約工人的經紀人，這樣才能派遣工作 (找到Thread上的Handler)
+        mThreadHandler=new Handler(mThread.getLooper());
+        //請經紀人指派工作名稱 r，給工人做
+        mThreadHandler.post(r1);
+    }
+    private Runnable r1=new Runnable () {
+        public void run() {
+            dosth();
+        }
+    };
+    private void dosth(){
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            List<ActivityManager.AppTask> recentTasks = activityManager.getAppTasks();
+            recentTasks = activityManager.getAppTasks();
             for (ActivityManager.AppTask task: recentTasks){
-                hehe = task.getTaskInfo().baseIntent.getComponent().getPackageName();
+                String hehe = task.getTaskInfo().baseIntent.getComponent().getPackageName();
                 String label = null;
                 try {
                     label = getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(hehe, PackageManager.GET_META_DATA)).toString();
@@ -77,14 +105,18 @@ public class BgdFgdListenService extends Service {
                     e.printStackTrace();
                 }
                 hehe += label;
+                RunningApps.add( "XPOSED"+hehe );
+                Log.d("HEHEXPOSED_TEST", hehe);
             }
 
             //Get the running application list
             //Source link : http://stackoverflow.com/questions/30619349/android-5-1-1-and-above-getrunningappprocesses-returns-my-application-packag
             List<ProcessManager.Process> processes = ProcessManager.getRunningApps();
+
             for (ProcessManager.Process process : processes) {
                 StringBuilder sb = new StringBuilder();
                 RunningApps.add(sb.append(process.name).toString());
+                Log.d("HEHEXPOSED_TEST", sb.append(process.name).toString());
             }
         }
         else {
@@ -95,74 +127,85 @@ public class BgdFgdListenService extends Service {
                 String apps = (String) adapter.subSequence(1, SlashPosition);
                 RunningApps.add(apps);
                 RunningAppsID.add(recentTasks.get(i).id);
-                if (isAppOnForeground(this, apps))
-                    hehe = apps;
+
+                RunningApps.add("XPOSED" + apps + " - " + i);
+                Log.d("HEHEXPOSED_TEST", apps);
             }
         }
         Collections.sort(RunningApps);
         Collections.sort(RunningAppsID);
 
-        PE = record.edit();
-        PE.putStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>(RunningApps));
-        PE.putString(Common.CURRENTAPPLICATION, hehe);
-        PE.putBoolean(Common.BGDFGDRECORDKEYUP, true);
-        //PE.putStringSet(Common.BGDFGDAPPLICATIONID, new HashSet<Integer>(RunningAppsID));
-        PE.apply();
-        Toast.makeText(this, "Service Success", Toast.LENGTH_LONG).show();
+    }
+    // 兼容2.0以前版本
+    @Override
+    public void onStart(Intent intent, int startId) {
+    }
 
+    // 在2.0以后的版本如果重写了onStartCommand，那onStart将不会被调用，注：在2.0以前是没有onStartCommand方法
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        Log.i("Service", "Received start id " + startId + ": " + intent);
+// 如果服务进程在它启动后(从onStartCommand()返回后)被kill掉, 那么让他呆在启动状态但不取传给它的intent.
+// 随后系统会重写创建service，因为在启动时，会在创建新的service时保证运行onStartCommand
+// 如果没有任何开始指令发送给service，那将得到null的intent，因此必须检查它.
+// 该方式可用在开始和在运行中任意时刻停止的情况，例如一个service执行音乐后台的重放
+        //return super.onStartCommand(intent, flags, startId);
+        startTimer();
         return START_STICKY;
     }
 
-    private boolean isAppOnForeground(Context context, String pkg) {
-        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
-        if (appProcesses == null) {
-            return false;
+    @Override
+    public void onDestroy() {
+        Toast.makeText(this, "9", Toast.LENGTH_SHORT).show();
+        //移除工人上的工作
+        if (mThreadHandler != null) {
+            mThreadHandler.removeCallbacks(r1);
         }
-        final String packageName = context.getPackageName();
-        String Compare = "";
-        if (Objects.equals(pkg, packageName))
-            Compare = packageName;
-        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
-            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName.equals(Compare)) {
-                return true;
-            }
+        //解聘工人 (關閉Thread)
+        if (mThread != null) {
+            mThread.quit();
         }
-        return false;
+        timer.cancel();
+        timer.purge();
+        timerTask.cancel();
+        t = false;
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
     }
 
-    /**
-     * Called when all clients have unbound with unbindService()
-     */
-    @Override
-    public boolean onUnbind(Intent intent) {
-        return mAllowRebind;
+    private final IBinder mBinder = new LocalBinder();
+    private Timer timer;
+    private TimerTask timerTask;
+    private boolean t = true;
+    public void startTimer() {
+        //set a new Timer
+        timer = new Timer();
+        //initialize the TimerTask's job
+        if(t)
+             initializeTimerTask();
+        //schedule the timer, to wake up every 10 second
+        timer.schedule(timerTask, 10000, 10000);
     }
-
     /**
-     * Called when a client is binding to the service with bindService()
+     * it sets the timer to print the counter every x seconds
      */
-    @Override
-    public void onRebind(Intent intent) {
-
-    }
-
-    /**
-     * Called when The service is no longer used and is being destroyed
-     */
-    @Override
-    public void onDestroy() {
-        //handler.removeCallbacks(showTime);
-        super.onDestroy();
-        PE = record.edit();
-        PE.clear();
-        PE.apply();
-        Toast.makeText(this, "Service end", Toast.LENGTH_LONG).show();
+    private int counter = 0;
+    public void initializeTimerTask() {
+        timerTask = new TimerTask() {
+            public void run() {
+                Log.d("HeHeXposed_Test" ,"im fuckng here" + counter++);
+                try{
+                    mThreadHandler.post(r1);
+                    //startService(new Intent(ctx, BgdFgdStartServiceReceiver.class));
+                }catch (EmptyStackException e){
+                    Log.d("HeHeXposed_Test","unl");
+                }
+            }
+        };
     }
 }

@@ -105,11 +105,9 @@ public class DefActivity extends Activity {
                     Restart.setText(msg);
                 }
             } catch (Exception e) {
-                Log.d("", "FF");
+                Log.d("Default activity", "Failed to show dialog");
             }
-
         }
-
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             //Rly othing
