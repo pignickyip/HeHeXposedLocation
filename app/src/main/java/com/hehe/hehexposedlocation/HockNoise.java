@@ -281,9 +281,9 @@ public class HockNoise implements IXposedHookLoadPackage {
                     XposedBridge.log("No such key");
             }*/
             RunningAppsList.clear();
-            RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>()));
+            RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>()));
             Collections.sort(RunningAppsList);
-            OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");
+            OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");//TODO
         }
         //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
@@ -376,6 +376,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
+                                    RanLat = RunningApplicationPlusNoise(RanLat , RunningAppsList.contains(CurrpackageName));
+                                    RanLat = FroundApplication(RanLat , Objects.equals(OnRunningFrontgroundApplication, CurrpackageName));
                                     String ho123 = Record.get(packageName);
                                     String ha123 = Record.get(CurrpackageName);
                                     try {
@@ -417,7 +419,6 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                     param.setResult(result);
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
-                                                    //TODO TEST
                                                     double result = ori + (MakeItNegOrPost(RanLat, range) * 1.00000001);
                                                     if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
                                                             || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
@@ -610,7 +611,18 @@ public class HockNoise implements IXposedHookLoadPackage {
                 return 1.00005;
             }
         }
-
         return hehe;
+    }
+
+    private double RunningApplicationPlusNoise (double noise, boolean runningORNot){
+        if(runningORNot)
+            return noise*0.9999999975;
+        return noise;
+    }
+
+    private double FroundApplication (double noise, boolean runningORNot){
+        if(runningORNot)
+             return  noise*0.9999995;
+        return noise;
     }
 }

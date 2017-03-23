@@ -49,9 +49,12 @@ public class BgdFgdListenService extends Service {
     //宣告特約工人
     private HandlerThread mThread;
 
-    private final ArrayList<String> RunningApps = new ArrayList<>();
-    private final ArrayList<Integer> RunningAppsID = new ArrayList<>();
+    final List<String> RunningApps = new ArrayList<String>();
+    //private final ArrayList<Integer> RunningAppsID = new ArrayList<>();
     List<ActivityManager.AppTask> recentTasks;
+
+    SharedPreferences RunningAppsPref = null;
+    SharedPreferences.Editor PE;
 
     Context ctx;
     public Context getCtx() {
@@ -75,6 +78,7 @@ public class BgdFgdListenService extends Service {
     @Override
     public void onCreate() {
         Log.d("HEHEXPOSED_TEST", "MainService onCreate");
+        RunningAppsPref = getSharedPreferences(Common.BGDFGDRECORDKEY , 0);
         findApp();
     }
     private void findApp(){
@@ -93,48 +97,49 @@ public class BgdFgdListenService extends Service {
         }
     };
     private void dosth(){
+        String hehe = "";
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             recentTasks = activityManager.getAppTasks();
             for (ActivityManager.AppTask task: recentTasks){
-                String hehe = task.getTaskInfo().baseIntent.getComponent().getPackageName();
+                hehe = task.getTaskInfo().baseIntent.getComponent().getPackageName();
                 String label = null;
                 try {
                     label = getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(hehe, PackageManager.GET_META_DATA)).toString();
                 } catch (PackageManager.NameNotFoundException e) {
                     e.printStackTrace();
                 }
-                hehe += label;
-                RunningApps.add( "XPOSED"+hehe );
-                Log.d("HEHEXPOSED_TEST", hehe);
+               // hehe += label;
+                Log.d("Current", label);
             }
 
             //Get the running application list
             //Source link : http://stackoverflow.com/questions/30619349/android-5-1-1-and-above-getrunningappprocesses-returns-my-application-packag
             List<ProcessManager.Process> processes = ProcessManager.getRunningApps();
-
             for (ProcessManager.Process process : processes) {
                 StringBuilder sb = new StringBuilder();
                 RunningApps.add(sb.append(process.name).toString());
-                Log.d("HEHEXPOSED_TEST", sb.append(process.name).toString());
             }
         }
-        else {
+        else {//For android 5.0
             List<ActivityManager.RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
             for (int i = 0; i < recentTasks.size(); i++) {
                 String adapter = recentTasks.get(i).baseActivity.toShortString();
                 int SlashPosition = adapter.indexOf("/");
                 String apps = (String) adapter.subSequence(1, SlashPosition);
                 RunningApps.add(apps);
-                RunningAppsID.add(recentTasks.get(i).id);
+                //RunningAppsID.add(recentTasks.get(i).id);
 
-                RunningApps.add("XPOSED" + apps + " - " + i);
-                Log.d("HEHEXPOSED_TEST", apps);
+                RunningApps.add(apps);
+               // Log.d("HEHEXPOSED_TEST", apps);
             }
         }
         Collections.sort(RunningApps);
-        Collections.sort(RunningAppsID);
-
+        //Collections.sort(RunningAppsID);
+        PE = RunningAppsPref.edit();
+        PE.putStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>(RunningApps));
+        PE.putString(Common.CURRENTAPPLICATION, hehe);
+        PE.apply();
     }
     // 兼容2.0以前版本
     @Override
@@ -157,7 +162,7 @@ public class BgdFgdListenService extends Service {
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "9", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Service is end", Toast.LENGTH_SHORT).show();
         //移除工人上的工作
         if (mThreadHandler != null) {
             mThreadHandler.removeCallbacks(r1);
@@ -186,8 +191,7 @@ public class BgdFgdListenService extends Service {
         //set a new Timer
         timer = new Timer();
         //initialize the TimerTask's job
-        if(t)
-             initializeTimerTask();
+        initializeTimerTask();
         //schedule the timer, to wake up every 10 second
         timer.schedule(timerTask, 10000, 10000);
     }
@@ -199,11 +203,19 @@ public class BgdFgdListenService extends Service {
         timerTask = new TimerTask() {
             public void run() {
                 Log.d("HeHeXposed_Test" ,"im fuckng here" + counter++);
-                try{
-                    mThreadHandler.post(r1);
-                    //startService(new Intent(ctx, BgdFgdStartServiceReceiver.class));
-                }catch (EmptyStackException e){
-                    Log.d("HeHeXposed_Test","unl");
+                if(t) {
+                    try {
+                        mThreadHandler.post(r1);
+                        //startService(new Intent(ctx, BgdFgdStartServiceReceiver.class));
+                    } catch (EmptyStackException e) {
+                        Log.d("HeHeXposed_Test", "unl");
+                    }
+                }
+                else{
+                    timer.cancel();
+                    timer.purge();
+                    timerTask.cancel();
+                    Log.d("HEHEXPOSED","Timer is end");
                 }
             }
         };

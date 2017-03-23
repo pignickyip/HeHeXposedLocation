@@ -397,8 +397,6 @@ public class SettingsActivity extends PreferenceActivity {
         boolean Cant = false;
         if (Category.isEmpty())
             Cant = true;
-
-        //TODO test before renew the sim card
         PE = WebContent.edit();
         PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
         PE.putStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>(ApplicationRate));

@@ -32,8 +32,11 @@ public class BgdFgdEnableActivity extends Activity {
     Button stopButton = null;
     ToggleButton enable_servicebtn = null;
     SharedPreferences enable_service;
+    SharedPreferences.Editor PE;
     TextView service_text;
+    TextView infoService;
     Intent mServiceIntent;
+    String msg = "";
     private BgdFgdListenService mBoundService;
     /** Called when the activity is first created. */
     private boolean mIsBound;
@@ -51,29 +54,59 @@ public class BgdFgdEnableActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bgdfgdenable);
         ctx = this;
+        enable_service = getSharedPreferences(Common.BGDFGDRECORD_ENABLEKEY,0);
         service_text = (TextView) findViewById(R.id.bgdfgdText);
         enable_servicebtn = (ToggleButton) findViewById(R.id.bgdfgdtoggleButton);
+        infoService = (TextView) findViewById(R.id.bgdfgdInfo);
+
+        msg = "Here to set up background and front-ground application noise";
+        infoService.setText(msg);
+
+        msg = "Not service running";
+        service_text.setText(msg);
+
+        boolean serviceEnable = enable_service.getBoolean(Common.BGDFGDRECORDKEY_ENABLE, false);
+        enable_servicebtn.setChecked(serviceEnable);
+        PE = enable_service.edit();
         enable_servicebtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+                boolean serviceStart = enable_service.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
+
                 // 當按鈕第一次被點擊時候響應的事件
                 if (enable_servicebtn.isChecked()) {
-                    doBindService();
+                    PE.remove(Common.BGDFGDRECORDKEY_SERVICE_ENABLE);
+                    if(!serviceStart) {
+                        doBindService();
+                        PE.putBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, true);
+                    }
+                    else{
+                        PE.putBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
+                    }
+                    PE.remove(Common.BGDFGDRECORDKEY_ENABLE);
+                    PE.putBoolean(Common.BGDFGDRECORDKEY_ENABLE, enable_servicebtn.isChecked());
+                    PE.apply();
+
+                    msg = "Service already enable";
+                    service_text.setText(msg);
                 }
                 // 當按鈕再次被點擊時候響應的事件
                 else {
-                   doUnbindService();
+                    PE.remove(Common.BGDFGDRECORDKEY_ENABLE);
+                    PE.putBoolean(Common.BGDFGDRECORDKEY_ENABLE, enable_servicebtn.isChecked());
+                    PE.apply();
+                    doUnbindService();
+
+                    msg = "No Service running";
+                    service_text.setText(msg);
                 }
             }
         });
-        
+
     }
     @Override
     protected void onDestroy() {
-        doUnbindService();
         super.onDestroy();
     }
-
-
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override

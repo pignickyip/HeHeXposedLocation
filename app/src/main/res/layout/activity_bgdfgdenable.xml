@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-  <TextView
-      android:id="@+id/bgdfgdText"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_x="145dp"
-      android:layout_y="14dp"
-      android:text="@string/default_text" />
- <ToggleButton
-     android:id="@+id/bgdfgdtoggleButton"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:text="ToggleButton" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/bgdfgdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="14sp"
+            android:text="@string/default_text"
+            android:textAlignment="center"
+            android:typeface="normal" />
+        <ToggleButton
+            android:id="@+id/bgdfgdtoggleButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ToggleButton" />
+
+        <TextView
+            android:id="@+id/bgdfgdInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="14sp"
+            android:text="@string/default_text"
+            android:textAlignment="center"
+            android:typeface="normal" />
+
+    </LinearLayout>
+</RelativeLayout>

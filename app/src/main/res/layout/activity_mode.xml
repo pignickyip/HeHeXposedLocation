@@ -10,8 +10,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.14">
+        android:layout_height="282dp">
 
         <TextView
             android:text="@string/Notice_def_setting"
