@@ -26,6 +26,7 @@ import com.hehe.hehexposedlocation.Common;
 import com.hehe.hehexposedlocation.ProcessManager;
 import com.hehe.hehexposedlocation.R;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -55,6 +56,8 @@ public class BgdFgdListenService extends Service {
 
     SharedPreferences RunningAppsPref = null;
     SharedPreferences.Editor PE;
+
+    List<ActivityManager.RunningAppProcessInfo> Runinng;
 
     Context ctx;
     public Context getCtx() {
@@ -100,19 +103,17 @@ public class BgdFgdListenService extends Service {
         String hehe = "";
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            recentTasks = activityManager.getAppTasks();
-            for (ActivityManager.AppTask task: recentTasks){
-                hehe = task.getTaskInfo().baseIntent.getComponent().getPackageName();
-                String label = null;
-                try {
-                    label = getPackageManager().getApplicationLabel(getPackageManager().getApplicationInfo(hehe, PackageManager.GET_META_DATA)).toString();
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
+            Runinng = activityManager.getRunningAppProcesses();
+            for (ActivityManager.RunningAppProcessInfo app : Runinng) {
+                try  {
+                    hehe = app.processName;
                 }
-               // hehe += label;
-                Log.d("Current", label);
+                catch (Exception e){
+                    Log.d("Fuck","Fuck");
+                }
+                Log.d("BUUBU",hehe);
             }
-
+            Runinng.clear();
             //Get the running application list
             //Source link : http://stackoverflow.com/questions/30619349/android-5-1-1-and-above-getrunningappprocesses-returns-my-application-packag
             List<ProcessManager.Process> processes = ProcessManager.getRunningApps();

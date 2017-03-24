@@ -86,7 +86,6 @@ public class PwdActivity extends Activity {
                     subview.setText(msg);
                 }
             }
-
             @Override
             public void afterTextChanged(Editable s) {
                 String adapter = input_pwd.getText().toString();

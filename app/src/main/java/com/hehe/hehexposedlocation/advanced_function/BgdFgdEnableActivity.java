@@ -65,43 +65,28 @@ public class BgdFgdEnableActivity extends Activity {
         msg = "Not service running";
         service_text.setText(msg);
 
-        boolean serviceEnable = enable_service.getBoolean(Common.BGDFGDRECORDKEY_ENABLE, false);
+        final boolean serviceEnable = enable_service.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
         enable_servicebtn.setChecked(serviceEnable);
         PE = enable_service.edit();
         enable_servicebtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                boolean serviceStart = enable_service.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
-
-                // 當按鈕第一次被點擊時候響應的事件
-                if (enable_servicebtn.isChecked()) {
-                    PE.remove(Common.BGDFGDRECORDKEY_SERVICE_ENABLE);
-                    if(!serviceStart) {
+                PE.remove(Common.BGDFGDRECORDKEY_SERVICE_ENABLE);
+                if (!serviceEnable) {
                         doBindService();
                         PE.putBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, true);
-                    }
-                    else{
+                        msg = "Service running";
+                        service_text.setText(msg);
+                        Toast.makeText(getApplicationContext(), msg , Toast.LENGTH_LONG).show();
+                    } else {
                         PE.putBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
+                        msg = "Service is end";
+                        service_text.setText(msg);
+                        doUnbindService();
+                        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                     }
-                    PE.remove(Common.BGDFGDRECORDKEY_ENABLE);
-                    PE.putBoolean(Common.BGDFGDRECORDKEY_ENABLE, enable_servicebtn.isChecked());
                     PE.apply();
-
-                    msg = "Service already enable";
-                    service_text.setText(msg);
-                }
-                // 當按鈕再次被點擊時候響應的事件
-                else {
-                    PE.remove(Common.BGDFGDRECORDKEY_ENABLE);
-                    PE.putBoolean(Common.BGDFGDRECORDKEY_ENABLE, enable_servicebtn.isChecked());
-                    PE.apply();
-                    doUnbindService();
-
-                    msg = "No Service running";
-                    service_text.setText(msg);
-                }
             }
         });
-
     }
     @Override
     protected void onDestroy() {
