@@ -2,20 +2,11 @@ package com.hehe.hehexposedlocation;
 
 import android.app.AndroidAppHelper;
 import android.content.ContentResolver;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
-
-import com.hehe.hehexposedlocation.BuildConfig;
-import com.hehe.hehexposedlocation.Common;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -26,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -35,17 +25,14 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XSharedPreferences;
 import de.robv.android.xposed.XposedBridge;
-import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-import static com.hehe.hehexposedlocation.def_setting.FreeList.APPLICATION_CATEGORY_LIST;
-import static com.hehe.hehexposedlocation.def_setting.FreeList.APPLICATION_GAME_CATEGORY_LIST;
-import static com.hehe.hehexposedlocation.def_setting.FreeList.KEYWORD_LIST;
-import static com.hehe.hehexposedlocation.def_setting.FreeList.PACKAGE_LIST;
+import static com.hehe.hehexposedlocation.FreeList.FREE_CATEGORY_LIST;
+import static com.hehe.hehexposedlocation.FreeList.KEYWORD_LIST;
+import static com.hehe.hehexposedlocation.FreeList.PACKAGE_LIST;
 
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findConstructorExact;
-import static de.robv.android.xposed.XposedHelpers.setDoubleField;
 
 /**
  * The Spinner noise setting
@@ -59,6 +46,7 @@ public class HockNoise implements IXposedHookLoadPackage {
     private final static double MinLong = -180.0;
     private final static String[] FreePackageList = PACKAGE_LIST;
     private final static String[] FreeKeywordList = KEYWORD_LIST;
+    private final static String[] FreeCategoryList = FREE_CATEGORY_LIST;
     private final List<String> WhiteListappList = new ArrayList<String>();
     private final List<String> UserpkgName = new ArrayList<String>();
     private final List<String> SyspkgName = new ArrayList<String>();
@@ -295,6 +283,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
                 if (omg == 0) {//Default
+
                     //XposedBridge.log("The User chose Default");
                 } else if (omg == 1) {//Customer
                     adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 5);
@@ -376,8 +365,14 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
-                                    RanLat = RunningApplicationPlusNoise(RanLat , RunningAppsList.contains(CurrpackageName));
-                                    RanLat = FroundApplication(RanLat , Objects.equals(OnRunningFrontgroundApplication, CurrpackageName));
+                                    if(Objects.equals(packageName, CurrpackageName)) {
+                                        RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(CurrpackageName));
+                                        RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                                    }
+                                    else{
+                                        RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(packageName));
+                                        RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                    }
                                     String ho123 = Record.get(packageName);
                                     String ha123 = Record.get(CurrpackageName);
                                     try {
@@ -386,12 +381,12 @@ public class HockNoise implements IXposedHookLoadPackage {
                                         String Category_1 = WebContent.get(packageName);
                                         String Category_2 = WebContent.get(CurrpackageName);
                                         //Check the package in free list -> created by admin
-                                        if (Objects.equals(Category_1, "Travel & Local")) {
+                                        if (Arrays.asList(FreeCategoryList).contains(Category_1)) {
                                             param.setResult(ori);
                                             XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_1);
                                             if (Objects.equals(ho123, ha123))
                                                 Record.put(ho123, "Original");
-                                        } else if (Objects.equals(Category_2, "Travel & Local")) {
+                                        } else if (Arrays.asList(FreeCategoryList).contains(Category_2)) {
                                             param.setResult(ori);
                                             XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                         } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
@@ -420,8 +415,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
                                                     double result = ori + (MakeItNegOrPost(RanLat, range) * 1.00000001);
-                                                    if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
-                                                            || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
+                                                    if ( OnRunningFrontgroundApplication.startsWith(packageName)
+                                                            ||  OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
                                                         result *= 1.00000005;
                                                     }
                                                     param.setResult(result);
@@ -459,6 +454,14 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     BigDecimal.valueOf(ha % he)
                                             .setScale(5, RoundingMode.HALF_UP)
                                             .doubleValue();
+                            if(Objects.equals(packageName, CurrpackageName)) {
+                                RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(CurrpackageName));
+                                RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                            }
+                            else{
+                                RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(packageName));
+                                RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                            }
                             List<String> appList = new ArrayList<String>();
                             appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
                             Collections.sort(appList);
@@ -468,10 +471,10 @@ public class HockNoise implements IXposedHookLoadPackage {
                                 String Category_1 = WebContent.get(packageName);
                                 String Category_2 = WebContent.get(CurrpackageName);
                                 //Check the package in free list -> created by admin
-                                if (Objects.equals(Category_1, "Travel & Local")) {
+                                if (Arrays.asList(FreeCategoryList).contains(Category_1)) {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_1);
-                                } else if (Objects.equals(Category_2, "Travel & Local")) {
+                                } else if (Arrays.asList(FreeCategoryList).contains(Category_2)) {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                 } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
@@ -496,8 +499,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
                                             double result = ori + (MakeItNegOrPost(RanLong, range) * 1.00000001);
-                                            if ((Objects.equals(OnRunningFrontgroundApplication, packageName))
-                                                    || Objects.equals(OnRunningFrontgroundApplication, CurrpackageName)) {
+                                            if ( OnRunningFrontgroundApplication.startsWith(packageName)
+                                                    ||  OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
                                                 result *= 1.00000005;
                                             }
                                             param.setResult(result);

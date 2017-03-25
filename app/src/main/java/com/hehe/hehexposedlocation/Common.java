@@ -1,23 +1,5 @@
 package com.hehe.hehexposedlocation;
 
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-
-//import hehexposed.BuildConfig;
-
-import com.hehe.hehexposedlocation.DefaultLists;
-import com.hehe.hehexposedlocation.def_setting.DefActivity;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import static android.provider.ContactsContract.Directory.PACKAGE_NAME;
-
-
 public class Common {
     public static final String SYSTEM_LOCATION = "android.location.Location";
     public static final String SYSTEM_LOCATION_MANGER = "android.location.LocationManager";
@@ -94,77 +76,6 @@ public class Common {
     public static final String PASSWORD_LOGIN_ATTEMPT = "PASSWORD_LOGIN_ATTEMPT";
     public static final String PASSWORD_LAST_LOGIN_ATTEMPT = "PASSWORD_LAST_LOGIN_ATTEMPT";
 
-    // public static final PrefSet APPS = new AppsSet();
-    public static final PrefSet KEYWORDS = new KeywordSet();
-    public static final PrefSet COMMANDS = new CommandSet();
-    public static final PrefSet LIBRARIES = new LibrarySet();
 
-    public static abstract class PrefSet {
-        abstract String getPrefKey();
-        abstract String getSetKey();
-        abstract Set<String> getDefaultSet();
-
-        public SharedPreferences getSharedPreferences(PreferenceActivity activity) {
-            activity.getPreferenceManager().setSharedPreferencesMode(Context.MODE_WORLD_READABLE);
-            return activity.getSharedPreferences(getPrefKey(), Context.MODE_WORLD_READABLE);
-        }
-    }
-
-    public static class KeywordSet extends PrefSet {
-        public static final String PREFS_KEYWORDS = "CustomizeKeywords";
-        public static final String KEYWORD_SET_KEY = PACKAGE_NAME+"KEYWORD_SET";
-        public static final Set<String> DEFAULT_KEYWORD_SET = new HashSet<String>(Arrays.asList(DefaultLists.DEFAULT_KEYWORD_LIST));
-
-        @Override
-        public String getPrefKey() {
-            return PREFS_KEYWORDS;
-        }
-        @Override
-        public String getSetKey() {
-            return KEYWORD_SET_KEY;
-        }
-        @Override
-        public Set<String> getDefaultSet() {
-            return DEFAULT_KEYWORD_SET;
-        }
-    }
-
-    public static class CommandSet extends PrefSet {
-        public static final String PREFS_COMMANDS = "CustomizeCommands";
-        public static final String COMMAND_SET_KEY = PACKAGE_NAME+"APPS_SET";
-        public static final Set<String> DEFAULT_COMMAND_SET = new HashSet<String>(Arrays.asList(DefaultLists.DEFAULT_COMMAND_LIST));
-
-        @Override
-        public String getPrefKey() {
-            return PREFS_COMMANDS;
-        }
-        @Override
-        public String getSetKey() {
-            return COMMAND_SET_KEY;
-        }
-        @Override
-        public Set<String> getDefaultSet() {
-            return DEFAULT_COMMAND_SET;
-        }
-    }
-
-    public static class LibrarySet extends PrefSet {
-        public static final String PREFS_LIBNAMES = "CustomizeLibnames";
-        public static final String LIBRARY_SET_KEY = "LIBNAMES_SET";
-        public static final Set<String> DEFAULT_LIBNAME_SET = new HashSet<String>(Arrays.asList(DefaultLists.DEFAULT_LIBNAME_LIST));
-
-        @Override
-        public String getPrefKey() {
-            return PREFS_LIBNAMES;
-        }
-        @Override
-        public String getSetKey() {
-            return LIBRARY_SET_KEY;
-        }
-        @Override
-        public Set<String> getDefaultSet() {
-            return DEFAULT_LIBNAME_SET;
-        }
-    }
 }
 

@@ -62,10 +62,13 @@ public class BgdFgdEnableActivity extends Activity {
         msg = "Here to set up background and front-ground application noise";
         infoService.setText(msg);
 
-        msg = "Not service running";
+        final boolean serviceEnable = enable_service.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
+        if(serviceEnable)
+            msg = "Service running";
+        else
+            msg = "Not service running";
         service_text.setText(msg);
 
-        final boolean serviceEnable = enable_service.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
         enable_servicebtn.setChecked(serviceEnable);
         PE = enable_service.edit();
         enable_servicebtn.setOnClickListener(new View.OnClickListener() {

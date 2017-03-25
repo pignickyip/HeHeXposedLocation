@@ -49,6 +49,8 @@
     <string-array name="ref_list">
         <item>HideMockLocation</item>
         <item>XposedAppSettings</item>
+        <item>Whitelist</item>
+        <item><a href="http://stackoverflow.com/users/1048340/jared-rummler">Jared Rummler</a></item>
         <item>Icon design: iconos de viajes</item>
     </string-array>
     <string-array name="menu_array">
@@ -65,7 +67,6 @@
         <item>Clear all Setting</item>
         <item>Enable Movement</item>
         <item>Password setting</item>
-        <item>test</item>
     </string-array>
     <string-array name="def_setting">
         <item>Default</item>

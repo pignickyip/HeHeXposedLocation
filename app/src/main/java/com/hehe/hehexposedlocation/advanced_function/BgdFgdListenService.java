@@ -100,22 +100,28 @@ public class BgdFgdListenService extends Service {
         }
     };
     private void dosth(){
-        String hehe = "";
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        String FrontApps = "";
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            /*
             Runinng = activityManager.getRunningAppProcesses();
             for (ActivityManager.RunningAppProcessInfo app : Runinng) {
                 try  {
-                    hehe = app.processName;
+                    if (app.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
+                            app.importanceReasonCode == 0 ) {
+                        hehe = app.processName;
+                    }
                 }
                 catch (Exception e){
                     Log.d("Fuck","Fuck");
                 }
                 Log.d("BUUBU",hehe);
-            }
-            Runinng.clear();
+            }*/
+            FrontApps = ProcessManager.getForegroundApp();
+            Log.d("BUUBU",FrontApps);
             //Get the running application list
             //Source link : http://stackoverflow.com/questions/30619349/android-5-1-1-and-above-getrunningappprocesses-returns-my-application-packag
+            RunningApps.clear();
             List<ProcessManager.Process> processes = ProcessManager.getRunningApps();
             for (ProcessManager.Process process : processes) {
                 StringBuilder sb = new StringBuilder();
@@ -129,17 +135,15 @@ public class BgdFgdListenService extends Service {
                 int SlashPosition = adapter.indexOf("/");
                 String apps = (String) adapter.subSequence(1, SlashPosition);
                 RunningApps.add(apps);
-                //RunningAppsID.add(recentTasks.get(i).id);
-
-                RunningApps.add(apps);
-               // Log.d("HEHEXPOSED_TEST", apps);
+                if(i == 0)
+                    FrontApps = apps;
             }
         }
         Collections.sort(RunningApps);
         //Collections.sort(RunningAppsID);
         PE = RunningAppsPref.edit();
         PE.putStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>(RunningApps));
-        PE.putString(Common.CURRENTAPPLICATION, hehe);
+        PE.putString(Common.CURRENTAPPLICATION, FrontApps);
         PE.apply();
     }
     // 兼容2.0以前版本

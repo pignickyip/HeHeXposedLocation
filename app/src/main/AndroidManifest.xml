@@ -86,7 +86,8 @@
             android:label="@string/inside_activity_name_pwdsetting"
             android:noHistory="false">
             <intent-filter>
-                <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />>
             </intent-filter>
         </activity>
         <activity
@@ -98,6 +99,9 @@
             android:excludeFromRecents="true"
             android:noHistory="false">
             <intent-filter>
+                <action android:name="com.hehe.hehexposedlocation.MAINACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.HOME" />
                 <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
             </intent-filter>
         </activity>

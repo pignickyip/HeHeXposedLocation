@@ -217,8 +217,6 @@ public class SettingsActivity extends PreferenceActivity {
                 intent = new Intent(this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
                 startActivity(intent);
                 break;
-            case 13:
-                break;
             default:
                 break;
         }
