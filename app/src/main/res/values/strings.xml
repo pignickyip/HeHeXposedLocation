@@ -366,4 +366,5 @@ Really go back and discard changes?</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="title_activity_instructions">InstructionsActivity</string>
 </resources>

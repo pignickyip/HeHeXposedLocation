@@ -1,1 +1,1 @@
-include ':app', ':api-82-sources', ':api-82', ':XposedBridgeApi', ':jsoup-1.10.2', ':jsoup-1.10.2-javadoc', ':jsoup-1.10.2-sources'
+include ':app', ':api-82-sources', ':api-82', ':XposedBridgeApi', ':jsoup-1.10.2', ':jsoup-1.10.2-javadoc', ':jsoup-1.10.2-sources', ':YouTubeAndroidPlayerApi'

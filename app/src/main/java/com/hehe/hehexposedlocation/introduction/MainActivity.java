@@ -1,4 +1,4 @@
-package com.hehe.hehexposedlocation.intro;
+package com.hehe.hehexposedlocation.introduction;
 
 import android.app.Activity;
 import android.os.Bundle;

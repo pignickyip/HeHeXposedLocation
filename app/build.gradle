@@ -2,6 +2,12 @@ apply plugin: 'com.android.application'
 apply plugin: 'android-apt'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'test'
+            storeFile file('C:/Users/User/.android/debug.keystore')
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion '25.0.2'
     aaptOptions.cruncherEnabled = false
@@ -15,6 +21,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
@@ -24,8 +31,8 @@ android {
             minifyEnabled false
         }
     }
-
-
+    productFlavors {
+    }
 }
 
 dependencies {
@@ -42,18 +49,20 @@ dependencies {
     //https://jsoup.org/cookbook/introduction/parsing-a-document
     compile project(':jsoup-1.10.2')
     compile project(':jsoup-1.10.2-javadoc')
-    compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
     //compile project(':jsoup-1.10.2-sources')
+    compile project(':YouTubeAndroidPlayerApi')
+    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+    compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
     compile 'com.android.support:support-annotations:25.2.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.android.support:support-vector-drawable:25.2.0'
     compile 'com.google.android.gms:play-services-appindexing:9.8.0'
+    compile 'com.google.android.gms:play-services:10.2.1'
     compile 'com.android.support:design:22.2.0'
     compile 'com.android.support:support-v13:23.4.0'
     compile 'com.afollestad.material-dialogs:commons:0.9.0.2'
     compile 'com.jakewharton:butterknife:8.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
-    apt 'com.jakewharton:butterknife-compiler:8.1.0'
 }

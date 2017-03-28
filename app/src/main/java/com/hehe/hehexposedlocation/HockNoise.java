@@ -390,12 +390,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             param.setResult(ori);
                                             XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                         } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
-                                            //within white list
-                                            if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
-                                                param.setResult(ori);
-                                                XposedBridge.log(packageName + " needs the accuracy location");
-                                            } else {//if not in white list
-                                                double ra =
+                                            double ra =
                                                         BigDecimal.valueOf(rand.nextDouble() % 0.1)
                                                                 .setScale(5, RoundingMode.HALF_UP)
                                                                 .doubleValue();
@@ -403,8 +398,13 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                 ra += ori;
                                                 param.setResult(ra);
                                                 XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
-                                            }
-                                        } else if (Objects.equals(ha123, "Original")) {
+                                        }
+                                        //within white list
+                                        else if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
+                                            param.setResult(ori);
+                                            XposedBridge.log(packageName + " needs the accuracy location cause it listed in whitelist");
+                                        }
+                                        else if (Objects.equals(ha123, "Original")) {
                                             param.setResult(ori);
                                         } else {
                                             //Match apart of
@@ -478,10 +478,6 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                 } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
-                                    if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
-                                        param.setResult(ori);
-                                        XposedBridge.log(packageName + " needs the accuracy location");
-                                    } else {
                                         double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
                                                 .setScale(5, RoundingMode.HALF_UP)
                                                 .doubleValue();
@@ -489,8 +485,12 @@ public class HockNoise implements IXposedHookLoadPackage {
                                         ra += ori;
                                         param.setResult(ra);
                                         XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
-                                    }
-                                } else {
+                                }
+                                else if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
+                                    param.setResult(ori);
+                                    XposedBridge.log(packageName + " needs the accuracy location cause it listed in whitelist");
+                                }
+                                else {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
                                         if (packageName.startsWith(List_keyword)) {

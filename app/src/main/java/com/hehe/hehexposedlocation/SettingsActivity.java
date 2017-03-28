@@ -30,16 +30,12 @@ import org.jsoup.nodes.Element;
 
 
 import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.hehe.hehexposedlocation.def_setting.DefActivity;
+import com.hehe.hehexposedlocation.introduction.InstructionsActivity;
 
 import java.io.IOException;
 import java.math.BigInteger;
-import java.net.CookieHandler;
 import java.security.MessageDigest;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,11 +48,8 @@ import java.util.concurrent.atomic.AtomicReference;
 
 
 public class SettingsActivity extends PreferenceActivity {
-    private GoogleApiClient client;
 
     private String[] menuItems;
-    private String instructionsMsg;
-    private String instructionsTitle;
 
     private PackageManager pm = null;
 
@@ -94,19 +87,10 @@ public class SettingsActivity extends PreferenceActivity {
 
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
-        instructionsMsg = "First, Go to Enable HeHeXposed to choose the setting which specify your needs" +
-                "\n Second, Choose those function you want to use\n"
-                + "\n Remind that, you should restart the mobile phone to apply change\n"
-                + "\n\n";
-
-        instructionsTitle = res.getString(R.string.instructions_title);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_list_item_1, menuItems);
         setListAdapter(adapter);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
@@ -131,7 +115,7 @@ public class SettingsActivity extends PreferenceActivity {
                         .show();
                 break;
             case 1: //Introduction
-                intent = new Intent(this, com.hehe.hehexposedlocation.intro.MainActivity.class);
+                intent = new Intent(this, com.hehe.hehexposedlocation.introduction.MainActivity.class);
                 startActivity(intent);
                 break;
             case 2: //Reference List
@@ -151,15 +135,8 @@ public class SettingsActivity extends PreferenceActivity {
                         .show();
                 break;
             case 3: //instructions
-                new AlertDialog.Builder(this)
-                        .setMessage(instructionsMsg)
-                        .setTitle(instructionsTitle)
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
+                intent = new Intent(this, InstructionsActivity.class);
+                startActivity(intent);
                 break;
             case 4: //Default Noise setting
                 intent = new Intent(this, com.hehe.hehexposedlocation.def_setting.DefActivity.class);
@@ -231,31 +208,12 @@ public class SettingsActivity extends PreferenceActivity {
         Thing object = new Thing.Builder()
                 .setName("Settings Page") //  Define a title for the content shown.
                 // Make sure this auto-generated URL is correct.
-                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .setUrl(Uri.parse("https://console.developers.google.com/apis/dashboard?project=hehexposed"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)
                 .setObject(object)
                 .setActionStatus(Action.STATUS_TYPE_COMPLETED)
                 .build();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        AppIndex.AppIndexApi.start(client, getIndexApiAction());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        AppIndex.AppIndexApi.end(client, getIndexApiAction());
-        client.disconnect();
     }
 
     private void UserActivityIdentity() {

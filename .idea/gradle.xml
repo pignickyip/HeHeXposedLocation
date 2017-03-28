@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/XposedBridgeApi" />
+            <option value="$PROJECT_DIR$/YouTubeAndroidPlayerApi" />
             <option value="$PROJECT_DIR$/api-82" />
             <option value="$PROJECT_DIR$/api-82-sources" />
             <option value="$PROJECT_DIR$/app" />
