@@ -109,22 +109,18 @@ public class HockNoise implements IXposedHookLoadPackage {
         Collections.sort(adapterWeb);
         if (!(WebContent.size() == adapterWeb.size()))
             WebContent.clear();
-        for (String Web : adapterWeb) {
-            Boolean next = true;
+        for (String Web : adapterWeb) {//TODO
             for (String User : UserpkgName) {
                 if (Web.startsWith(User)) {
                     WebContent.put(User, Web.substring(User.length()));
-                    next = false;
-                    break;
+                    continue;
                 }
             }
-            if (next) {
-                for (String System : SyspkgName) {
+            for (String System : SyspkgName) {
                     if (Web.startsWith(System)) {
                         WebContent.put(System, Web.substring(System.length()));
                         break;
                     }
-                }
             }
         }
 

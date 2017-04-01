@@ -257,7 +257,7 @@
             android:configChanges="orientation|screenSize"
             android:enabled="true"
             android:excludeFromRecents="true"
-            android:label="@string/title_activity_instructions"
+            android:label="@string/inside_activity_name_Instruction"
             android:noHistory="false"
             android:parentActivityName=".SettingsActivity">
             <meta-data

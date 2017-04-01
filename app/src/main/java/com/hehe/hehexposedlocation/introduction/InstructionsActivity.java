@@ -3,9 +3,11 @@ package com.hehe.hehexposedlocation.introduction;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubeBaseActivity;
@@ -14,17 +16,37 @@ import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerFragment;
 import com.hehe.hehexposedlocation.R;
 
+import java.util.Hashtable;
+
 
 public class InstructionsActivity extends YouTubeBaseActivity implements YouTubePlayer.OnInitializedListener {
-    public static final String API_KEY = "751426042441-k7lpb2dh90urck1acc1m8oe74u283srp.apps.googleusercontent.com";
+    private static final String API_KEY = "751426042441-k7lpb2dh90urck1acc1m8oe74u283srp.apps.googleusercontent.com";
+
+    String msg = "";
 
     //https://www.youtube.com/watch?v=<VIDEO_ID>
-    public static final String VIDEO_ID = "-m3V8w_7vhk";
+    private static final String BasicSettingVideo = "1s9p7_mDw1Q";
+    private static final String ModeSettingVideo = "1s9p7_mDw1Q";
+
+    Hashtable<String, Boolean> DisplayVideoList = new Hashtable<String, Boolean>();
+
+    TextView instruction_intro;
+    TextView videoIntro1;
+    TextView videoIntro2;
+
+    Context ctx;
+    private Context getCtx() {
+        if(ctx != null) {
+            return ctx;
+        }
+        ctx = InstructionsActivity.this;
+        return ctx;
+    }
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_player);
-
+        ctx = this;
         new AlertDialog.Builder(this)
                 .setMessage("Here to show the basic setting of HeHeXposed")
                 .setTitle("Introduction")
@@ -34,18 +56,56 @@ public class InstructionsActivity extends YouTubeBaseActivity implements YouTube
                     }
                 })
                 .show();
+        instruction_intro = (TextView) findViewById(R.id.instruction_intro);
+        videoIntro1 = (TextView) findViewById(R.id.videoIntro1);
+        videoIntro2 = (TextView) findViewById(R.id.videoIntro2);
+
+        msg = "Please follow those step to set up HeHeXpsoed";
+        instruction_intro.setText(msg);
+        msg = "Basic setting";
+        videoIntro1.setText(msg);
+        msg = "Advanced setting";
+        videoIntro2.setText(msg);
+
+        DisplayVideoList.put("HI",true);
         //Initializing and adding YouTubePlayerFragment
         FragmentManager fm = getFragmentManager();
         String tag = YouTubePlayerFragment.class.getSimpleName();
         YouTubePlayerFragment playerFragment = (YouTubePlayerFragment) fm.findFragmentByTag(tag);
+        youtubefragementoption(playerFragment,fm,tag, 1);
+        youtubefragementoption(playerFragment,fm,tag, 2);
+    }
+
+    @Override
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+
+    }
+
+    @Override
+    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+    }
+    public void youtubefragementoption(YouTubePlayerFragment playerFragment, FragmentManager fm, String tag , final int option){
         if (playerFragment == null) {
             FragmentTransaction ft = fm.beginTransaction();
             playerFragment = YouTubePlayerFragment.newInstance();
             //ft.add(android.R.id.content, playerFragment, tag);
-            ft.add(R.id.video1, playerFragment, tag);
+            int ressourceId = getResources().getIdentifier("video" + 1, "id", ctx.getPackageName());
+            if(option == 1) {
+                ressourceId = getResources().getIdentifier(
+                        "video" + 1,
+                        "id",
+                        ctx.getPackageName());
+            }
+            else{
+                ressourceId = getResources().getIdentifier(
+                        "video" + 2,
+                        "id",
+                        ctx.getPackageName());
+            }
+            ft.add(ressourceId, playerFragment, tag);
             ft.commit();
         }
-
         playerFragment.initialize(API_KEY, new YouTubePlayer.OnInitializedListener() {
             @Override
             public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer player, boolean wasRestored) {
@@ -53,9 +113,10 @@ public class InstructionsActivity extends YouTubeBaseActivity implements YouTube
                 if(null== player) return;
 
                 // Start buffering
-                if (!wasRestored) {
-                    player.cueVideo(VIDEO_ID);
-                }
+                if (option == 1)
+                    player.cueVideo(BasicSettingVideo);
+                else
+                    player.cueVideo(BasicSettingVideo);
 
                 player.setPlayerStyle(YouTubePlayer.PlayerStyle.MINIMAL);
 
@@ -86,13 +147,4 @@ public class InstructionsActivity extends YouTubeBaseActivity implements YouTube
         });
     }
 
-    @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-
-    }
-
-    @Override
-    public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-    }
 }

@@ -8,6 +8,7 @@
     <string name="inside_activity_name_pwdsetting">Password Setting</string>
     <string name="inside_activity_name_whitelist">Whitelist Settings</string>
     <string name="inside_activity_name_into">Introduction</string>
+    <string name="inside_activity_name_Instruction">Instruction</string>
 
     <string name="app_mod_summary">We are IS&#8230;</string>
     <string name="admin_email">15049782d@connect.polyu.hk</string>
