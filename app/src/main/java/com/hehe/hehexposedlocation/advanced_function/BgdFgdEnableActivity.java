@@ -28,8 +28,6 @@ import java.util.List;
  */
 
 public class BgdFgdEnableActivity extends Activity {
-    Button startButton = null;
-    Button stopButton = null;
     ToggleButton enable_servicebtn = null;
     SharedPreferences enable_service;
     SharedPreferences.Editor PE;

@@ -149,6 +149,13 @@ public class BgdFgdListenService extends Service {
     // 兼容2.0以前版本
     @Override
     public void onStart(Intent intent, int startId) {
+        Log.i("Service", "Received start id " + startId + ": " + intent);
+// 如果服务进程在它启动后(从onStartCommand()返回后)被kill掉, 那么让他呆在启动状态但不取传给它的intent.
+// 随后系统会重写创建service，因为在启动时，会在创建新的service时保证运行onStartCommand
+// 如果没有任何开始指令发送给service，那将得到null的intent，因此必须检查它.
+// 该方式可用在开始和在运行中任意时刻停止的情况，例如一个service执行音乐后台的重放
+        //return super.onStartCommand(intent, flags, startId);
+        startTimer();
     }
 
     // 在2.0以后的版本如果重写了onStartCommand，那onStart将不会被调用，注：在2.0以前是没有onStartCommand方法

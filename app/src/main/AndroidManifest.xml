@@ -121,7 +121,7 @@
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
         <activity
-            android:name=".introduction.MainActivity"
+            android:name=".introduction.IntroductionActivity"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/inside_activity_name_into"
@@ -156,7 +156,7 @@
                 android:value="com.hehe.hehexposedlocation.appsettings.XposedModActivity" />
         </activity>
         <activity
-            android:name=".def_setting.DefActivity"
+            android:name=".basic_setting.DefActivity"
             android:configChanges="orientation|screenSize"
             android:enabled="true"
             android:excludeFromRecents="true"
@@ -264,7 +264,9 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
-
+        <activity
+            android:name=".whitelist.WhitelistActivity"
+            android:label="@string/title_activity_whitelist"></activity>
     </application>
 
 </manifest>

@@ -14,9 +14,10 @@
         android:id="@+id/btnPermsFilter"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_toRightOf="@id/btnFilter"
         android:contentDescription="@string/perms_title"
-        android:src="@android:drawable/ic_lock_idle_lock" />
+        android:src="@android:drawable/ic_lock_idle_lock"
+        android:layout_alignParentTop="true"
+        android:layout_toEndOf="@+id/btnFilter" />
 
     <SearchView
         android:id="@+id/searchApp"

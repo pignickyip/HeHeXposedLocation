@@ -274,7 +274,7 @@ public class HockNoise implements IXposedHookLoadPackage {
         if (sdk > 18) {
             try {
                 Random rand = new Random(sdk);
-                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0);
+                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, -1);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
@@ -282,14 +282,15 @@ public class HockNoise implements IXposedHookLoadPackage {
 
                     //XposedBridge.log("The User chose Default");
                 } else if (omg == 1) {//Customer
-                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 5);
+                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 40);
                     XposedBridge.log("The User chose Customer and the value is " + adapter);
-                    if(adapter >40) {
-                        adapter %= 40;
+
+                    if(adapter <= 1){
+                        adapter = 2;
                     }
-                    if(adapter == 0) {
-                        adapter = 5;
-                    }
+                    adapter %= 39;
+
+                    adapter++;
 
                     if (sdk >= 21)
                         adapter = ThreadLocalRandom.current().nextInt(1, adapter);
@@ -317,6 +318,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                 } else if (Objects.equals(Feedback_choice, " ")) {
                     FeedbackValue = adapter;
                 }
+
+                XposedBridge.log("The feedback system get "+ Feedback_choice + " - " + FeedbackValue);
                 final int range = FeedbackValue;
             /*
             Source file of android location api
@@ -504,7 +507,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                         } else {
                                             double result = ori + (MakeItNegOrPost(RanLong, range) * 1.0000001);
                                             param.setResult(result);
-                                            XposedBridge.log(packageName + " get the Longitude " + result);
+                                            XposedBridge.log(packageName + " get the Latitude " + result);
                                         }
                                     }
 
@@ -615,7 +618,7 @@ public class HockNoise implements IXposedHookLoadPackage {
 
     private double RunningApplicationPlusNoise (double noise, boolean runningORNot){
         if(runningORNot)
-            return noise*0.9999999975;
+            return noise*0.99999925;
         return noise;
     }
 

@@ -3,6 +3,7 @@ package com.hehe.hehexposedlocation;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,6 +33,7 @@ import org.jsoup.nodes.Element;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 import com.hehe.hehexposedlocation.introduction.InstructionsActivity;
+import com.hehe.hehexposedlocation.introduction.IntroductionActivity;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -66,8 +68,9 @@ public class SettingsActivity extends PreferenceActivity {
     final List<String> SyspkgName = new ArrayList<String>();
     final List<String> ApplicationRate = new ArrayList<String>();
     final List<String> ApplicationRateCount = new ArrayList<String>();
-    final List<String> ApplicationNumberDownoad = new ArrayList<String>();
+    final List<String> ApplicationNumberDownload = new ArrayList<String>();
 
+    Context context;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -81,9 +84,10 @@ public class SettingsActivity extends PreferenceActivity {
         GetFileDisplay = getSharedPreferences(Common.TIME_CATEGORY_GET, 0);
         password = getSharedPreferences(Common.PASSWORD_SETTING, 0);
 
+        context = this;
         ApplicationRate.clear();
         ApplicationRateCount.clear();
-        ApplicationNumberDownoad.clear();
+        ApplicationNumberDownload.clear();
 
         Resources res = getResources();
         menuItems = res.getStringArray(R.array.menu_array);
@@ -115,7 +119,7 @@ public class SettingsActivity extends PreferenceActivity {
                         .show();
                 break;
             case 1: //Introduction
-                intent = new Intent(this, com.hehe.hehexposedlocation.introduction.MainActivity.class);
+                intent = new Intent(this, IntroductionActivity.class);
                 startActivity(intent);
                 break;
             case 2: //Reference List
@@ -138,9 +142,56 @@ public class SettingsActivity extends PreferenceActivity {
                 intent = new Intent(this, InstructionsActivity.class);
                 startActivity(intent);
                 break;
-            case 4: //Default Noise setting
-                intent = new Intent(this, com.hehe.hehexposedlocation.def_setting.DefActivity.class);
-                startActivity(intent);
+            case 4: {//Default Noise setting
+
+                final boolean pwd = password.getBoolean(Common.PASSWORD_ALREADY_UP, false);
+                if(!pwd){
+                    intent = new Intent(this, com.hehe.hehexposedlocation.basic_setting.DefActivity.class);
+                    startActivity(intent);
+                }else{
+                    Log.d("Password","Here im");
+                    // get prompts.xml view
+                    LayoutInflater layoutInflater = LayoutInflater.from(SettingsActivity.this);
+                    @SuppressLint("InflateParams") View promptView = layoutInflater.inflate(R.layout.dialog_getintoenable, null);
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(SettingsActivity.this);
+                    alertDialogBuilder.setView(promptView);
+                    alertDialogBuilder.setTitle("Password authentication");
+                    final String msg = "Input ur password";
+                    final TextView msg_1 = (TextView) promptView.findViewById(R.id.getintoenable_dialog_textview);
+                    final EditText auth = (EditText) promptView.findViewById(R.id.getintoenable_auth);
+                    msg_1.setText(msg);
+                    // setup a dialog window
+                    alertDialogBuilder.setCancelable(true);
+                    alertDialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String adapter = auth.getText().toString();
+                            String challenge = EncryptFunction(adapter);
+                            String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
+
+                            if (Objects.equals(challenge, real_pwd) || !pwd) {
+                                Intent intent = new Intent(context,com.hehe.hehexposedlocation.basic_setting.DefActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                                Toast.makeText(getApplicationContext(), "Successfully log in", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Wrong password, Denied", Toast.LENGTH_LONG).show();
+                            }
+                            dialog.dismiss();
+
+                            //SettingsActivity.this.finish();
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+
+                    // create an alert dialog
+                    AlertDialog alert = alertDialogBuilder.create();
+                    alert.show();
+                }
+            }
                 break;
             case 5: //White List
                 intent = new Intent(this, WhitelistActivity.class);
@@ -189,6 +240,8 @@ public class SettingsActivity extends PreferenceActivity {
             }
             case 11: //Enable
                 UserActivityIdentity();
+                intent = new Intent(this, com.hehe.hehexposedlocation.whitelist.WhitelistActivity.class);
+                startActivity(intent);
                 break;
             case 12:
                 intent = new Intent(this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
@@ -348,7 +401,7 @@ public class SettingsActivity extends PreferenceActivity {
         Collections.sort(Category);
         Collections.sort(ApplicationRate);
         Collections.sort(ApplicationRateCount);
-        Collections.sort(ApplicationNumberDownoad);
+        Collections.sort(ApplicationNumberDownload);
 
         boolean Cant = false;
         if (Category.isEmpty())
@@ -357,7 +410,7 @@ public class SettingsActivity extends PreferenceActivity {
         PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
         PE.putStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>(ApplicationRate));
         PE.putStringSet(Common.WEB_CONTENT_RATE_COUNT, new HashSet<String>(ApplicationRateCount));
-        PE.putStringSet(Common.WEB_CONTENT_NUMDOWNLOAD, new HashSet<String>(ApplicationNumberDownoad));
+        PE.putStringSet(Common.WEB_CONTENT_NUMDOWNLOAD, new HashSet<String>(ApplicationNumberDownload));
         PE.apply();
 
         if (!Cant) {
@@ -405,7 +458,7 @@ public class SettingsActivity extends PreferenceActivity {
 
                         Element NumberDownloadElement = doc.select("[itemprop=numDownloads]").first();
                         String NumberDownload = NumberDownloadElement.text();
-                        ApplicationNumberDownoad.add(pkg + NumberDownload);
+                        ApplicationNumberDownload.add(pkg + NumberDownload);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

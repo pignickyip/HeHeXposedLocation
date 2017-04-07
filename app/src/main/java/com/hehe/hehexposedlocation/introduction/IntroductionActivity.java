@@ -6,7 +6,7 @@ import android.os.Bundle;
 import com.hehe.hehexposedlocation.*;
 
 
-public class MainActivity extends Activity {
+public class IntroductionActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

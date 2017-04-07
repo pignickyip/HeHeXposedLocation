@@ -13,12 +13,4 @@
         android:choiceMode="singleChoice">
     </ListView>
 
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:maxLines="1"
-        android:hint="@string/whitelist_Search_hints"
-        android:id="@+id/searchbox" />
-
 </LinearLayout>

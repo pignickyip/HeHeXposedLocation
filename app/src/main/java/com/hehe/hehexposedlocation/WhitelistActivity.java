@@ -154,7 +154,7 @@ public class WhitelistActivity extends PreferenceActivity {
                         addAppButton.setEnabled(true);
                     }
         });
-        builder.setPositiveButton(R.string.whitelist_Search_button, new DialogInterface.OnClickListener() {
+        /*builder.setPositiveButton(R.string.whitelist_Search_button, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText editText = (EditText) view.findViewById(R.id.searchbox);
@@ -180,7 +180,7 @@ public class WhitelistActivity extends PreferenceActivity {
                         else
                             Toast.makeText(getApplicationContext(), "Wrong word " + cho , Toast.LENGTH_SHORT).show();
                     }
-                });
+                });*/
         builder.show();
 
     }

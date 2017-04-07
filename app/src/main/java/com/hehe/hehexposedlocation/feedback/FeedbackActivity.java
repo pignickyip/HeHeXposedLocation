@@ -33,8 +33,6 @@ import java.util.Objects;
 public class FeedbackActivity extends Activity {
     private GoogleApiClient client;
 
-    String[] menuItems;
-
     private PackageManager pm;
     private Resources res;
 
@@ -125,7 +123,7 @@ public class FeedbackActivity extends Activity {
         String showmsg = "Administration email: " + res.getString(R.string.admin_email);
         show.setText(showmsg);
     }
-    public void SetRadio(){
+    protected void SetRadio(){
         String getback = ComfortableChoise.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
         if(Objects.equals(getback, "Strong"))
             strong.setChecked(true);
@@ -156,7 +154,7 @@ public class FeedbackActivity extends Activity {
                         Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                 }
-                spe.commit();
+                spe.apply();
             }
         });
     }

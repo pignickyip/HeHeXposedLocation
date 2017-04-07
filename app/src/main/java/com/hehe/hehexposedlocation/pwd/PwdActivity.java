@@ -95,8 +95,11 @@ public class PwdActivity extends Activity {
             }
         });
         boolean setup_already = password.getBoolean(Common.PASSWORD_ALREADY_UP, false);
-        if (setup_already)
+        if (setup_already) {
             input_pwd.setHint("You have already set up the password");
+            msg = "You have already set up the password";
+            subview.setText(msg);
+        }
         else
             input_pwd.setHint("Here to set up");
         ImageButton pwd_submit_but = (ImageButton) findViewById(R.id.pwd_submit);
@@ -180,7 +183,7 @@ public class PwdActivity extends Activity {
                             touchid.setVisibility(View.INVISIBLE);
                             touchidCancel.setVisibility(View.VISIBLE);
                         } else {
-                            msg = "Enable touch id";
+                            msg = "You can enable touch id";
                             touchid.setVisibility(View.VISIBLE);
                             touchidCancel.setVisibility(View.INVISIBLE);
                         }
@@ -198,6 +201,10 @@ public class PwdActivity extends Activity {
                                                 PE.putBoolean(Common.PASSWORD_FINGERPRINT_ON, true);
                                                 PE.apply();
                                                 Toast.makeText(getApplicationContext(), "Enable now", Toast.LENGTH_LONG).show();
+                                                touchid.setVisibility(View.INVISIBLE);
+                                                touchidCancel.setVisibility(View.VISIBLE);
+                                                msg = "Already enable fingerprint";
+                                                touchidView.setText(msg);
                                             }
                                         })
                                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -219,7 +226,11 @@ public class PwdActivity extends Activity {
                                                 PE = password.edit();
                                                 PE.remove(Common.PASSWORD_FINGERPRINT_ON);
                                                 PE.apply();
+                                                touchidCancel.setVisibility(View.INVISIBLE);
+                                                touchid.setVisibility(View.VISIBLE);
                                                 Toast.makeText(getApplicationContext(), "Disable now", Toast.LENGTH_LONG).show();
+                                                msg = "Already disable fingerprint";
+                                                touchidView.setText(msg);
                                             }
                                         })
                                         .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {

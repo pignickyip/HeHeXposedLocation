@@ -26,7 +26,6 @@ import com.hehe.hehexposedlocation.R;
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
     private Context context;
-    SharedPreferences password = null;
     // Constructor
     public FingerprintHandler(Context mContext) {
         context = mContext;

@@ -87,7 +87,7 @@
     <string name="FeedbackChoice1">Too Strong</string>
     <string name="FeedbackChoice2">Comfortable</string>
     <string name="FeedbackChoice3">Too Week</string>
-    <string name="feedback_other">Your outher opinion: </string>
+    <string name="feedback_other">Your other opinion: </string>
     <string name="feedbackIntro">Thank you for your using,  here you can choose your opinion of this module:</string>
     <string name="feedbackinput_hints">Please input what you want to tell me</string>
     <string name="Contact_hints">Please input your contact</string>
@@ -107,7 +107,7 @@
     <string name="Notice_def_setting">Restart your phone after update.</string>
     <string name="def_setting_intro">You can choose level: </string>
     <string name="Customer_setting">Your customer number: </string>
-    <string name="Customer_hints">Input between 1-999</string>
+    <string name="Customer_hints">Input between 1-99</string>
 
     <string name="instructions_title">Instruction 指引</string>
     <string name="intro_content1">With the prosperity of mobile and smart devices, the mobile devices security increasingly important.</string>
@@ -368,4 +368,9 @@ Really go back and discard changes?</string>
         completions."
     </string>
     <string name="title_activity_instructions">InstructionsActivity</string>
+    <string name="title_activity_whitelist">WhitelistActivity</string>
+    <string name="userappsname_show_whitelist">User application only</string>
+    <string name="systemappsname_show_whitelist">System application only</string>
+    <string name="allappsname_show_whitelist">All application</string>
+    <string name="dialog_filter_description">Choose which one you need</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.hehe.hehexposedlocation.def_setting;
+package com.hehe.hehexposedlocation.basic_setting;
 
 import android.app.Activity;
 import android.app.AlertDialog;

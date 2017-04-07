@@ -51,7 +51,6 @@ dependencies {
     compile project(':jsoup-1.10.2-javadoc')
     //compile project(':jsoup-1.10.2-sources')
     compile project(':YouTubeAndroidPlayerApi')
-    apt 'com.jakewharton:butterknife-compiler:8.1.0'
     compile 'eu.chainfire:libsuperuser:1.0.0.201608240809'
     compile 'com.android.support:support-annotations:25.2.0'
     compile 'com.android.support:appcompat-v7:23.4.0'
@@ -65,4 +64,5 @@ dependencies {
     compile 'com.jakewharton:butterknife:8.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
     testCompile 'junit:junit:4.12'
+    apt 'com.jakewharton:butterknife-compiler:8.1.0'
 }
