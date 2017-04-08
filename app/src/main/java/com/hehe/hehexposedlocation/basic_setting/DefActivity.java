@@ -48,7 +48,7 @@ public class DefActivity extends Activity {
             }
         });
         TextView tv = (TextView) findViewById(R.id.def_setting_intro);
-        //Show the introduction
+        //Show the activity_introduction
         String[] word = {"Default means my function is being stop\n",
                 "Customer means enable any function of my application\n",
                 "Low means low noise strength\n",

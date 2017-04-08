@@ -66,17 +66,16 @@ public class WhitelistActivity extends PreferenceActivity {
     SharedPreferences DisplaymSharedPrefs;
     static int getback;
 
-    private static HashMap<String,Object> appIcon = new HashMap<>();
     final List<String> pkgList = new ArrayList<String>();
     final List<String> appList = new ArrayList<String>();
 
-    boolean whitelistAllApps;
+    boolean whitelistEnable;
 
     ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_whitelist2);
+        setContentView(R.layout.activity_whitelist);
         ButterKnife.bind(this);
 
         init();
@@ -94,17 +93,17 @@ public class WhitelistActivity extends PreferenceActivity {
     private void init() {
 
         this.getPreferenceManager().setSharedPreferencesMode(MODE_WORLD_READABLE);
-        whitelist = getSharedPreferences(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE, 0);
-        DisplaymSharedPrefs = getSharedPreferences(Common.SHARED_WHITELIST_PREFERENCES_FILE, 0);
+        whitelist = getSharedPreferences(Common.WHITELIST_HEHEXPOSED_KEY, 0);
+        DisplaymSharedPrefs = getSharedPreferences(Common.WHITELIST_DISPLAY_HEHEXPOSED_KEY, 0);
 
-        whitelistAllApps = DisplaymSharedPrefs.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true);
+        whitelistEnable = DisplaymSharedPrefs.getBoolean(Common.WHITELIST_ENABLE_KEY, false);
 
         pkgList.clear();
-        pkgList.addAll(whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
+        pkgList.addAll(whitelist.getStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>()));
         Collections.sort(pkgList);
 
         appList.clear();
-        appList.addAll(DisplaymSharedPrefs.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
+        appList.addAll(DisplaymSharedPrefs.getStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>()));
         Collections.sort(appList);
 
         getback = DisplaymSharedPrefs.getInt(Common.WHITELIST_FILTER_CHOICE, -1);
@@ -112,24 +111,24 @@ public class WhitelistActivity extends PreferenceActivity {
 
     private void saveToPrefs() {
         whitelist.edit()
-                .putBoolean(Common.PREF_KEY_WHITELIST_ALL, whitelistAllApps)
-                .putStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>(pkgList))
+                .putBoolean(Common.WHITELIST_ENABLE_KEY, whitelistEnable)
+                .putStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>(pkgList))
                 .apply();
         DisplaymSharedPrefs.edit()
-                .putBoolean(Common.PREF_KEY_WHITELIST_ALL, whitelistAllApps)
-                .putStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>(appList))
+                .putBoolean(Common.WHITELIST_ENABLE_KEY, whitelistEnable)
+                .putStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>(appList))
                 .apply();
-        Toast.makeText(this, R.string.restart_required, Toast.LENGTH_SHORT).show();
     }
 
     private void resetUi() {
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
-        mListAndEmptyContainer.setVisibility(whitelistAllApps ? View.GONE : View.VISIBLE);
-        mWhitelistAllViewContainer.setVisibility(whitelistAllApps ? View.VISIBLE : View.GONE);
-        addAppButton.setEnabled(!whitelistAllApps);
-        allAppsCheckbox.setChecked(whitelistAllApps);
+        mListAndEmptyContainer.setVisibility(whitelistEnable ? View.GONE : View.VISIBLE);
+        mWhitelistAllViewContainer.setVisibility(whitelistEnable ? View.VISIBLE : View.GONE);
+        addAppButton.setEnabled(whitelistEnable);
+        filter.setEnabled(whitelistEnable);
+        allAppsCheckbox.setChecked(whitelistEnable);
     }
     @Override
     protected void onListItemClick(ListView l, View v, final int position, long id) {
@@ -150,7 +149,7 @@ public class WhitelistActivity extends PreferenceActivity {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void showAddAppDialog(final HashMap<String, String> nameMap, final HashMap<String, String> pkgMap,final String[] sortedNames) {
+    public void showAddAppDialog(final HashMap<String, String> pkgname, final HashMap<String, String> LabelName,final String[] displaylabel, final HashMap<String,Object> appIcon) {
         progressDialog.dismiss();
 
         final View view = getLayoutInflater().inflate(R.layout.dialog_whitelistadd, null);
@@ -158,18 +157,18 @@ public class WhitelistActivity extends PreferenceActivity {
         builder.setView(view);
         builder.setTitle(R.string.dialog_whitelist_title_add_app);
         builder.setCancelable(true);
-        builder.setItems(sortedNames, new DialogInterface.OnClickListener() {
+        builder.setItems(displaylabel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String pkg = pkgMap.get(sortedNames[which]);
-                appList.add(nameMap.get(pkg));
+                String pkg = pkgname.get(displaylabel[which]);
+                appList.add(LabelName.get(pkg));
                 Collections.sort(appList);
                 pkgList.add(pkg);
                 Collections.sort(pkgList);
                 resetUi();
                 saveToPrefs();
                 addAppButton.setEnabled(true);
-                Toast.makeText(getApplicationContext(), "Successfully make the "+sortedNames[which]+" to White List", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Successfully make the " + LabelName.get(pkg) + " to White List", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
@@ -228,16 +227,16 @@ public class WhitelistActivity extends PreferenceActivity {
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            whitelistAllApps = isChecked;
+            whitelistEnable = isChecked;
             resetUi();
             saveToPrefs();
         }
     }
 
-    private static class PackageLookupThread extends Thread {
+    private class PackageLookupThread extends Thread {
         final WeakReference<WhitelistActivity> contextHolder;
-        final List<String> UserpkgName = new ArrayList<String>();
-        final List<String> SyspkgName = new ArrayList<String>();
+
+        final int getback = DisplaymSharedPrefs.getInt(Common.WHITELIST_FILTER_CHOICE, -1);
 
         public PackageLookupThread(final WhitelistActivity context) {
             this.contextHolder = new WeakReference<WhitelistActivity>(context);
@@ -246,70 +245,57 @@ public class WhitelistActivity extends PreferenceActivity {
         @Override
         public void run() {
             //app.loadLabel(getPackageManager())
-            Log.d("h",getback+"");
             PackageManager pm = contextHolder.get().getPackageManager();
             final List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-            final String[] names = new String[packages.size()];
-            final HashMap<String, String> nameMap = new HashMap<>();
-            final HashMap<String, String> allpkgMap = new HashMap<>();
-
             //获取手机内所有应用
-            List<PackageInfo> paklist = pm.getInstalledPackages(0);
+            final List<PackageInfo> paklist = pm.getInstalledPackages(0);
+            final List<String> adapter = new ArrayList<String>();
+            final HashMap<String, String> pkgName  = new HashMap<>();
+            final HashMap<String,String> pkgLabelName = new HashMap<>();
+            final HashMap<String,Object> appIcon = new HashMap<>();
             for (int j = 0; j < paklist.size(); j++) {
                 PackageInfo pak = paklist.get(j);
+                String pakLabel =  (String)pak.applicationInfo.loadLabel(pm);
                 switch (getback){
-                    case 0://all
-                        allpkgMap.put(names[j], pak.packageName);
-                        // applicationInfo is subclass of packageinfo
-                        names[j] = (String)pak.applicationInfo.loadLabel(pm);
-                        nameMap.put(pak.packageName,names[j]);
-
-                        appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                        Log.d("h",names[j]);
-                        break;
                     case 1://system
                         if (!((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0)) {
-                            SyspkgName.add(pak.packageName);
-                            // applicationInfo is subclass of packageinfo
-                            names[j] = (String)pak.applicationInfo.loadLabel(pm);
-                            nameMap.put(pak.packageName,names[j]);
-
+                            adapter.add(pakLabel);
+                            pkgName.put(pakLabel,pak.packageName);
+                            pkgLabelName.put(pak.packageName,pakLabel);
                             appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                            Log.d("h",names[j]);
+                            Log.d("h",pakLabel);
                         }
                         break;
-                    case 2://user
+                    case 0://all
+                        adapter.add(pakLabel);
+                        pkgName.put(pakLabel,pak.packageName);
+                        pkgLabelName.put(pak.packageName,pakLabel);
+                        appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
+                        break;
+                    default: //user or default
                         if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
                             // customs applications
-                            UserpkgName.add(pak.packageName);
-                            // applicationInfo is subclass of packageinfo
-                            names[j] = (String)pak.applicationInfo.loadLabel(pm);
-                            nameMap.put(pak.packageName,names[j]);
-
+                            adapter.add(pakLabel);
+                            pkgName.put(pakLabel,pak.packageName);
+                            pkgLabelName.put(pak.packageName,pakLabel);
                             appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                            Log.d("h",names[j]);
+                            Log.d("h",pakLabel);
                         }
-                        break;
-                    default:
-                        allpkgMap.put(names[j], pak.packageName);
-                        // applicationInfo is subclass of packageinfo
-                        names[j] = (String)pak.applicationInfo.loadLabel(pm);
-                        nameMap.put(pak.packageName,names[j]);
-
-                        appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                        Log.d("h",names[j]);
                         break;
                 }
             }
-            Arrays.sort(names);
-            Collections.sort(UserpkgName);
-            Collections.sort(SyspkgName);
-
+            final String[] display = new String[adapter.size()];
+            int i = 0;
+            for (String hoho:adapter){
+                display[i] = hoho;
+                i++;
+            }
+            Arrays.sort(display);
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
                 public void run() {
-                    contextHolder.get().showAddAppDialog(nameMap,allpkgMap, names);
+                    contextHolder.get().showAddAppDialog(pkgName,pkgLabelName,display , appIcon);
                 }
             });
         }
@@ -329,9 +315,9 @@ public class WhitelistActivity extends PreferenceActivity {
         // setup a dialog window
         alertDialogBuilder.setCancelable(false);
         getback = DisplaymSharedPrefs.getInt(Common.WHITELIST_FILTER_CHOICE, -1);
-        Log.d("Ad",getback+"");
         switch (getback) {
             case -1:
+                userappsFilter.setChecked(true);
                 break;
             case 0:
                 allappsFilter.setChecked(true);

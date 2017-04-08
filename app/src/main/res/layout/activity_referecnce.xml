@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hehe.hehexposedlocation.introduction.ReferecnceActivity"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <TextView
+        android:id="@+id/title_reference"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text="@string/reference"
+        android:textAlignment="textEnd"
+        android:textStyle="italic"
+        tools:layout_editor_absoluteX="54dp"
+        tools:layout_editor_absoluteY="16dp"
+        android:layout_weight="0.10" />
+
+
+    <TextView
+        android:id="@+id/ReferenceList"
+        android:layout_width="match_parent"
+        android:layout_height="319dp"
+        android:fontFamily="serif-monospace"
+        tools:layout_editor_absoluteX="19dp"
+        tools:layout_editor_absoluteY="65dp"
+        tools:text="@string/default_text"
+        android:layout_weight="0.65" />
+</LinearLayout>

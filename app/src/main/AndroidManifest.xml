@@ -110,7 +110,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WhitelistActivity"
+            android:name=".whitelist.WhitelistActivity"
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/inside_activity_name_whitelist"
@@ -125,6 +125,17 @@
             android:enabled="true"
             android:excludeFromRecents="true"
             android:label="@string/inside_activity_name_into"
+            android:noHistory="true"
+            android:parentActivityName=".SettingsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.hehe.hehexposedlocation.SettingsActivity" />
+        </activity>
+        <activity
+            android:name=".introduction.ReferecnceActivity"
+            android:label="@string/inside_activity_name_Referecnce"
+            android:enabled="true"
+            android:excludeFromRecents="true"
             android:noHistory="true"
             android:parentActivityName=".SettingsActivity">
             <meta-data
@@ -264,9 +275,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.hehe.hehexposedlocation.SettingsActivity" />
         </activity>
-        <activity
-            android:name=".whitelist.WhitelistActivity"
-            android:label="@string/title_activity_whitelist"></activity>
+
     </application>
 
 </manifest>

@@ -57,6 +57,7 @@ public class HockNoise implements IXposedHookLoadPackage {
     private final HashMap<String, String> Record = new HashMap<String, String>();
     private final List<String> RunningAppsList = new ArrayList<String>();
     private String OnRunningFrontgroundApplication;
+    private boolean whiteListEnable;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -64,68 +65,77 @@ public class HockNoise implements IXposedHookLoadPackage {
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
         //http://api.xposed.info/reference/de/robv/android/xposed/XSharedPreferences.
         //White List
-        final XSharedPreferences sharedPreferences_whitelist = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
+        final XSharedPreferences WHITELIST = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WHITELIST_HEHEXPOSED_KEY);
         //Setting
-        final XSharedPreferences sharedPreferences_posit = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_DEFAULT_POSITION);
-        final XSharedPreferences sharedPreferences_customer = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
+        final XSharedPreferences USERSPINNERCHOICE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_DEFAULT_POSITION);
+        final XSharedPreferences USERNOISECUSTOMER = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
         //Application reset
-        final XSharedPreferences sharedPreferences_UserApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
-        final XSharedPreferences sharedPreferences_SystemApplicationFile = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
-        final XSharedPreferences sharedPreferences_WebContent = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WEB_CONTENT);
+        final XSharedPreferences USERAPPLICATIONFILE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
+        final XSharedPreferences SYSTEMAPPLICATIONFILE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
+        final XSharedPreferences WEBCONTENT = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WEB_CONTENT);
         //Feedback
-        final XSharedPreferences sharedPreferences_Feedback = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.FEEDBACK_COMFORTABLE);
+        final XSharedPreferences FEEDBACK = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.FEEDBACK_COMFORTABLE);
         //Mode
-        final XSharedPreferences sharedPreferences_ModeWork = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_WORK_SETUP);
-        final XSharedPreferences sharedPreferences_ModeRest = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
+        final XSharedPreferences MODE_WORK = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_WORK_SETUP);
+        final XSharedPreferences MODE_REST = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.MODE_REST_SETUP);
         //Background Service
-        final XSharedPreferences RunningApps = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.BGDFGDRECORDKEY);
+        final XSharedPreferences RUNNINGAPPSLISTENER = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.BGDFGDRECORDKEY);
 
-        sharedPreferences_whitelist.makeWorldReadable();
-        sharedPreferences_posit.makeWorldReadable();
-        sharedPreferences_customer.makeWorldReadable();
-        sharedPreferences_UserApplicationFile.makeWorldReadable();
-        sharedPreferences_SystemApplicationFile.makeWorldReadable();
-        sharedPreferences_WebContent.makeWorldReadable();
-        sharedPreferences_Feedback.makeWorldReadable();
-        sharedPreferences_ModeWork.makeWorldReadable();
-        sharedPreferences_ModeRest.makeWorldReadable();
-        RunningApps.makeWorldReadable();
+        WHITELIST.makeWorldReadable();
+        USERSPINNERCHOICE.makeWorldReadable();
+        USERNOISECUSTOMER.makeWorldReadable();
+        USERAPPLICATIONFILE.makeWorldReadable();
+        SYSTEMAPPLICATIONFILE.makeWorldReadable();
+        WEBCONTENT.makeWorldReadable();
+        FEEDBACK.makeWorldReadable();
+        MODE_WORK.makeWorldReadable();
+        MODE_REST.makeWorldReadable();
+        RUNNINGAPPSLISTENER.makeWorldReadable();
+
 
         WhiteListappList.clear();
-        WhiteListappList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
-        Collections.sort(WhiteListappList);
+        whiteListEnable = WHITELIST.getBoolean(Common.WHITELIST_ENABLE_KEY, false);
+        if (whiteListEnable) {
+            WhiteListappList.addAll(WHITELIST.getStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>()));
+            Collections.sort(WhiteListappList);
+            XposedBridge.log("White List is enabled");
+        }
 
         //Category
         UserpkgName.clear();
-        UserpkgName.addAll(sharedPreferences_UserApplicationFile.getStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>()));
+        UserpkgName.addAll(USERAPPLICATIONFILE.getStringSet(Common.USER_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(UserpkgName);
         SyspkgName.clear();
-        SyspkgName.addAll(sharedPreferences_SystemApplicationFile.getStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>()));
+        SyspkgName.addAll(SYSTEMAPPLICATIONFILE.getStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>()));
         Collections.sort(SyspkgName);
 
         final List<String> adapterWeb = new ArrayList<String>();
         adapterWeb.clear();
-        adapterWeb.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
+        adapterWeb.addAll(WEBCONTENT.getStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>()));
         Collections.sort(adapterWeb);
         if (!(WebContent.size() == adapterWeb.size()))
             WebContent.clear();
         for (String Web : adapterWeb) {//TODO
+            boolean check = false;
             for (String User : UserpkgName) {
                 if (Web.startsWith(User)) {
                     WebContent.put(User, Web.substring(User.length()));
-                    continue;
+                    check = true;
                 }
             }
+            if(check) {
+                continue;
+            }
             for (String System : SyspkgName) {
-                    if (Web.startsWith(System)) {
-                        WebContent.put(System, Web.substring(System.length()));
-                        break;
-                    }
+                if (Web.startsWith(System)) {
+                    WebContent.put(System, Web.substring(System.length()));
+                    break;
+                }
             }
         }
 
         adapterWeb.clear();
-        adapterWeb.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>()));
+        adapterWeb.addAll(WEBCONTENT.getStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>()));
         Collections.sort(adapterWeb);
         if (!(ApplicationRate.size() == adapterWeb.size()))
             ApplicationRate.clear();
@@ -153,10 +163,10 @@ public class HockNoise implements IXposedHookLoadPackage {
         }
 
         adapterWeb.clear();
-        adapterWeb.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_RATE_COUNT, new HashSet<String>()));
+        adapterWeb.addAll(WEBCONTENT.getStringSet(Common.WEB_CONTENT_RATE_COUNT, new HashSet<String>()));
         Collections.sort(adapterWeb);
         if (!(ApplicationRateCount.size() == adapterWeb.size()))
-             ApplicationRateCount.clear();
+            ApplicationRateCount.clear();
         for (String Web : adapterWeb) {
             Boolean next = true;
             for (String User : UserpkgName) {
@@ -180,7 +190,7 @@ public class HockNoise implements IXposedHookLoadPackage {
             }
         }
         adapterWeb.clear();
-        adapterWeb.addAll(sharedPreferences_WebContent.getStringSet(Common.WEB_CONTENT_NUMDOWNLOAD, new HashSet<String>()));
+        adapterWeb.addAll(WEBCONTENT.getStringSet(Common.WEB_CONTENT_NUMDOWNLOAD, new HashSet<String>()));
         Collections.sort(adapterWeb);
         if (!(ApplicationNumberDownoad.size() == adapterWeb.size()))
             ApplicationNumberDownoad.clear();
@@ -212,11 +222,11 @@ public class HockNoise implements IXposedHookLoadPackage {
         int Curr_Hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
         int Curr_Minute = mcurrentTime.get(Calendar.MINUTE);
         //Mode change
-        final boolean WorkMode_ON = sharedPreferences_ModeWork.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
-        final int WorkMode_Start_Hour = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, -1);
-        final int WorkMode_Start_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
-        final int WorkMode_End_Hour = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
-        final int WorkMode_End_Mintues = sharedPreferences_ModeWork.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
+        final boolean WorkMode_ON = MODE_WORK.getBoolean(Common.MODE_WORK_SETUP_KEY, false);
+        final int WorkMode_Start_Hour = MODE_WORK.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_HOUR, -1);
+        final int WorkMode_Start_Mintues = MODE_WORK.getInt(Common.MODE_WORK_SETUP_STARTTIME_KEY_MINUTES, -1);
+        final int WorkMode_End_Hour = MODE_WORK.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_HOUR, -1);
+        final int WorkMode_End_Mintues = MODE_WORK.getInt(Common.MODE_WORK_SETUP_ENDTIME_KEY_MINUTES, -1);
         if (WorkMode_ON) {
             if (WorkMode_Start_Hour <= Curr_Hour) {
                 if (WorkMode_Start_Mintues <= Curr_Minute) {
@@ -232,11 +242,11 @@ public class HockNoise implements IXposedHookLoadPackage {
         } else
             TimeModeCheck = WorkMode_Start_Hour;
 
-        Boolean RestMode_ON = sharedPreferences_ModeRest.getBoolean(Common.MODE_REST_SETUP_KEY, false);
-        final int RestMode_Start_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
-        final int RestMode_Start_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
-        final int RestMode_End_Hour = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
-        final int RestMode_End_Mintues = sharedPreferences_ModeRest.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
+        Boolean RestMode_ON = MODE_REST.getBoolean(Common.MODE_REST_SETUP_KEY, false);
+        final int RestMode_Start_Hour = MODE_REST.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_HOUR, -1);
+        final int RestMode_Start_Mintues = MODE_REST.getInt(Common.MODE_REST_SETUP_STARTTIME_KEY_MINUTES, -1);
+        final int RestMode_End_Hour = MODE_REST.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_HOUR, -1);
+        final int RestMode_End_Mintues = MODE_REST.getInt(Common.MODE_REST_SETUP_ENDTIME_KEY_MINUTES, -1);
         if (RestMode_ON) {
             if (RestMode_Start_Hour <= Curr_Hour) {
                 if (RestMode_Start_Mintues <= Curr_Minute) {
@@ -248,7 +258,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                 }
             }
         }
-        final boolean RunBgdFgd = RunningApps.getBoolean(Common.BGDFGDRECORDKEYUP, false);
+        final boolean RunBgdFgd = RUNNINGAPPSLISTENER.getBoolean(Common.BGDFGDRECORDKEYUP, false);
         if (RunBgdFgd) {
             /*List<String> temp = new ArrayList<String>();
             temp.clear();
@@ -265,16 +275,16 @@ public class HockNoise implements IXposedHookLoadPackage {
                     XposedBridge.log("No such key");
             }*/
             RunningAppsList.clear();
-            RunningAppsList.addAll(RunningApps.getStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>()));
+            RunningAppsList.addAll(RUNNINGAPPSLISTENER.getStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>()));
             Collections.sort(RunningAppsList);
-            OnRunningFrontgroundApplication = RunningApps.getString(Common.CURRENTAPPLICATION, "No Application Running");//TODO
+            OnRunningFrontgroundApplication = RUNNINGAPPSLISTENER.getString(Common.CURRENTAPPLICATION, "No Application Running");
         }
         //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
         if (sdk > 18) {
             try {
                 Random rand = new Random(sdk);
-                int omg = sharedPreferences_posit.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, -1);
+                int omg = USERSPINNERCHOICE.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, -1);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
@@ -282,10 +292,10 @@ public class HockNoise implements IXposedHookLoadPackage {
 
                     //XposedBridge.log("The User chose Default");
                 } else if (omg == 1) {//Customer
-                    adapter = sharedPreferences_customer.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 40);
+                    adapter = USERNOISECUSTOMER.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 40);
                     XposedBridge.log("The User chose Customer and the value is " + adapter);
 
-                    if(adapter <= 1){
+                    if (adapter <= 1) {
                         adapter = 2;
                     }
                     adapter %= 39;
@@ -303,12 +313,12 @@ public class HockNoise implements IXposedHookLoadPackage {
                     else
                         adapter = (rand.nextInt(10 * omg)) + 1;
 
-                   // XposedBridge.log("The User chose Low, Medium, High.");
+                    // XposedBridge.log("The User chose Low, Medium, High.");
                 } else
                     XposedBridge.log("The SharePreferences get wrong...");
 
                 int FeedbackValue = 1;
-                String Feedback_choice = sharedPreferences_Feedback.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
+                String Feedback_choice = FEEDBACK.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
                 if (Objects.equals(Feedback_choice, "Strong")) {
                     FeedbackValue = adapter / 2;
                 } else if (Objects.equals(Feedback_choice, "Week")) {
@@ -319,7 +329,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                     FeedbackValue = adapter;
                 }
 
-                XposedBridge.log("The feedback system get "+ Feedback_choice + " - " + FeedbackValue);
+                XposedBridge.log("The feedback system get " + Feedback_choice + " - " + FeedbackValue);
                 final int range = FeedbackValue;
             /*
             Source file of android location api
@@ -327,20 +337,6 @@ public class HockNoise implements IXposedHookLoadPackage {
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/LocationManager.java
             */
                 if (omg != 0) {
-                    if (sharedPreferences_whitelist.getBoolean(Common.PREF_KEY_WHITELIST_ALL, true) || WhiteListappList.contains(lpparam.packageName)) {
-                        //https://android.googlesource.com/platform/frameworks/base/+/9637d474899d9725da8a41fdf92b9bd1a15d301e/core/java/android/provider/Settings.java
-                        findAndHookMethod("android.provider.Settings.Secure", lpparam.classLoader, "getString",
-                                ContentResolver.class, String.class, new XC_MethodHook() {
-                                    @Override
-                                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                                        String requested = (String) param.args[1];
-                                        if (requested.equals(Settings.Secure.ALLOW_MOCK_LOCATION)) {
-                                            param.setResult("0");
-                                            XposedBridge.log("Loaded app: " + lpparam.packageName);
-                                        }
-                                    }
-                                });
-                    }
                     final double modeChange = TimeModeCheck;
                     findAndHookMethod(Common.SYSTEM_LOCATION, lpparam.classLoader, "getLatitude",
                             new XC_MethodHook() {
@@ -359,16 +355,15 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     double popular = SearchInFromWebContent(CurrpackageName);
                                     //Original value + random value
                                     double ha = (rand.nextDouble() % (MaxLat));
-                                    double he = (rand.nextDouble() % (range*popular)) % 0.1 * modeChange / 10;
+                                    double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange / 10;
                                     double RanLat =
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
-                                    if(Objects.equals(packageName, CurrpackageName)) {
+                                    if (Objects.equals(packageName, CurrpackageName)) {
                                         RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(CurrpackageName));
                                         RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                                    }
-                                    else{
+                                    } else {
                                         RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(packageName));
                                         RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
                                     }
@@ -390,20 +385,19 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                         } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
                                             double ra =
-                                                        BigDecimal.valueOf(rand.nextDouble() % 0.1)
-                                                                .setScale(5, RoundingMode.HALF_UP)
-                                                                .doubleValue();
-                                                ra = MakeItNegOrPost(ra, range) / 10000;
-                                                ra += ori;
-                                                param.setResult(ra);
-                                                XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
+                                                    BigDecimal.valueOf(rand.nextDouble() % 0.1)
+                                                            .setScale(5, RoundingMode.HALF_UP)
+                                                            .doubleValue();
+                                            ra = MakeItNegOrPost(ra, range) / 10000;
+                                            ra += ori;
+                                            param.setResult(ra);
+                                            XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
                                         }
                                         //within white list
                                         else if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
                                             param.setResult(ori);
-                                            XposedBridge.log(packageName + " needs the accuracy location cause it listed in whitelist");
-                                        }
-                                        else if (Objects.equals(ha123, "Original")) {
+                                            XposedBridge.log(packageName + " needs the accuracy location cause it listed in white list");
+                                        } else if (Objects.equals(ha123, "Original")) {
                                             param.setResult(ori);
                                         } else {
                                             //Match apart of
@@ -414,8 +408,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                     XposedBridge.log(packageName + " get the Latitude " + result);
                                                 } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
                                                     double result = ori + (MakeItNegOrPost(RanLat, range) * 1.00000001);
-                                                    if ( OnRunningFrontgroundApplication.startsWith(packageName)
-                                                            ||  OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
+                                                    if (OnRunningFrontgroundApplication.startsWith(packageName)
+                                                            || OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
                                                         result *= 1.00000005;
                                                     }
                                                     param.setResult(result);
@@ -448,22 +442,18 @@ public class HockNoise implements IXposedHookLoadPackage {
                             //Original value + random value
                             double ha = (rand.nextDouble() % (MaxLong));
                             double popular = SearchInFromWebContent(CurrpackageName);
-                            double he = (rand.nextDouble() % (range*popular)) % 0.1 * modeChange /10;
+                            double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange / 10;
                             double RanLong =
                                     BigDecimal.valueOf(ha % he)
                                             .setScale(5, RoundingMode.HALF_UP)
                                             .doubleValue();
-                            if(Objects.equals(packageName, CurrpackageName)) {
+                            if (Objects.equals(packageName, CurrpackageName)) {
                                 RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(CurrpackageName));
                                 RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                            }
-                            else{
+                            } else {
                                 RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(packageName));
                                 RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
                             }
-                            List<String> appList = new ArrayList<String>();
-                            appList.addAll(sharedPreferences_whitelist.getStringSet(Common.PREF_KEY_WHITELIST_APP_LIST, new HashSet<String>()));
-                            Collections.sort(appList);
                             try {
                                 double ori = (double) param.getResult();//get the original result
                                 //TODO escape
@@ -477,19 +467,17 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                 } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
-                                        double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
-                                                .setScale(5, RoundingMode.HALF_UP)
-                                                .doubleValue();
-                                        ra = MakeItNegOrPost(ra, range) /10000 ;
-                                        ra += ori;
-                                        param.setResult(ra);
-                                        XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
-                                }
-                                else if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
+                                    double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
+                                            .setScale(5, RoundingMode.HALF_UP)
+                                            .doubleValue();
+                                    ra = MakeItNegOrPost(ra, range) / 10000;
+                                    ra += ori;
+                                    param.setResult(ra);
+                                    XposedBridge.log(CurrpackageName + " needs the seems accuracy location - " + ra);
+                                } else if ((WhiteListappList.contains(packageName)) || (WhiteListappList.contains(CurrpackageName))) {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause it listed in whitelist");
-                                }
-                                else {
+                                } else {
                                     //Match apart of
                                     for (String List_keyword : FreeKeywordList) {
                                         if (packageName.startsWith(List_keyword)) {
@@ -498,8 +486,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             XposedBridge.log(packageName + " get the Longitude " + result);
                                         } else if (RunningAppsList.contains(CurrpackageName) || RunningAppsList.contains(packageName)) {
                                             double result = ori + (MakeItNegOrPost(RanLong, range) * 1.00000001);
-                                            if ( OnRunningFrontgroundApplication.startsWith(packageName)
-                                                    ||  OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
+                                            if (OnRunningFrontgroundApplication.startsWith(packageName)
+                                                    || OnRunningFrontgroundApplication.startsWith(CurrpackageName)) {
                                                 result *= 1.00000005;
                                             }
                                             param.setResult(result);
@@ -568,63 +556,57 @@ public class HockNoise implements IXposedHookLoadPackage {
         return hehe;
     }
 
-    private double SearchInFromWebContent(String CurrpackageName){
+    private double SearchInFromWebContent(String CurrpackageName) {
         Double rate = ApplicationRate.get(CurrpackageName);
         Integer ratecount = ApplicationRateCount.get(CurrpackageName);
         Integer numofDownloader_Length = ApplicationNumberDownoad.get(CurrpackageName);
 
-        if(rate == (null))
+        if (rate == (null))
             return 1.0;
-        if(ratecount == (null))
+        if (ratecount == (null))
             return 1.0;
-        if(numofDownloader_Length == (null))
+        if (numofDownloader_Length == (null))
             return 1.0;
         double hehe = 1.00005;
-        if(numofDownloader_Length >= 20){ // more or equal to 1 million
+        if (numofDownloader_Length >= 20) { // more or equal to 1 million
             return 1.0;
-        }
-        else{
-            if(numofDownloader_Length >= 15 ){ //more than 10 thousand
-                if(rate > 2.5){
-                    if(ratecount > 5) { //at least 10 thousand
+        } else {
+            if (numofDownloader_Length >= 15) { //more than 10 thousand
+                if (rate > 2.5) {
+                    if (ratecount > 5) { //at least 10 thousand
                         return 1.00001;
                     }
-                } else if(ratecount > 5){ //more or equal to 1 thousand
+                } else if (ratecount > 5) { //more or equal to 1 thousand
                     return 1.00002;
+                } else {
+                    return 1.00003;
                 }
-                else{
-                   return 1.00003;
-                }
-            }
-            else if(numofDownloader_Length > 12){ //more or equal to 1 thousand
-                if(rate > 2.5){
-                    if(ratecount > 3) { //at least 1 hundred
+            } else if (numofDownloader_Length > 12) { //more or equal to 1 thousand
+                if (rate > 2.5) {
+                    if (ratecount > 3) { //at least 1 hundred
                         return 1.00003;
-                    }
-                    else{
+                    } else {
                         return 1.00004;
                     }
-                }
-                else{
+                } else {
                     return 1.00004;
                 }
-            }
-            else{
+            } else {
                 return 1.00005;
             }
         }
         return hehe;
     }
 
-    private double RunningApplicationPlusNoise (double noise, boolean runningORNot){
-        if(runningORNot)
-            return noise*0.99999925;
+    private double RunningApplicationPlusNoise(double noise, boolean runningORNot) {
+        if (runningORNot)
+            return noise * 0.99999925;
         return noise;
     }
 
-    private double FroundApplication (double noise, boolean runningORNot){
-        if(runningORNot)
-             return  noise*0.9999995;
+    private double FroundApplication(double noise, boolean runningORNot) {
+        if (runningORNot)
+            return noise * 0.9999995;
         return noise;
     }
 }

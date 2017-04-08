@@ -34,6 +34,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.Thing;
 import com.hehe.hehexposedlocation.introduction.InstructionsActivity;
 import com.hehe.hehexposedlocation.introduction.IntroductionActivity;
+import com.hehe.hehexposedlocation.introduction.ReferecnceActivity;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -123,20 +124,8 @@ public class SettingsActivity extends PreferenceActivity {
                 startActivity(intent);
                 break;
             case 2: //Reference List
-                String[] ref_ar;
-                String ref = getString(R.string.app_name) + ": " + '\n'
-                        + "Thanks those module: \n";
-                ref_ar = getResources().getStringArray(R.array.ref_list);
-                List<String> ha = Arrays.asList(ref_ar);
-                new AlertDialog.Builder(this)
-                        .setMessage(ref + ha)
-                        .setTitle("Reference List")
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                        .show();
+                intent = new Intent(this, ReferecnceActivity.class);
+                startActivity(intent);
                 break;
             case 3: //instructions
                 intent = new Intent(this, InstructionsActivity.class);
@@ -194,7 +183,7 @@ public class SettingsActivity extends PreferenceActivity {
             }
                 break;
             case 5: //White List
-                intent = new Intent(this, WhitelistActivity.class);
+                intent = new Intent(this, com.hehe.hehexposedlocation.whitelist.WhitelistActivity.class);
                 startActivity(intent);
                 break;
             case 6:
@@ -240,8 +229,6 @@ public class SettingsActivity extends PreferenceActivity {
             }
             case 11: //Enable
                 UserActivityIdentity();
-                intent = new Intent(this, com.hehe.hehexposedlocation.whitelist.WhitelistActivity.class);
-                startActivity(intent);
                 break;
             case 12:
                 intent = new Intent(this, com.hehe.hehexposedlocation.pwd.PwdActivity.class);
@@ -307,8 +294,8 @@ public class SettingsActivity extends PreferenceActivity {
                     //Customer setting value
                     ClearFunction(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
                     //white list
-                    ClearFunction(Common.SHARED_WHITELIST_PREFERENCES_FILE);
-                    ClearFunction(Common.SHARED_WHITELIST_PKGS_PREFERENCES_FILE);
+                    ClearFunction(Common.WHITELIST_HEHEXPOSED_KEY);
+                    ClearFunction(Common.WHITELIST_DISPLAY_HEHEXPOSED_KEY);
 
                     //Web content
                     ClearFunction(Common.TIME_CATEGORY_GET);

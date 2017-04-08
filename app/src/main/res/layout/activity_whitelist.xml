@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
-    tools:context=".WhitelistActivity">
+    tools:context=".whitelist.WhitelistActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,18 +16,26 @@
 
         <CheckBox
             android:id="@+id/all_apps"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/toolbar_whitelist_all_setting"/>
+            android:layout_weight="0.16"
+            android:text="@string/whitelist_enable" />
+
+        <ImageButton
+            android:id="@+id/btntest"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.19"
+            android:contentDescription="@string/filter_title"
+            android:src="@android:drawable/ic_menu_view" />
 
         <Button
             android:id="@+id/add_app"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/toolbar_whitelist_add_app"/>
+            android:layout_weight="0.66"
+            android:text="@string/toolbar_whitelist_add_app" />
     </LinearLayout>
 
     <FrameLayout
@@ -48,7 +56,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="center"
-            android:text="@string/empty_state"
+            android:text="@string/non_enablewhitelist"
             android:textSize="30sp"
             android:textColor="@android:color/white"/>
     </FrameLayout>
@@ -63,7 +71,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_gravity="center"
-            android:text="@string/all_apps_whitelisted_state"
+            android:text="@string/addappsNotice"
             android:textSize="30sp"
             android:textColor="@android:color/white"/>
     </FrameLayout>
