@@ -104,13 +104,13 @@ public class SettingsActivity extends PreferenceActivity {
         Fragment navFragment = null;
         switch (position) {
             case 0: //about me
-                String aboutMsg = getString(R.string.app_name) + ": " + BuildConfig.VERSION_NAME
+                String Aboutmsg = getString(R.string.app_name) + ": " + BuildConfig.VERSION_NAME
                         + "\n The Hong Kong Polytechnic University \n Student Final Year Project - 2016 "
                         + "\n Smart Location Obfuscation Module for \n Xposed Framework in Android "
                         + "\n Yip Tim Yan";
 
                 new AlertDialog.Builder(this)
-                        .setMessage(aboutMsg)
+                        .setMessage(Aboutmsg)
                         .setTitle(R.string.about)
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {

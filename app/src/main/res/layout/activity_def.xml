@@ -23,10 +23,11 @@
 
 
         <Button
-            android:text="@string/default_text"
+            android:id="@+id/restart_it"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/restart_it" />
+            android:text="@string/default_text" />
 
         <TextView
         android:layout_width="wrap_content"

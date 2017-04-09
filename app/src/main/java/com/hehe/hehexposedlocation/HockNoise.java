@@ -384,10 +384,10 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             param.setResult(ori);
                                             XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                         } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
-                                            double ra =
-                                                    BigDecimal.valueOf(rand.nextDouble() % 0.1)
+                                            /*double ra = BigDecimal.valueOf(rand.nextDouble() % 0.1)
                                                             .setScale(5, RoundingMode.HALF_UP)
-                                                            .doubleValue();
+                                                            .doubleValue();*/
+                                            double ra = BigDecimal.valueOf(RanLat*0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
                                             ra = MakeItNegOrPost(ra, range) / 10000;
                                             ra += ori;
                                             param.setResult(ra);
@@ -467,9 +467,10 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     param.setResult(ori);
                                     XposedBridge.log(packageName + " needs the accuracy location cause the category is " + Category_2);
                                 } else if (Arrays.asList(FreePackageList).contains(packageName) || Arrays.asList(FreePackageList).contains(CurrpackageName)) {
-                                    double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
+                                    /*double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
                                             .setScale(5, RoundingMode.HALF_UP)
-                                            .doubleValue();
+                                            .doubleValue();*/
+                                    double ra = BigDecimal.valueOf(RanLong*0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
                                     ra = MakeItNegOrPost(ra, range) / 10000;
                                     ra += ori;
                                     param.setResult(ra);

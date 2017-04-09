@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +31,7 @@ import com.hehe.hehexposedlocation.R;
 import java.util.Objects;
 
 
-public class FeedbackActivity extends Activity {
+public class FeedbackActivity extends AppCompatActivity {
     private GoogleApiClient client;
 
     private PackageManager pm;
