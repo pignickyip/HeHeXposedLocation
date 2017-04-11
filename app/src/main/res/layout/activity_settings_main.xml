@@ -8,10 +8,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <TextView
-        android:text="@string/main_activity_inroo"
+        android:id="@+id/textView11"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/textView11" />
+        android:text="@string/main_activity_inroo"
+        android:textColor="@color/HeHeTextColor" />
 
     <ListView
         android:id="@android:id/list"

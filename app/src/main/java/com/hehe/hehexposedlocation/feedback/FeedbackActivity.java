@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -46,7 +47,7 @@ public class FeedbackActivity extends AppCompatActivity {
 
     private TextView FeedbackIntro;
     private TextView show;
-    private Button ShowMeFeedback;
+    private ImageButton ShowMeFeedback;
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -62,8 +63,7 @@ public class FeedbackActivity extends AppCompatActivity {
         initSet();
         SetRadio();
 
-        ShowMeFeedback = (Button)findViewById(R.id.feedback_button);
-        ShowMeFeedback.setText("Feedback Option");
+        ShowMeFeedback = (ImageButton)findViewById(R.id.feedback_button);
         ShowMeFeedback.setOnClickListener(new Button.OnClickListener(){
             @Override
             public void onClick(View v) {

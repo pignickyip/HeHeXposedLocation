@@ -7,5 +7,20 @@
     <color name="colorEditTextDisable">#999999</color>
     <color name="colorEditTextFocusLost">#ccc</color>
     <color name="colorEditTextFocusGained">#F35</color>
+    <color name="legacy_light_primary">#e998b4</color>
+    <color name="hehecolorPrimary">#172737</color>
+    <color name="hehecolorPrimaryDark">#c05555</color>
+    <color name="hehecolorAccent">#97f1e8</color>
+    <color name="hehecolorBackground">#537da6</color>
+    <color name="hehecolorText">#fcfefefe</color>
+    <color name="hehecolorForeground">#e99b9b</color>
+    <color name="foreground_material_light">#eaeaea</color>
+    <color name="HeHeTextColor">#7bbfe6</color>
+
+    <color name="warning">#f00</color>
+    <color name="navigation">#a3e0c3</color>
+    <color name="primary_dark_material_dark">#f36f6f</color>
+    <color name="background">#303030</color>
+    <color name="background_material_dark">#303030</color>
 
 </resources>

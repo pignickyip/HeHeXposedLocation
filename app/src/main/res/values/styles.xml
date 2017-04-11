@@ -5,6 +5,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+
     </style>
     <!-- Application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
@@ -34,4 +35,7 @@
         <item name="android:focusable">true</item>
         <item name="android:focusableInTouchMode">true</item>
     </style>
+
+    <style name="hehestyle" parent="Theme.AppCompat.Light" />
+
 </resources>

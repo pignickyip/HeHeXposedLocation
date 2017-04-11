@@ -3,6 +3,7 @@ package com.hehe.hehexposedlocation;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import com.google.android.gms.appindexing.Thing;
 import com.hehe.hehexposedlocation.introduction.InstructionsActivity;
 import com.hehe.hehexposedlocation.introduction.IntroductionActivity;
 import com.hehe.hehexposedlocation.introduction.ReferecnceActivity;
+import com.hehe.hehexposedlocation.whitelist.WhitelistActivity;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -72,6 +74,7 @@ public class SettingsActivity extends PreferenceActivity {
     final List<String> ApplicationNumberDownload = new ArrayList<String>();
 
     Context context;
+    ProgressDialog progressDialog;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -256,6 +259,9 @@ public class SettingsActivity extends PreferenceActivity {
                 .build();
     }
 
+    private class CategoryThread extends Thread {
+
+    }
     private void UserActivityIdentity() {
         //TODO http://stackoverflow.com/questions/27058741/detect-user-activity-running-cycling-driving-using-android
         //https://developer.xamarin.com/samples/monodroid/google-services/Location/ActivityRecognition/
@@ -344,6 +350,7 @@ public class SettingsActivity extends PreferenceActivity {
 
         //获取手机内所有应用
         List<PackageInfo> paklist = pm.getInstalledPackages(0);
+
         for (int i = 0; i < paklist.size(); i++) {
             PackageInfo pak = paklist.get(i);
             //判断是否为非系统预装的应用程序
@@ -369,22 +376,44 @@ public class SettingsActivity extends PreferenceActivity {
         PE.putStringSet(Common.SYSTEM_PACKET_NAME_KEY, new HashSet<String>(SyspkgName));
         PE.apply();
 
-        List<String> Category = new ArrayList<String>();
+        final List<String> Category = new ArrayList<String>();
         Category.clear();
         WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
 
-        for (String User : UserpkgName) {
-            String temp = WebGet(User);
-            if (temp != null) {
-                Category.add(User + temp);
+        /* 显示ProgressDialog */
+        progressDialog = ProgressDialog.show(SettingsActivity.this, "标题", "加载中，请稍后……");
+
+				/* 开启一个新线程，在新线程里执行耗时的方法 */
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (String User : UserpkgName) {
+                    String temp = null;
+                    try {
+                        temp = WebGet(User);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (temp != null) {
+                        Category.add(User + temp);
+                    }
+                }
+                for (String System : SyspkgName) {
+                    String temp = null;
+                    try {
+                        temp = WebGet(System);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (temp != null) {
+                        Category.add(System + temp);
+                    }
+                }
             }
-        }
-        for (String System : SyspkgName) {
-            String temp = WebGet(System);
-            if (temp != null) {
-                Category.add(System + temp);
-            }
-        }
+
+        }).start();
+        progressDialog.dismiss();
+
         Collections.sort(Category);
         Collections.sort(ApplicationRate);
         Collections.sort(ApplicationRateCount);

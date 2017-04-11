@@ -42,11 +42,12 @@ public class ModeActivity extends Activity {
     private TextView workmode = null;
     private TextView WorkStartTime = null;
     private TextView WorkEndTime = null;
-
+    private TextView Notice = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mode);
+        Notice = (TextView) findViewById(R.id.Notice_restart_mode);
 //http://javapapers.com/android/android-alarm-clock-tutorial/
         initSet();
         ButtonAction();
@@ -434,6 +435,7 @@ public class ModeActivity extends Activity {
                 if (!(WorkStart_Setup && WorkEnd_Setup))
                     status += Special_msg;
                 workmode.setText(status);
+                Notice.setTextColor(getResources().getColor(R.color.warning));
             }
         });
 
@@ -461,6 +463,7 @@ public class ModeActivity extends Activity {
                 if (!(RestStart_Setup && RestEnd_Setup))
                     status += Special_msg;
                 restmode.setText(status);
+                Notice.setTextColor(getResources().getColor(R.color.warning));
             }
         });
     }

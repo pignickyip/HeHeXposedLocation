@@ -99,7 +99,9 @@ public class InstructionsActivity extends YouTubeBaseActivity implements YouTube
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.basicsettingText:
-                    msg = "......";
+                    msg =   "1. Get the category\n" +
+                            "2. Using enable HeHeXposed, change te strength\n"+
+                            "3. Restart your mobile";
                     new AlertDialog.Builder(InstructionsActivity.this)
                             .setMessage(msg)
                             .setTitle("Basic Setting")
@@ -111,7 +113,9 @@ public class InstructionsActivity extends YouTubeBaseActivity implements YouTube
                             .show();
                     break;
                 case R.id.modesettingText:
-                    msg = ".......";
+                    msg =   "1. Get the category\n" +
+                            "2. Using enable HeHeXposed, change te strength\n"+
+                            "3. Restart your mobile";
                     new AlertDialog.Builder(InstructionsActivity.this)
                             .setMessage(msg)
                             .setTitle("Advance Setting")

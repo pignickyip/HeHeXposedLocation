@@ -48,32 +48,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#555555"
-            android:drawSelectorOnTop="false"/>
+            android:drawSelectorOnTop="false" />
+
         <TextView
-            android:id="@android:id/empty"
+            android:id="@+id/textView10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="@string/non_enablewhitelist"
-            android:textSize="30sp"
-            android:textColor="@android:color/white"/>
+            android:textColor="@color/legacy_light_primary"
+            android:textSize="30sp" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/whitelist_all_view_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <TextView
             android:id="@+id/whitelist_all_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="@string/addappsNotice"
+            android:textColor="@android:color/white"
             android:textSize="30sp"
-            android:textColor="@android:color/white"/>
+            android:textStyle="bold" />
     </FrameLayout>
 </LinearLayout>
 

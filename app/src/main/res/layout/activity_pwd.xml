@@ -62,7 +62,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="74dp"
                 android:background="@null"
-                android:src="@drawable/ic_submit_but" />
+                android:src="@drawable/ic_done_dark" />
         </LinearLayout>
 
         <LinearLayout
@@ -105,16 +105,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="21dp"
                 android:background="@null"
-                android:src="@drawable/ic_fingerprint_enable"
-                android:layout_weight="0.34" />
+                android:src="?android:attr/fingerprintAuthDrawable"
+                android:layout_weight="0.38" />
 
             <ImageButton
                 android:id="@+id/touchid_cancel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.30"
                 android:background="@null"
-                android:src="@drawable/ic_action_cancel"
-                android:layout_weight="0.30" />
+                android:src="@drawable/ic_action_cancel" />
+
         </LinearLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

@@ -232,7 +232,6 @@ public class WhitelistActivity extends PreferenceActivity {
             saveToPrefs();
         }
     }
-
     private class PackageLookupThread extends Thread {
         final WeakReference<WhitelistActivity> contextHolder;
 
