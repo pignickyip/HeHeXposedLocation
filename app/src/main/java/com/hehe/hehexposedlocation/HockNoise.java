@@ -67,8 +67,8 @@ public class HockNoise implements IXposedHookLoadPackage {
         //White List
         final XSharedPreferences WHITELIST = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.WHITELIST_HEHEXPOSED_KEY);
         //Setting
-        final XSharedPreferences USERSPINNERCHOICE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREFERENCES_DEFAULT_POSITION);
-        final XSharedPreferences USERNOISECUSTOMER = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER);
+        final XSharedPreferences USERSPINNERCHOICE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.DEFAULT_HEHEXPOSED_KEY);
+        final XSharedPreferences USERNOISECUSTOMER = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.DEFAULT_HEHEXPOSED_KEY);
         //Application reset
         final XSharedPreferences USERAPPLICATIONFILE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.USER_PACKET_NAME);
         final XSharedPreferences SYSTEMAPPLICATIONFILE = new XSharedPreferences(BuildConfig.APPLICATION_ID, Common.SYSTEM_PACKET_NAME);
@@ -115,7 +115,7 @@ public class HockNoise implements IXposedHookLoadPackage {
         Collections.sort(adapterWeb);
         if (!(WebContent.size() == adapterWeb.size()))
             WebContent.clear();
-        for (String Web : adapterWeb) {//TODO
+        for (String Web : adapterWeb) {
             boolean check = false;
             for (String User : UserpkgName) {
                 if (Web.startsWith(User)) {
@@ -123,7 +123,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                     check = true;
                 }
             }
-            if(check) {
+            if (check) {
                 continue;
             }
             for (String System : SyspkgName) {
@@ -284,7 +284,7 @@ public class HockNoise implements IXposedHookLoadPackage {
         if (sdk > 18) {
             try {
                 Random rand = new Random(sdk);
-                int omg = USERSPINNERCHOICE.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, -1);
+                int omg = USERSPINNERCHOICE.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0);
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
@@ -313,7 +313,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                     else
                         adapter = (rand.nextInt(10 * omg)) + 1;
 
-                    // XposedBridge.log("The User chose Low, Medium, High.");
+                     XposedBridge.log("The User chose Low, Medium, High.");
                 } else
                     XposedBridge.log("The SharePreferences get wrong...");
 
@@ -328,9 +328,11 @@ public class HockNoise implements IXposedHookLoadPackage {
                 } else if (Objects.equals(Feedback_choice, " ")) {
                     FeedbackValue = adapter;
                 }
-
-                XposedBridge.log("The feedback system get " + Feedback_choice + " - " + FeedbackValue);
+                if(FeedbackValue >1) {
+                    XposedBridge.log("The feedback system get " + Feedback_choice + " - " + FeedbackValue);
+                }
                 final int range = FeedbackValue;
+                final boolean serviceEnable = RUNNINGAPPSLISTENER.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
             /*
             Source file of android location api
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/Location.java
@@ -360,12 +362,14 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
-                                    if (Objects.equals(packageName, CurrpackageName)) {
-                                        RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(CurrpackageName));
-                                        RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                                    } else {
-                                        RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(packageName));
-                                        RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                    if (serviceEnable) {
+                                        if (Objects.equals(packageName, CurrpackageName)) {
+                                            RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(CurrpackageName));
+                                            RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                                        } else {
+                                            RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(packageName));
+                                            RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                        }
                                     }
                                     String ho123 = Record.get(packageName);
                                     String ha123 = Record.get(CurrpackageName);
@@ -387,7 +391,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                             /*double ra = BigDecimal.valueOf(rand.nextDouble() % 0.1)
                                                             .setScale(5, RoundingMode.HALF_UP)
                                                             .doubleValue();*/
-                                            double ra = BigDecimal.valueOf(RanLat*0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
+                                            double ra = BigDecimal.valueOf(RanLat * 0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
                                             ra = MakeItNegOrPost(ra, range) / 10000;
                                             ra += ori;
                                             param.setResult(ra);
@@ -447,12 +451,14 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     BigDecimal.valueOf(ha % he)
                                             .setScale(5, RoundingMode.HALF_UP)
                                             .doubleValue();
-                            if (Objects.equals(packageName, CurrpackageName)) {
-                                RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(CurrpackageName));
-                                RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                            } else {
-                                RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(packageName));
-                                RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                            if(serviceEnable) {
+                                if (Objects.equals(packageName, CurrpackageName)) {
+                                    RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(CurrpackageName));
+                                    RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                                } else {
+                                    RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(packageName));
+                                    RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                                }
                             }
                             try {
                                 double ori = (double) param.getResult();//get the original result
@@ -470,7 +476,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     /*double ra = BigDecimal.valueOf(rand.nextDouble() % 0.001)
                                             .setScale(5, RoundingMode.HALF_UP)
                                             .doubleValue();*/
-                                    double ra = BigDecimal.valueOf(RanLong*0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
+                                    double ra = BigDecimal.valueOf(RanLong * 0.9998).setScale(7, RoundingMode.HALF_UP).doubleValue();
                                     ra = MakeItNegOrPost(ra, range) / 10000;
                                     ra += ori;
                                     param.setResult(ra);

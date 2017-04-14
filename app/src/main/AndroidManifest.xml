@@ -12,19 +12,12 @@
 
     <!-- User Defined -->
     <permission-tree android:name="com.hehe.hehexposedlocation" />
-    <permission-tree android:name="com.hehe.hehexposedlocation.appsettings" />
-
-    <permission
-        android:name="com.hehe.hehexposedlocation.appsettings.BROADCAST_PERMISSION"
-        android:protectionLevel="dangerous" />
-    <permission
-        android:name="com.hehe.hehexposedlocation.appsettings.UPDATE_PERMISSIONS"
-        android:protectionLevel="dangerous" />
     <!-- System  Defined -->
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

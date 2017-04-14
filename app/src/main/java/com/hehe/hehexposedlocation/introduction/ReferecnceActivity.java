@@ -21,7 +21,7 @@ public class ReferecnceActivity extends Activity {
                 " and " +
                 "<a href=\"http://repo.xposed.info/users/tungstwenty\" target=\"_blank\">Tungstwenty</a>,\n ";
         String ProcessManager = "<a href=\"http://stackoverflow.com/users/1048340/jared-rummler\" target=\"_blank\">Jared Rummler</a>,\n";
-        String IconDesign = "Icon design: \nde viajes";
+        String IconDesign = "Icon design: \nde viajes by <a href=\"https://dribbble.com/laurareen\" target=\"_blank\">Laura Reen</a>";
         String ListToDisplay = HideMockLocation + "\n" + XposedDeveloper + "\n" + ProcessManager + "\n" + IconDesign;
         String msg = ListToDisplay;
         display.setText(Html.fromHtml(msg));

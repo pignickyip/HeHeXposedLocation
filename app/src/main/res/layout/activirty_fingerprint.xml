@@ -16,7 +16,8 @@
         android:orientation="vertical"
         android:weightSum="1"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:background="@color/background">
 
 
         <TextView
@@ -42,7 +43,7 @@
             android:layout_height="70dp"
             android:layout_marginBottom="30dp"
             android:paddingTop="2dp"
-            android:src="@drawable/ic_fingerprint_enable" />
+            android:src="@drawable/ic_fingerprint" />
 
 
         <TextView

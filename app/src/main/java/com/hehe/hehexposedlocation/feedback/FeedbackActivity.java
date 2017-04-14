@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -81,9 +82,11 @@ public class FeedbackActivity extends AppCompatActivity {
                         i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"15049782d@connect.polyu.hk"});
                         i.putExtra(Intent.EXTRA_SUBJECT, "Opinion of HeHeXposed Xposed module");
                         i.putExtra(Intent.EXTRA_TEXT   , content);
+                        Log.d("Email","To admin");
                         try {
                             startActivity(Intent.createChooser(i, "Send mail..."));
                         } catch (android.content.ActivityNotFoundException ex) {
+                            Log.e("Email", String.valueOf(ex));
                             Toast.makeText(FeedbackActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -155,6 +158,7 @@ public class FeedbackActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), returnvalue.getText(), Toast.LENGTH_SHORT).show();
                         break;
                 }
+                Log.d("Feedback", "Comfortable change");
                 spe.apply();
             }
         });

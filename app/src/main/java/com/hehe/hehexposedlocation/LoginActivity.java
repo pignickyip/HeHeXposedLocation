@@ -89,6 +89,7 @@ public class LoginActivity extends Activity {
         if (setup_already) {
             if(touchUP){
                 Intent intent = new Intent(this, com.hehe.hehexposedlocation.FingerprintActivity.class);
+                Log.d("Login", "Login by fingerprint");
                 startActivity(intent);
                 finish();
             }
@@ -248,7 +249,6 @@ public class LoginActivity extends Activity {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
@@ -289,6 +289,7 @@ public class LoginActivity extends Activity {
 
     private void MovetoContent() {
         Intent intent = new Intent(this, com.hehe.hehexposedlocation.SettingsActivity.class);
+        Log.d("Login", "Get access");
         startActivity(intent);
         finish();
     }

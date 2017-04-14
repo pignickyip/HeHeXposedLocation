@@ -20,7 +20,7 @@
     <color name="warning">#f00</color>
     <color name="navigation">#a3e0c3</color>
     <color name="primary_dark_material_dark">#f36f6f</color>
-    <color name="background">#303030</color>
+    <color name="background">#fff</color>
     <color name="background_material_dark">#303030</color>
 
 </resources>

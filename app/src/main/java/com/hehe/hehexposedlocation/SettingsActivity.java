@@ -15,6 +15,8 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceActivity;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
@@ -75,6 +77,7 @@ public class SettingsActivity extends PreferenceActivity {
 
     Context context;
     ProgressDialog progressDialog;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -137,11 +140,11 @@ public class SettingsActivity extends PreferenceActivity {
             case 4: {//Default Noise setting
 
                 final boolean pwd = password.getBoolean(Common.PASSWORD_ALREADY_UP, false);
-                if(!pwd){
+                if (!pwd) {
                     intent = new Intent(this, com.hehe.hehexposedlocation.basic_setting.DefActivity.class);
                     startActivity(intent);
-                }else{
-                    Log.d("Password","Here im");
+                } else {
+                    Log.d("Password", "Here im");
                     // get prompts.xml view
                     LayoutInflater layoutInflater = LayoutInflater.from(SettingsActivity.this);
                     @SuppressLint("InflateParams") View promptView = layoutInflater.inflate(R.layout.dialog_getintoenable, null);
@@ -161,7 +164,7 @@ public class SettingsActivity extends PreferenceActivity {
                             String real_pwd = password.getString(Common.PASSWORD_PIN_CODE, "");
 
                             if (Objects.equals(challenge, real_pwd) || !pwd) {
-                                Intent intent = new Intent(context,com.hehe.hehexposedlocation.basic_setting.DefActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                Intent intent = new Intent(context, com.hehe.hehexposedlocation.basic_setting.DefActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
                                 Toast.makeText(getApplicationContext(), "Successfully log in", Toast.LENGTH_LONG).show();
                             } else {
@@ -184,7 +187,7 @@ public class SettingsActivity extends PreferenceActivity {
                     alert.show();
                 }
             }
-                break;
+            break;
             case 5: //White List
                 intent = new Intent(this, com.hehe.hehexposedlocation.whitelist.WhitelistActivity.class);
                 startActivity(intent);
@@ -259,9 +262,7 @@ public class SettingsActivity extends PreferenceActivity {
                 .build();
     }
 
-    private class CategoryThread extends Thread {
 
-    }
     private void UserActivityIdentity() {
         //TODO http://stackoverflow.com/questions/27058741/detect-user-activity-running-cycling-driving-using-android
         //https://developer.xamarin.com/samples/monodroid/google-services/Location/ActivityRecognition/
@@ -315,6 +316,7 @@ public class SettingsActivity extends PreferenceActivity {
 
                     Toast.makeText(getApplicationContext(), "Successfully reset all the setting", Toast.LENGTH_LONG).show();
                 } else {
+                    Log.d("Password", "Wrong Password");
                     Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
                 }
                 dialog.dismiss();
@@ -379,40 +381,30 @@ public class SettingsActivity extends PreferenceActivity {
         final List<String> Category = new ArrayList<String>();
         Category.clear();
         WebContent = getSharedPreferences(Common.WEB_CONTENT, 0);
-
-        /* 显示ProgressDialog */
-        progressDialog = ProgressDialog.show(SettingsActivity.this, "标题", "加载中，请稍后……");
-
-				/* 开启一个新线程，在新线程里执行耗时的方法 */
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for (String User : UserpkgName) {
-                    String temp = null;
-                    try {
-                        temp = WebGet(User);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (temp != null) {
-                        Category.add(User + temp);
-                    }
-                }
-                for (String System : SyspkgName) {
-                    String temp = null;
-                    try {
-                        temp = WebGet(System);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (temp != null) {
-                        Category.add(System + temp);
-                    }
-                }
+        for (String User : UserpkgName) {
+            String temp = null;
+            try {
+                temp = WebGet(User);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
-        }).start();
-        progressDialog.dismiss();
+            if (temp != null) {
+                Category.add(User + temp);
+            }
+            Log.d("Category",User);
+        }
+        for (String System : SyspkgName) {
+            String temp = null;
+            try {
+                temp = WebGet(System);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (temp != null) {
+                Category.add(System + temp);
+            }
+            Log.d("Category",System);
+        }
 
         Collections.sort(Category);
         Collections.sort(ApplicationRate);
@@ -420,8 +412,9 @@ public class SettingsActivity extends PreferenceActivity {
         Collections.sort(ApplicationNumberDownload);
 
         boolean Cant = false;
-        if (Category.isEmpty())
+        if (Category.isEmpty()) {
             Cant = true;
+        }
         PE = WebContent.edit();
         PE.putStringSet(Common.WEB_CONTENT_KEY, new HashSet<String>(Category));
         PE.putStringSet(Common.WEB_CONTENT_RATE, new HashSet<String>(ApplicationRate));

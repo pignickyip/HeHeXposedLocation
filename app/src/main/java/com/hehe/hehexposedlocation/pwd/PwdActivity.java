@@ -296,6 +296,7 @@ public class PwdActivity extends Activity {
                         msg = "Password already reset";
                         subview.setText(msg);
                         OnOff.setChecked(false);
+                        Log.d("Password", "Password reset");
                     } else {
                         PE = password.edit();
                         PE.putInt(Common.PASSWORD_PIN_RESET_ATTEMPT, attempt + 1);
@@ -345,6 +346,7 @@ public class PwdActivity extends Activity {
                     Toast.makeText(getApplicationContext(), "It is down!", Toast.LENGTH_LONG).show();
                 } else {
                     OnOff.setChecked(isUp);
+                    Log.d("Password", "Wrong Password");
                     Toast.makeText(getApplicationContext(), "Wrong password", Toast.LENGTH_LONG).show();
                     dialog.cancel();
                 }

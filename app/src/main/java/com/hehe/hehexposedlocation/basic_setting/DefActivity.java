@@ -69,12 +69,12 @@ public class DefActivity extends Activity {
         // Apply the adapter to the spinner
         spinnerDef.setAdapter(adapter);
 
-        SAVE_ACTION = getSharedPreferences(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0);
+        SAVE_ACTION = getSharedPreferences(Common.DEFAULT_HEHEXPOSED_KEY, 0);
         if (!(SAVE_ACTION == null))
             spinnerDef.setSelection(SAVE_ACTION.getInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, 0));
         spinnerDef.setOnItemSelectedListener(new MyOnItemSelectedListener());
 
-        CUSTOMER = getSharedPreferences(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 0);
+        CUSTOMER = getSharedPreferences(Common.DEFAULT_HEHEXPOSED_KEY, 0);
 
     }
 
@@ -91,6 +91,7 @@ public class DefActivity extends Activity {
 
             PE.remove(Common.SHARED_PREFERENCES_DEFAULT_POSITION);
             PE.putInt(Common.SHARED_PREFERENCES_DEFAULT_POSITION, position);
+            Log.d("Strength", "Ur choice:"+position);
             PE.apply();
             try {
                 if (Objects.equals(item, "Customer")) {
@@ -110,7 +111,7 @@ public class DefActivity extends Activity {
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
-            //Rly othing
+            //Rly nothing
         }
 
     }

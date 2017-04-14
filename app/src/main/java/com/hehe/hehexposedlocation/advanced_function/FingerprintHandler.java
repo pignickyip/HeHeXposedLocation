@@ -17,6 +17,7 @@ import android.os.CancellationSignal;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.hehe.hehexposedlocation.Common;
@@ -68,6 +69,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         if(success){
             textView.setTextColor(ContextCompat.getColor(context,R.color.colorPrimaryDark));
             Intent intent = new Intent(context,com.hehe.hehexposedlocation.SettingsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            Log.d("Login", "Login by fingerprint");
             context.startActivity(intent);
         }
     }

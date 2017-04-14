@@ -49,11 +49,11 @@ public class WhitelistActivity extends PreferenceActivity {
 
     // These 2 are mutually exclusive
     @BindView(R.id.list_and_empty_container) View mListAndEmptyContainer;
-    @BindView(R.id.whitelist_all_view_container) View mWhitelistAllViewContainer;
+    @BindView(R.id.enableWhiteList) View enableText;
+    @BindView(R.id.whitelist_enable_container) View mWhitelistEnablelView;
 
-    @BindView(R.id.whitelist_all_view) View mWhitelistAllView;
     @BindView(R.id.add_app) Button addAppButton;
-    @BindView(R.id.all_apps) CheckBox allAppsCheckbox;
+    @BindView(R.id.all_apps) CheckBox enableAppsCheckbox;
     @BindView(R.id.btntest) ImageButton filter;
 
     RadioGroup filtergp ;
@@ -83,7 +83,7 @@ public class WhitelistActivity extends PreferenceActivity {
 
         final ToolbarListener listener = new ToolbarListener();
         addAppButton.setOnClickListener(listener);
-        allAppsCheckbox.setOnCheckedChangeListener(listener);
+        enableAppsCheckbox.setOnCheckedChangeListener(listener);
         filter.setOnClickListener(listener);
 
         mAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, appList);
@@ -118,17 +118,21 @@ public class WhitelistActivity extends PreferenceActivity {
                 .putBoolean(Common.WHITELIST_ENABLE_KEY, whitelistEnable)
                 .putStringSet(Common.WHITELIST_APPS_LIST_KEY, new HashSet<String>(appList))
                 .apply();
+        Log.d("WhiteList","Save it");
     }
 
     private void resetUi() {
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
+            Log.d("HE","dd");
         }
-        mListAndEmptyContainer.setVisibility(whitelistEnable ? View.GONE : View.VISIBLE);
-        mWhitelistAllViewContainer.setVisibility(whitelistEnable ? View.VISIBLE : View.GONE);
+        boolean applistemptyenable = appList.isEmpty();
+        mListAndEmptyContainer.setVisibility(!whitelistEnable ? View.VISIBLE : View.GONE);
+        mWhitelistEnablelView.setVisibility(whitelistEnable ? View.VISIBLE  : View.GONE);
+        enableText.setVisibility(applistemptyenable ? View.VISIBLE : View.GONE);
         addAppButton.setEnabled(whitelistEnable);
         filter.setEnabled(whitelistEnable);
-        allAppsCheckbox.setChecked(whitelistEnable);
+        enableAppsCheckbox.setChecked(whitelistEnable);
     }
     @Override
     protected void onListItemClick(ListView l, View v, final int position, long id) {
@@ -167,6 +171,7 @@ public class WhitelistActivity extends PreferenceActivity {
                 Collections.sort(pkgList);
                 resetUi();
                 saveToPrefs();
+                Log.d("WhiteList",pkg);
                 addAppButton.setEnabled(true);
                 Toast.makeText(getApplicationContext(), "Successfully make the " + LabelName.get(pkg) + " to White List", Toast.LENGTH_SHORT).show();
             }
@@ -262,7 +267,9 @@ public class WhitelistActivity extends PreferenceActivity {
                             pkgName.put(pakLabel,pak.packageName);
                             pkgLabelName.put(pak.packageName,pakLabel);
                             appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                            Log.d("h",pakLabel);
+
+
+                            Log.d("FilterWhiteList",pakLabel);
                         }
                         break;
                     case 0://all
@@ -270,6 +277,8 @@ public class WhitelistActivity extends PreferenceActivity {
                         pkgName.put(pakLabel,pak.packageName);
                         pkgLabelName.put(pak.packageName,pakLabel);
                         appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
+
+                        Log.d("FilterWhiteList",pakLabel);
                         break;
                     default: //user or default
                         if ((pak.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) <= 0) {
@@ -278,7 +287,9 @@ public class WhitelistActivity extends PreferenceActivity {
                             pkgName.put(pakLabel,pak.packageName);
                             pkgLabelName.put(pak.packageName,pakLabel);
                             appIcon.put(pak.packageName,pak.applicationInfo.loadIcon(pm));
-                            Log.d("h",pakLabel);
+
+
+                            Log.d("FilterWhiteList",pakLabel);
                         }
                         break;
                 }

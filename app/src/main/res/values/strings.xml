@@ -22,10 +22,10 @@
     <string name="loading_app_list">Loading your apps.</string>
     <string name="whitelist_enable">Enable</string>
     <string name="toolbar_whitelist_add_app">Add App</string>
-    <string name="dialog_whitelist_title_add_app">Add App To Mock</string>
+    <string name="dialog_whitelist_title_add_app">Add Application to White List</string>
     <string name="toolbar_whitelist_donation">Test</string>
     <string name="remove_app_title">Remove App</string>
-    <string name="remove_app_message">Removed apps will detect Mock Locations is enabled.</string>
+    <string name="remove_app_message">Removed apps</string>
     <string name="restart_required">Force kill the target app to apply changes.</string>
     <string name="dialog_remind">Are you sure?</string>
     <string name="typeagain">type your password again</string>
