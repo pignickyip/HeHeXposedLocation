@@ -103,22 +103,8 @@ public class BgdFgdListenService extends Service {
         ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         String FrontApps = "";
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            /*
-            Runinng = activityManager.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo app : Runinng) {
-                try  {
-                    if (app.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND &&
-                            app.importanceReasonCode == 0 ) {
-                        hehe = app.processName;
-                    }
-                }
-                catch (Exception e){
-                    Log.d("Fuck","Fuck");
-                }
-                Log.d("BUUBU",hehe);
-            }*/
             FrontApps = ProcessManager.getForegroundApp();
-            Log.d("BUUBU",FrontApps);
+            Log.d("Background detector",FrontApps);
             //Get the running application list
             //Source link : http://stackoverflow.com/questions/30619349/android-5-1-1-and-above-getrunningappprocesses-returns-my-application-packag
             RunningApps.clear();
@@ -142,6 +128,7 @@ public class BgdFgdListenService extends Service {
         Collections.sort(RunningApps);
         //Collections.sort(RunningAppsID);
         PE = RunningAppsPref.edit();
+        PE.clear();
         PE.putStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>(RunningApps));
         PE.putString(Common.CURRENTAPPLICATION, FrontApps);
         PE.apply();
@@ -214,20 +201,20 @@ public class BgdFgdListenService extends Service {
     public void initializeTimerTask() {
         timerTask = new TimerTask() {
             public void run() {
-                Log.d("HeHeXposed_Test" ,"im fuckng here" + counter++);
+                Log.d("Background detector" ,"im here" + counter++);
                 if(t) {
                     try {
                         mThreadHandler.post(r1);
                         //startService(new Intent(ctx, BgdFgdStartServiceReceiver.class));
                     } catch (EmptyStackException e) {
-                        Log.d("HeHeXposed_Test", "unl");
+                        Log.d("Background detector", "unl");
                     }
                 }
                 else{
                     timer.cancel();
                     timer.purge();
                     timerTask.cancel();
-                    Log.d("HEHEXPOSED","Timer is end");
+                    Log.d("Background detector","Timer is end");
                 }
             }
         };

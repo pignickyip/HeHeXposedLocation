@@ -15,7 +15,7 @@ public class FreeList{
     public static final String[] PACKAGE_LIST = { "android","com.google.android.gms"," " };//"android" , "com.google.android.gms"
     public static final String[] KEYWORD_LIST = { "com.google ", " " };
     public static final String[] FREE_CATEGORY_LIST = new String[] {
-            "Travel & Local"
+            "Travel & Local"," "
     };
     public static final String[] APPLICATION_CATEGORY_LIST = {
             "Art & Design" ,

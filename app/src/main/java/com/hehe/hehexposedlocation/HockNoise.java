@@ -232,6 +232,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                 if (WorkMode_Start_Mintues <= Curr_Minute) {
                     if (WorkMode_Start_Hour != -1)
                         TimeModeCheck = 0.9;
+                    XposedBridge.log("Work mode on Time");
                 }
             } else if (WorkMode_End_Hour <= Curr_Hour) {
                 if (WorkMode_End_Mintues < Curr_Minute) {
@@ -239,6 +240,7 @@ public class HockNoise implements IXposedHookLoadPackage {
                     XposedBridge.log("Current " + Curr_Hour + ":" + Curr_Minute);
                 }
             }
+            XposedBridge.log("Work mode ON");
         } else
             TimeModeCheck = WorkMode_Start_Hour;
 
@@ -251,33 +253,22 @@ public class HockNoise implements IXposedHookLoadPackage {
             if (RestMode_Start_Hour <= Curr_Hour) {
                 if (RestMode_Start_Mintues <= Curr_Minute) {
                     TimeModeCheck = 1.1;
+                    XposedBridge.log("Rest mode on time");
                 }
             } else if (RestMode_End_Hour <= Curr_Hour) {
                 if (RestMode_End_Mintues < Curr_Minute) {
                     TimeModeCheck = 1;
                 }
             }
+            XposedBridge.log("Rest mode ON");
         }
-        final boolean RunBgdFgd = RUNNINGAPPSLISTENER.getBoolean(Common.BGDFGDRECORDKEYUP, false);
-        if (RunBgdFgd) {
-            /*List<String> temp = new ArrayList<String>();
-            temp.clear();
-            temp.addAll(RunningApps.getStringSet(Common.BGDFGDAPPLICATION, new HashSet<String>()));
-            Collections.sort(temp);
-            XposedBridge.log("No such key");
-            RunningAppsList.clear();
-            for (String RunningApp : temp) {
-                if(WebContent.containsKey(RunningApp)){
-                    RunningAppsList.add(RunningApp);
-                    XposedBridge.log("Running Application: " + RunningApp +"-");
-                }
-                else
-                    XposedBridge.log("No such key");
-            }*/
+        final boolean serviceEnable = RUNNINGAPPSLISTENER.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
+        if (serviceEnable) {
             RunningAppsList.clear();
             RunningAppsList.addAll(RUNNINGAPPSLISTENER.getStringSet(Common.BGDFGDRUNNINGAPPLICATION, new HashSet<String>()));
             Collections.sort(RunningAppsList);
             OnRunningFrontgroundApplication = RUNNINGAPPSLISTENER.getString(Common.CURRENTAPPLICATION, "No Application Running");
+            XposedBridge.log("Running application listener");
         }
         //https://www.google.com.hk/search?q=how+to+use+the+data+in+hashmap+android&spell=1&sa=X&ved=0ahUKEwjy3e_XuMHRAhWEn5QKHZqmCtcQvwUIGCgA&biw=1451&bih=660
         //http://blog.csdn.net/yzzst/article/details/47659479
@@ -288,39 +279,62 @@ public class HockNoise implements IXposedHookLoadPackage {
                 // Latitudes range from -90 to 90.
                 // Longitudes range from -180 to 180.
                 int adapter = 1;
-                if (omg == 0) {//Default
+                switch (omg){
+                    case 0:
+                        break;
+                    case 1:{//Customer
+                        adapter = USERNOISECUSTOMER.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 40);
+                        XposedBridge.log("The User chose Customer and the value is " + adapter);
 
-                    //XposedBridge.log("The User chose Default");
-                } else if (omg == 1) {//Customer
-                    adapter = USERNOISECUSTOMER.getInt(Common.SHARED_PREDERENCES_DEFAULT_CUSTOMER, 40);
-                    XposedBridge.log("The User chose Customer and the value is " + adapter);
+                        if (adapter <= 40) {
+                            adapter = 20;
+                        }
+                        adapter %= 79;
 
-                    if (adapter <= 1) {
-                        adapter = 2;
+                        adapter++;
+
+                        if (sdk >= 21)
+                            adapter = ThreadLocalRandom.current().nextInt(1, adapter);
+                        else
+                            adapter = ((rand.nextInt(adapter))) + 1;
+                        break;
                     }
-                    adapter %= 39;
-
-                    adapter++;
-
-                    if (sdk >= 21)
-                        adapter = ThreadLocalRandom.current().nextInt(1, adapter);
-                    else
-                        adapter = ((rand.nextInt(adapter))) + 1;
-                } else if (omg >= 2) {//Low, Medium,Highest
-                    //adapter = sharedPreferences.getInt(Common.SHARED_PREFERENCES_POSITION,0);
-                    if (sdk >= 21)
-                        adapter = ThreadLocalRandom.current().nextInt(1, (10 * omg)) + 1;
-                    else
-                        adapter = (rand.nextInt(10 * omg)) + 1;
-
-                     XposedBridge.log("The User chose Low, Medium, High.");
-                } else
-                    XposedBridge.log("The SharePreferences get wrong...");
+                    case 2:{
+                        if (sdk >= 21)
+                            adapter = ThreadLocalRandom.current().nextInt(1, 20) + 1;
+                        else
+                            adapter = (rand.nextInt(20)) + 1;
+                        XposedBridge.log("The User chose Low");
+                        break;
+                    }
+                    case 3:{
+                        if (sdk >= 21)
+                            adapter = ThreadLocalRandom.current().nextInt(1, 40) + 1;
+                        else
+                            adapter = (rand.nextInt(40)) + 1;
+                        XposedBridge.log("The User chose Medium");
+                        break;
+                    }
+                    case 4:{
+                        if (sdk >= 21)
+                            adapter = ThreadLocalRandom.current().nextInt(1, 80) + 1;
+                        else
+                            adapter = (rand.nextInt(80)) + 1;
+                        XposedBridge.log("The User chose High");
+                        break;
+                    }
+                    default:
+                        XposedBridge.log("Choice Error");
+                        break;
+                }
 
                 int FeedbackValue = 1;
                 String Feedback_choice = FEEDBACK.getString(Common.FEEDBACK_COMFORTABLE_KEY, " ");
                 if (Objects.equals(Feedback_choice, "Strong")) {
-                    FeedbackValue = adapter / 2;
+                    if(adapter > 1)
+                        FeedbackValue = adapter / 2;
+                    else
+                        FeedbackValue = adapter;
                 } else if (Objects.equals(Feedback_choice, "Week")) {
                     FeedbackValue = adapter * 2;
                 } else if (Objects.equals(Feedback_choice, "Suitable")) {
@@ -330,9 +344,8 @@ public class HockNoise implements IXposedHookLoadPackage {
                 }
                 if(FeedbackValue >1) {
                     XposedBridge.log("The feedback system get " + Feedback_choice + " - " + FeedbackValue);
-                }
+            }
                 final int range = FeedbackValue;
-                final boolean serviceEnable = RUNNINGAPPSLISTENER.getBoolean(Common.BGDFGDRECORDKEY_SERVICE_ENABLE, false);
             /*
             Source file of android location api
             //https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/location/java/android/location/Location.java
@@ -357,18 +370,33 @@ public class HockNoise implements IXposedHookLoadPackage {
                                     double popular = SearchInFromWebContent(CurrpackageName);
                                     //Original value + random value
                                     double ha = (rand.nextDouble() % (MaxLat));
-                                    double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange / 10;
+                                    double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange;
                                     double RanLat =
                                             BigDecimal.valueOf(ha % he)
                                                     .setScale(5, RoundingMode.HALF_UP)
                                                     .doubleValue();
                                     if (serviceEnable) {
-                                        if (Objects.equals(packageName, CurrpackageName)) {
-                                            RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(CurrpackageName));
-                                            RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                                        } else {
-                                            RanLat = RunningApplicationPlusNoise(RanLat, RunningAppsList.contains(packageName));
-                                            RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                        XposedBridge.log("Running application service enable");
+                                        for (String heee : RunningAppsList){
+                                            if (heee.startsWith(packageName)) {
+                                                RanLat = RunningApplicationPlusNoise(RanLat, heee.startsWith(CurrpackageName));
+                                                RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                                                XposedBridge.log("Running application = Requesting application");
+                                            } else if(heee.startsWith(CurrpackageName)){
+                                                RanLat = RunningApplicationPlusNoise(RanLat, heee.startsWith(packageName));
+                                                RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                                XposedBridge.log("Running application = Requesting application");
+                                            }
+                                            else if(heee.startsWith("android.process.acore")){
+                                                RanLat = RunningApplicationPlusNoise(RanLat, heee.startsWith(packageName));
+                                                RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                                XposedBridge.log("Running application = Requesting application");
+                                            }
+                                            else if(heee.startsWith("com.google.android.gms.persistent")){
+                                                RanLat = RunningApplicationPlusNoise(RanLat, heee.startsWith(packageName));
+                                                RanLat = FroundApplication(RanLat, OnRunningFrontgroundApplication.startsWith(packageName));
+                                                XposedBridge.log("Running application = Requesting application");
+                                            }
                                         }
                                     }
                                     String ho123 = Record.get(packageName);
@@ -446,18 +474,33 @@ public class HockNoise implements IXposedHookLoadPackage {
                             //Original value + random value
                             double ha = (rand.nextDouble() % (MaxLong));
                             double popular = SearchInFromWebContent(CurrpackageName);
-                            double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange / 10;
+                            double he = (rand.nextDouble() % (range * popular)) % 0.1 * modeChange;
                             double RanLong =
                                     BigDecimal.valueOf(ha % he)
                                             .setScale(5, RoundingMode.HALF_UP)
                                             .doubleValue();
                             if(serviceEnable) {
-                                if (Objects.equals(packageName, CurrpackageName)) {
-                                    RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(CurrpackageName));
-                                    RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
-                                } else {
-                                    RanLong = RunningApplicationPlusNoise(RanLong, RunningAppsList.contains(packageName));
-                                    RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                                XposedBridge.log("Running application service enable");
+                                for (String heee : RunningAppsList) {
+                                    if (heee.startsWith(packageName)) {
+                                        RanLong = RunningApplicationPlusNoise(RanLong, heee.startsWith(CurrpackageName));
+                                        RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(CurrpackageName));
+                                        XposedBridge.log("Running application = Requesting application");
+                                    } else if (heee.startsWith(CurrpackageName)) {
+                                        RanLong = RunningApplicationPlusNoise(RanLong, heee.startsWith(packageName));
+                                        RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                                        XposedBridge.log("Running application = Requesting application");
+                                    }
+                                    else if(heee.startsWith("android.process.acore")){
+                                        RanLong = RunningApplicationPlusNoise(RanLong, heee.startsWith(packageName));
+                                        RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                                        XposedBridge.log("Running application = Requesting application");
+                                    }
+                                    else if(heee.startsWith("com.google.android.gms.persistent")){
+                                        RanLong = RunningApplicationPlusNoise(RanLong, heee.startsWith(packageName));
+                                        RanLong = FroundApplication(RanLong, OnRunningFrontgroundApplication.startsWith(packageName));
+                                        XposedBridge.log("Running application = Requesting application");
+                                    }
                                 }
                             }
                             try {
@@ -498,11 +541,11 @@ public class HockNoise implements IXposedHookLoadPackage {
                                                 result *= 1.00000005;
                                             }
                                             param.setResult(result);
-                                            XposedBridge.log("The running application " + packageName + " get the Latitude " + result);
+                                            XposedBridge.log("The running application " + packageName + " get the Longitude " + result);
                                         } else {
                                             double result = ori + (MakeItNegOrPost(RanLong, range) * 1.0000001);
                                             param.setResult(result);
-                                            XposedBridge.log(packageName + " get the Latitude " + result);
+                                            XposedBridge.log(packageName + " get the Longitude " + result);
                                         }
                                     }
 
@@ -574,32 +617,32 @@ public class HockNoise implements IXposedHookLoadPackage {
             return 1.0;
         if (numofDownloader_Length == (null))
             return 1.0;
-        double hehe = 1.00005;
+        double hehe = 1.0;
         if (numofDownloader_Length >= 20) { // more or equal to 1 million
-            return 1.0;
+            return 0.8;
         } else {
             if (numofDownloader_Length >= 15) { //more than 10 thousand
                 if (rate > 2.5) {
                     if (ratecount > 5) { //at least 10 thousand
-                        return 1.00001;
+                        return 0.85;
                     }
                 } else if (ratecount > 5) { //more or equal to 1 thousand
-                    return 1.00002;
+                    return 0.9;
                 } else {
-                    return 1.00003;
+                    return 0.925;
                 }
             } else if (numofDownloader_Length > 12) { //more or equal to 1 thousand
                 if (rate > 2.5) {
                     if (ratecount > 3) { //at least 1 hundred
-                        return 1.00003;
+                        return 0.9;
                     } else {
-                        return 1.00004;
+                        return 0.925;
                     }
                 } else {
-                    return 1.00004;
+                    return 0.95;
                 }
             } else {
-                return 1.00005;
+                return 0.975;
             }
         }
         return hehe;
